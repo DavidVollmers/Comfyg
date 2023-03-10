@@ -1,10 +1,9 @@
 ﻿using Comfyg.Client;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Primitives;
 
 namespace Comfyg;
 
-internal class ComfygProvider : IConfigurationProvider
+internal class ComfygProvider : ConfigurationProvider
 {
     private readonly ComfygClient _client;
 
@@ -12,29 +11,9 @@ internal class ComfygProvider : IConfigurationProvider
     {
         _client = client;
     }
-    
-    public bool TryGet(string key, out string? value)
-    {
-        throw new NotImplementedException();
-    }
 
-    public void Set(string key, string? value)
+    public override void Load()
     {
-        throw new NotImplementedException();
-    }
-
-    public IChangeToken GetReloadToken()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Load()
-    {
-        throw new NotImplementedException();
-    }
-
-    public IEnumerable<string> GetChildKeys(IEnumerable<string> earlierKeys, string? parentPath)
-    {
-        throw new NotImplementedException();
+        
     }
 }
