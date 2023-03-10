@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Core.Abstractions", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Api.Contracts", "packages\Api\Comfyg.Api.Contracts\Comfyg.Api.Contracts.csproj", "{B10C9658-EBAA-4B04-AC0F-A48418916938}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Authentication", "packages\Api\Comfyg.Authentication\Comfyg.Authentication.csproj", "{FC514504-2A6B-459C-92BF-9DCF0F505CD1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Authentication.Abstractions", "packages\Api\Comfyg.Authentication.Abstractions\Comfyg.Authentication.Abstractions.csproj", "{6E24A6DA-EF7B-4C9E-8A21-7B45DC512FB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +33,8 @@ Global
 		{73822547-5EF2-4361-A25B-BAE323CADB8D} = {7C0FF3E3-8DF7-4CE1-A44D-F5F77FD206B9}
 		{476EC29C-230B-4E31-9DCD-624F58EE8881} = {7C0FF3E3-8DF7-4CE1-A44D-F5F77FD206B9}
 		{B10C9658-EBAA-4B04-AC0F-A48418916938} = {7C0FF3E3-8DF7-4CE1-A44D-F5F77FD206B9}
+		{FC514504-2A6B-459C-92BF-9DCF0F505CD1} = {7C0FF3E3-8DF7-4CE1-A44D-F5F77FD206B9}
+		{6E24A6DA-EF7B-4C9E-8A21-7B45DC512FB8} = {7C0FF3E3-8DF7-4CE1-A44D-F5F77FD206B9}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{26CF8A96-1AA3-4BDC-A17C-75BE19CC3560}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -59,5 +65,13 @@ Global
 		{B10C9658-EBAA-4B04-AC0F-A48418916938}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B10C9658-EBAA-4B04-AC0F-A48418916938}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B10C9658-EBAA-4B04-AC0F-A48418916938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC514504-2A6B-459C-92BF-9DCF0F505CD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC514504-2A6B-459C-92BF-9DCF0F505CD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC514504-2A6B-459C-92BF-9DCF0F505CD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC514504-2A6B-459C-92BF-9DCF0F505CD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E24A6DA-EF7B-4C9E-8A21-7B45DC512FB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E24A6DA-EF7B-4C9E-8A21-7B45DC512FB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E24A6DA-EF7B-4C9E-8A21-7B45DC512FB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E24A6DA-EF7B-4C9E-8A21-7B45DC512FB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

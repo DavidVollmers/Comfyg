@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Comfyg.Api.Contracts\Comfyg.Api.Contracts.csproj" />
+      <ProjectReference Include="..\Comfyg.Authentication\Comfyg.Authentication.csproj" />
     </ItemGroup>
 
 </Project>
