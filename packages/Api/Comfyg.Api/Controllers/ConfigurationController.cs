@@ -5,4 +5,5 @@ namespace Comfyg.Api.Controllers;
 [ApiController]
 public class ConfigurationController : ControllerBase
 {
+    
 }

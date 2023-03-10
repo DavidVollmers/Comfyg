@@ -1,0 +1,12 @@
+﻿{
+  "profiles": {
+    "Comfyg.Examples.AspNetCore": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5157",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
