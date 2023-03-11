@@ -19,11 +19,14 @@ public static class ComfygAuthenticationExtensions
         serviceCollection.AddSingleton<ComfygSecurityTokenHandler>();
 
         return serviceCollection
-            .AddAuthentication(options =>
+            .AddAuthentication(nameof(Comfyg))
+            .AddJwtBearer(nameof(Comfyg), options =>
             {
-                options.DefaultScheme = nameof(Comfyg);
-                options.DefaultForbidScheme = nameof(Comfyg);
-            })
-            .AddJwtBearer();
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false,
+                    ValidateIssuer = false
+                };
+            });
     }
 }

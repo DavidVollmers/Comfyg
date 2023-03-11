@@ -1,4 +1,6 @@
-﻿namespace Comfyg.Authentication.Abstractions;
+﻿using Comfyg.Contracts.Authentication;
+
+namespace Comfyg.Authentication.Abstractions;
 
 public interface IClientService
 {

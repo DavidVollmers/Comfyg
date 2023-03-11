@@ -26,6 +26,8 @@ internal class ComfygSecurityTokenHandler : JwtSecurityTokenHandler
         var clientSecret = _clientService.ReceiveClientSecretAsync(client).GetAwaiter().GetResult();
         validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(clientSecret));
 
-        return base.ValidateToken(token, validationParameters, out validatedToken);
+        var principal = base.ValidateToken(token, validationParameters, out validatedToken);
+
+        return new ClaimsPrincipal(new ClientIdentity(client, principal.Identity!));
     }
 }

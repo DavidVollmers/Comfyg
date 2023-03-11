@@ -1,4 +1,5 @@
 ﻿using Comfyg.Authentication.Abstractions;
+using Comfyg.Contracts.Authentication;
 using Moq;
 
 namespace Comfyg.Client.Tests;
@@ -18,7 +19,12 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = Guid.NewGuid().ToString();
         var friendlyName = "Test Client";
-        var client = new Authentication.Abstractions.Client(clientId, clientSecret, friendlyName);
+        var client = new Contracts.Authentication.Client
+        {
+            ClientId = clientId,
+            ClientSecret = clientSecret,
+            FriendlyName = friendlyName
+        };
 
         using var httpClient = _factory.CreateClient();
 
@@ -31,7 +37,13 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
             mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>())).ReturnsAsync(clientSecret);
         });
 
-        await comfygClient.EstablishConnectionAsync();
+        var response = await comfygClient.EstablishConnectionAsync();
+
+        Assert.NotNull(response);
+        Assert.NotNull(response.Client);
+        Assert.Equal(clientId, response.Client.ClientId);
+        Assert.Equal(friendlyName, response.Client.FriendlyName);
+        Assert.Null(response.Client.ClientSecret);
 
         _factory.Mock<IClientService>(mock =>
         {

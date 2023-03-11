@@ -7,11 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.10.0"/>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.10.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Comfyg.Client.Tests"/>
+        <InternalsVisibleTo Include="Comfyg.Client.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Api\Comfyg.Contracts\Comfyg.Contracts.csproj" />
     </ItemGroup>
 
 </Project>

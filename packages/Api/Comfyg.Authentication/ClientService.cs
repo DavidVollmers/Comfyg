@@ -1,4 +1,5 @@
 ﻿using Comfyg.Authentication.Abstractions;
+using Comfyg.Contracts.Authentication;
 using CoreHelpers.WindowsAzure.Storage.Table;
 
 namespace Comfyg.Authentication;

@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Core", "packages\Api
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Core.Abstractions", "packages\Api\Comfyg.Core.Abstractions\Comfyg.Core.Abstractions.csproj", "{476EC29C-230B-4E31-9DCD-624F58EE8881}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Api.Contracts", "packages\Api\Comfyg.Api.Contracts\Comfyg.Api.Contracts.csproj", "{B10C9658-EBAA-4B04-AC0F-A48418916938}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Contracts", "packages\Api\Comfyg.Contracts\Comfyg.Contracts.csproj", "{B10C9658-EBAA-4B04-AC0F-A48418916938}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Authentication", "packages\Api\Comfyg.Authentication\Comfyg.Authentication.csproj", "{FC514504-2A6B-459C-92BF-9DCF0F505CD1}"
 EndProject

@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Comfyg.Contracts\Comfyg.Contracts.csproj" />
+    </ItemGroup>
+
 </Project>

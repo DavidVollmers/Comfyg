@@ -1,4 +1,5 @@
-﻿using Comfyg.Api.Contracts.Responses;
+﻿using Comfyg.Authentication.Abstractions;
+using Comfyg.Contracts.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,8 +11,10 @@ namespace Comfyg.Api.Controllers;
 public class ConnectionController : ControllerBase
 {
     [HttpPost("establish")]
-    public async Task<ActionResult<ConnectionResponse>> EstablishConnectionAsync()
+    public ActionResult<ConnectionResponse> EstablishConnection()
     {
-        return Ok(new ConnectionResponse());
+        if (User.Identity is not IClientIdentity clientIdentity) return BadRequest();
+
+        return Ok(new ConnectionResponse(clientIdentity.Client));
     }
 }
