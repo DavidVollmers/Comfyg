@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Comfyg.Authentication.Abstractions;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Moq;
 
@@ -12,7 +13,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureTestServices(services =>
         {
-            // services.AddSingleton<IClientService>(_ => GetMock<IClientService>().Object);
+            services.AddSingleton<IClientService>(_ => GetMock<IClientService>().Object);
         });
     }
 

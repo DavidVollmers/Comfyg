@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Comfyg.Authentication;
 
-public sealed class ComfygSecurityTokenHandler : JwtSecurityTokenHandler
+internal class ComfygSecurityTokenHandler : JwtSecurityTokenHandler
 {
     private readonly IClientService _clientService;
 

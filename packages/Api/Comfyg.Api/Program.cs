@@ -1,8 +1,20 @@
 using Comfyg.Authentication;
+using CoreHelpers.WindowsAzure.Storage.Table;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
+
 builder.Services.AddControllers();
+
+builder.Services.AddSingleton<IStorageContext>(_ =>
+{
+    var connectionString = builder.Configuration["AzureTableStorageConnectionString"];
+    return new StorageContext(connectionString);
+});
 
 builder.Services.AddComfygAuthentication();
 

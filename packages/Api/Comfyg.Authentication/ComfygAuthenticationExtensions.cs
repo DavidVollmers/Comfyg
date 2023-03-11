@@ -1,6 +1,9 @@
 ﻿using Comfyg.Authentication.Abstractions;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Comfyg.Authentication;
 
@@ -10,11 +13,10 @@ public static class ComfygAuthenticationExtensions
     {
         if (serviceCollection == null) throw new ArgumentNullException(nameof(serviceCollection));
 
-        serviceCollection.AddScoped<IClientService, ClientService>();
+        serviceCollection.AddSingleton<IClientService, ClientService>();
 
-        var serviceProvider = serviceCollection.BuildServiceProvider();
-
-        var clientService = serviceProvider.GetRequiredService<IClientService>();
+        serviceCollection.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, ComfygJwtBearerOptions>();
+        serviceCollection.AddSingleton<ComfygSecurityTokenHandler>();
 
         return serviceCollection
             .AddAuthentication(options =>
@@ -22,10 +24,6 @@ public static class ComfygAuthenticationExtensions
                 options.DefaultScheme = nameof(Comfyg);
                 options.DefaultForbidScheme = nameof(Comfyg);
             })
-            .AddJwtBearer(nameof(Comfyg), options =>
-            {
-                options.SecurityTokenValidators.Clear();
-                options.SecurityTokenValidators.Add(new ComfygSecurityTokenHandler(clientService));
-            });
+            .AddJwtBearer();
     }
 }

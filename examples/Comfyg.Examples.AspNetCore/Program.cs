@@ -9,7 +9,7 @@ if (builder.Environment.IsDevelopment())
 
 builder.Configuration.AddComfyg(options =>
 {
-    var connectionString = builder.Configuration["ComfygConnectionString"];
+    var connectionString = builder.Configuration["ComfygConnectionString"]!;
     options.Connect(connectionString);
 });
 
