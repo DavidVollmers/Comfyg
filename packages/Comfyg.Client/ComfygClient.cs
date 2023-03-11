@@ -7,13 +7,20 @@ namespace Comfyg.Client;
 
 public sealed class ComfygClient : IDisposable
 {
-    private readonly HttpClient _httpClient = new();
+    private readonly HttpClient _httpClient;
     private readonly string _clientId;
     private readonly string _clientSecret;
 
-    public ComfygClient(string connectionString)
+    private SecurityToken? _token;
+
+    public ComfygClient(string connectionString) : this(connectionString, new HttpClient())
+    {
+    }
+
+    internal ComfygClient(string connectionString, HttpClient httpClient)
     {
         if (connectionString == null) throw new ArgumentNullException(nameof(connectionString));
+        _httpClient = httpClient;
 
         try
         {
@@ -38,13 +45,32 @@ public sealed class ComfygClient : IDisposable
 
     public async Task EstablishConnectionAsync(CancellationToken cancellationToken = default)
     {
+        var token = CreateToken();
+
+        var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, "connections/establish")
+        {
+            Headers =
+            {
+                {"Authorization", $"Bearer {token}"}
+            }
+        }, cancellationToken).ConfigureAwait(false);
+
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException("Invalid status code when trying to establish connection", null,
+                response.StatusCode);
     }
 
     private string CreateToken()
     {
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        if (_token != null && _token.ValidTo > DateTime.UtcNow.AddMinutes(5))
+        {
+            return tokenHandler.WriteToken(_token);
+        }
+
         var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_clientSecret));
 
-        var tokenHandler = new JwtSecurityTokenHandler();
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
@@ -52,14 +78,14 @@ public sealed class ComfygClient : IDisposable
                 new Claim(ClaimTypes.NameIdentifier, _clientId)
             }),
             //TODO adjustable
-            Expires = DateTime.UtcNow.AddDays(1),
+            Expires = DateTime.UtcNow.AddDays(1).AddMinutes(5),
             Issuer = _clientId,
             Audience = _clientId,
             SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature)
         };
 
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        _token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(_token);
     }
 
     public void Dispose()
