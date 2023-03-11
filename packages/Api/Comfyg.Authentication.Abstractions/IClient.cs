@@ -2,9 +2,9 @@
 
 public interface IClient
 {
-    string ClientId { get; set; }
+    string ClientId { get; }
     
-    string ClientSecret { get; set; }
+    string ClientSecret { get; }
     
-    string FriendlyName { get; set; }
+    string FriendlyName { get; }
 }

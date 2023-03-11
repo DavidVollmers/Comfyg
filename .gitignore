@@ -485,3 +485,4 @@ $RECYCLE.BIN/
 !packages/Api
 !packages/Comfyg
 !packages/Comfyg.Client
+!packages/Comfyg.Cli

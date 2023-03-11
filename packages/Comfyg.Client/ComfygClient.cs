@@ -36,6 +36,10 @@ public sealed class ComfygClient : IDisposable
         }
     }
 
+    public async Task EstablishConnectionAsync(CancellationToken cancellationToken = default)
+    {
+    }
+
     private string CreateToken()
     {
         var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_clientSecret));

@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Authentication", "pa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Authentication.Abstractions", "packages\Api\Comfyg.Authentication.Abstractions\Comfyg.Authentication.Abstractions.csproj", "{6E24A6DA-EF7B-4C9E-8A21-7B45DC512FB8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Cli", "packages\Comfyg.Cli\Comfyg.Cli.csproj", "{D17E7168-49E6-4E55-B77C-7FA03766F03A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,5 +75,9 @@ Global
 		{6E24A6DA-EF7B-4C9E-8A21-7B45DC512FB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E24A6DA-EF7B-4C9E-8A21-7B45DC512FB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E24A6DA-EF7B-4C9E-8A21-7B45DC512FB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D17E7168-49E6-4E55-B77C-7FA03766F03A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D17E7168-49E6-4E55-B77C-7FA03766F03A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D17E7168-49E6-4E55-B77C-7FA03766F03A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D17E7168-49E6-4E55-B77C-7FA03766F03A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
