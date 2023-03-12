@@ -25,4 +25,10 @@ internal class ClientService : IClientService
     {
         throw new NotImplementedException();
     }
+
+    public Task CreateClientAsync(IClient client)
+    {
+        //TODO client secret
+        throw new NotImplementedException();
+    }
 }
