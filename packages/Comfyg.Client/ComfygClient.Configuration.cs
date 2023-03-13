@@ -1,18 +1,17 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Comfyg.Contracts.Requests;
-using Comfyg.Contracts.Responses;
 
 namespace Comfyg.Client;
 
 public partial class ComfygClient
 {
-    public async Task<SetupClientResponse> SetupClientAsync(SetupClientRequest request,
+    public async Task AddConfigurationAsync(AddConfigurationRequest request,
         CancellationToken cancellationToken = default)
     {
         var token = CreateToken();
 
-        var httpRequest = new HttpRequestMessage(HttpMethod.Post, "setup/client")
+        var httpRequest = new HttpRequestMessage(HttpMethod.Post, "configuration")
         {
             Content = JsonContent.Create(request)
         };
@@ -21,10 +20,7 @@ public partial class ComfygClient
         var response = await _httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException("Invalid status code when trying to setup client", null,
+            throw new HttpRequestException("Invalid status code when trying to add configuration", null,
                 response.StatusCode);
-
-        return (await response.Content.ReadFromJsonAsync<SetupClientResponse>(cancellationToken: cancellationToken)
-            .ConfigureAwait(false))!;
     }
 }

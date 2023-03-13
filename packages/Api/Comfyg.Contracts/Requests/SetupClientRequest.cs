@@ -8,5 +8,5 @@ public sealed class SetupClientRequest
 {
     [Required]
     [JsonConverter(typeof(ContractConverter<IClient, Client>))]
-    public IClient Client { get; set; }
+    public IClient Client { get; set; } = null!;
 }
