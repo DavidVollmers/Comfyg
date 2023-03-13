@@ -1,4 +1,5 @@
 using Comfyg.Authentication;
+using Comfyg.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,11 @@ builder.Services.AddComfygAuthentication(options =>
 {
     options.UseAzureTableStorage(builder.Configuration["AuthenticationAzureTableStorageConnectionString"]);
     options.UseEncryption(builder.Configuration["AuthenticationEncryptionKey"]);
+});
+
+builder.Services.AddComfyg(options =>
+{
+    options.UseAzureTableStorage(builder.Configuration["ComfygAzureTableStorageConnectionString"]);
 });
 
 var app = builder.Build();

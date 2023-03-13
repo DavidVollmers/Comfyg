@@ -19,6 +19,8 @@ Use the [.NET CLI](https://learn.microsoft.com/en-us/dotnet/core/tools/) to conf
 ```shell
 dotnet user-secrets set AuthenticationAzureTableStorageConnectionString "UseDevelopmentStorage=true"
 dotnet user-secrets set AuthenticationEncryptionKey "YOUR_ENCRYPTION_KEY"
+
+dotnet user-secrets set ComfygAzureTableStorageConnectionString "UseDevelopmentStorage=true"
 ```
 
 > `YOUR_ENCRYPTION_KEY` should be replaced with a password of your choice. Keep in mind changing this mid development

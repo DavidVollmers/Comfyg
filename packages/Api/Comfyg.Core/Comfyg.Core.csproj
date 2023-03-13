@@ -10,4 +10,8 @@
       <ProjectReference Include="..\Comfyg.Core.Abstractions\Comfyg.Core.Abstractions.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="CoreHelpers.WindowsAzure.Storage.Table" Version="6.0.3" />
+    </ItemGroup>
+
 </Project>

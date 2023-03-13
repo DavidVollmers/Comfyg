@@ -13,7 +13,7 @@ public class ConnectionController : ControllerBase
     [HttpPost("establish")]
     public ActionResult<ConnectionResponse> EstablishConnection()
     {
-        if (User.Identity is not IClientIdentity clientIdentity) return BadRequest();
+        if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
         return Ok(new ConnectionResponse(clientIdentity.Client));
     }

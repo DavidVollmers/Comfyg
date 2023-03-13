@@ -7,12 +7,12 @@ namespace Comfyg.Contracts.Authentication;
 
 public interface IClient
 {
-    [Required] string ClientId { get; }
+    [Required] [MaxLength(32)] string ClientId { get; }
 
     [JsonIgnore]
     [ValidateNever]
     [IgnoreDataMember]
     string ClientSecret { get; }
 
-    [Required] [MaxLength(32)] string FriendlyName { get; }
+    [Required] [MaxLength(256)] string FriendlyName { get; }
 }
