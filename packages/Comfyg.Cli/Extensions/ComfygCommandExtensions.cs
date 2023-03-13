@@ -1,5 +1,6 @@
 ﻿using System.CommandLine;
 using Comfyg.Cli.Commands;
+using Comfyg.Cli.Commands.Add;
 using Comfyg.Cli.Commands.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,8 +12,11 @@ internal static class ComfygCommandExtensions
     {
         serviceCollection.AddScoped<Command, ConnectCommand>();
 
-        serviceCollection.AddScoped<Command, SetupCommand>();
         serviceCollection.AddScoped<SetupClientCommand>();
+        serviceCollection.AddScoped<Command, SetupCommand>();
+
+        serviceCollection.AddScoped<AddConfigurationCommand>();
+        serviceCollection.AddScoped<Command, AddCommand>();
 
         return serviceCollection;
     }

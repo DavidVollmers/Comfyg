@@ -25,8 +25,17 @@ public class ConfigurationController : ControllerBase
 
         foreach (var configurationValue in request.ConfigurationValues)
         {
+            var isPermitted = await _configurationService
+                .IsPermittedToAddAsync(clientIdentity.Client.ClientId, configurationValue.Key)
+                .ConfigureAwait(false);
+            if (!isPermitted) return Forbid();
+        }
+
+        foreach (var configurationValue in request.ConfigurationValues)
+        {
             await _configurationService
-                .AddConfigurationAsync(clientIdentity.Client.ClientId, configurationValue.Key, configurationValue.Value)
+                .AddConfigurationValueAsync(clientIdentity.Client.ClientId, configurationValue.Key,
+                    configurationValue.Value)
                 .ConfigureAwait(false);
         }
 

@@ -4,7 +4,9 @@ namespace Comfyg.Core.Abstractions.Configuration;
 
 public interface IConfigurationService
 {
-    Task AddConfigurationAsync(string owner, string key, string value);
+    Task AddConfigurationValueAsync(string owner, string key, string value);
 
-    Task<IEnumerable<IConfigurationValue>> GetConfigurationAsync(string owner);
+    Task<IEnumerable<IConfigurationValue>> GetConfigurationValuesAsync(string owner);
+
+    Task<bool> IsPermittedToAddAsync(string owner, string key);
 }

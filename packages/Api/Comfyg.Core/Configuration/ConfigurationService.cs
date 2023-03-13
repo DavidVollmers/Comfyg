@@ -17,9 +17,12 @@ internal class ConfigurationService : IConfigurationService
         _storageContext.AddAttributeMapper<ConfigurationValueOwnerEntity>();
         _storageContext.OverrideTableName<ConfigurationValueOwnerEntity>(
             $"{nameof(ConfigurationValueOwnerEntity)}{systemId}");
+        _storageContext.AddAttributeMapper<ConfigurationValueOwnerEntityMirrored>();
+        _storageContext.OverrideTableName<ConfigurationValueOwnerEntityMirrored>(
+            $"{nameof(ConfigurationValueOwnerEntityMirrored)}{systemId}");
     }
 
-    public async Task AddConfigurationAsync(string owner, string key, string value)
+    public async Task AddConfigurationValueAsync(string owner, string key, string value)
     {
         using var context = _storageContext.CreateChildContext();
         context.EnableAutoCreateTable();
@@ -39,9 +42,14 @@ internal class ConfigurationService : IConfigurationService
             Key = key,
             Owner = owner
         }).ConfigureAwait(false);
+        await context.InsertOrReplaceAsync(new ConfigurationValueOwnerEntityMirrored
+        {
+            Key = key,
+            Owner = owner
+        }).ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<IConfigurationValue>> GetConfigurationAsync(string owner)
+    public async Task<IEnumerable<IConfigurationValue>> GetConfigurationValuesAsync(string owner)
     {
         using var context = _storageContext.CreateChildContext();
         context.EnableAutoCreateTable();
@@ -62,5 +70,14 @@ internal class ConfigurationService : IConfigurationService
         }
 
         return values;
+    }
+
+    public async Task<bool> IsPermittedToAddAsync(string owner, string key)
+    {
+        using var context = _storageContext.CreateChildContext();
+
+        var ownedValues = (await context.EnableAutoCreateTable().QueryAsync<ConfigurationValueOwnerEntityMirrored>(key)
+            .ConfigureAwait(false)).ToArray();
+        return !ownedValues.Any() || ownedValues.Any(ov => ov.Owner == owner);
     }
 }
