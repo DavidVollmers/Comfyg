@@ -13,9 +13,8 @@ internal static class ComfygSpectreExtensions
         table.AddColumn(nameof(IClient.FriendlyName));
         if (clientSecret != null) table.AddColumn(nameof(IClient.ClientSecret));
 
-        table.AddRow(nameof(IClient.ClientId), client.ClientId);
-        table.AddRow(nameof(IClient.FriendlyName), client.FriendlyName);
-        if (clientSecret != null) table.AddRow(nameof(IClient.ClientSecret), $"[bold]{clientSecret}[/]");
+        if (clientSecret != null) table.AddRow(client.ClientId, client.FriendlyName, $"[bold]{clientSecret}[/]");
+        else table.AddRow(client.ClientId, client.FriendlyName);
 
         return table;
     }

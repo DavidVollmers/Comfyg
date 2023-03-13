@@ -25,9 +25,11 @@ public sealed class EncryptionBasedSecretService : ISecretService
         var encryptor = aes.CreateEncryptor(_encryptionKey, aes.IV);
 
         using var stream = new MemoryStream();
-        await using var crypto = new CryptoStream(stream, encryptor, CryptoStreamMode.Write);
-        await using var writer = new StreamWriter(crypto);
+        var crypto = new CryptoStream(stream, encryptor, CryptoStreamMode.Write);
+        var writer = new StreamWriter(crypto);
         await writer.WriteAsync(value).ConfigureAwait(false);
+        await writer.DisposeAsync().ConfigureAwait(false);
+        await crypto.DisposeAsync().ConfigureAwait(false);
 
         return Convert.ToBase64String(aes.IV) + IvDelimiter + Convert.ToBase64String(stream.ToArray());
     }
