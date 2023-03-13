@@ -17,7 +17,7 @@ public class ConnectCommand : Command
         this.SetHandler(HandleCommandAsync);
     }
 
-    private async Task<int> HandleCommandAsync(InvocationContext context)
+    private async Task HandleCommandAsync(InvocationContext context)
     {
         var connectionString = context.ParseResult.GetValueForArgument(_connectionStringArgument);
 
@@ -26,7 +26,5 @@ public class ConnectCommand : Command
         var cancellationToken = context.GetCancellationToken();
 
         await client.EstablishConnectionAsync(cancellationToken).ConfigureAwait(false);
-
-        return 0;
     }
 }

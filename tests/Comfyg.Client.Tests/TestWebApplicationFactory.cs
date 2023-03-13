@@ -9,6 +9,14 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 {
     private readonly IDictionary<string, Mock> _mocks = new Dictionary<string, Mock>();
 
+    public void ResetMocks()
+    {
+        foreach (var mock in _mocks)
+        {
+            mock.Value.Reset();
+        }
+    }
+    
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>

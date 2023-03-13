@@ -12,6 +12,8 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
     public IntegrationTests(TestWebApplicationFactory factory)
     {
         _factory = factory;
+
+        _factory.ResetMocks();
     }
 
     [Fact]
@@ -31,7 +33,7 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         var connectionString =
             $"Endpoint={httpClient.BaseAddress};ClientId={systemClientId};ClientSecret={systemClientSecret}";
         using var comfygClient = new ComfygClient(connectionString, httpClient);
-
+        
         _factory.Mock<IConfiguration>(mock =>
         {
             mock.Setup(c => c["ComfygSystemClient"]).Returns(systemClientId);
