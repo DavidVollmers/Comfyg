@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Comfyg.Contracts.Configuration;
 
@@ -8,7 +9,7 @@ public interface IConfigurationValue
 
     [Required] [MaxLength(1024)] string Value { get; }
 
-    string Version { get; }
-    
-    string[] Tags { get; }
+    [ValidateNever] string Version { get; }
+
+    [ValidateNever] string[] Tags { get; }
 }
