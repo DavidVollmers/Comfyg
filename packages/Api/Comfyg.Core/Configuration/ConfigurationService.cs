@@ -44,6 +44,7 @@ internal class ConfigurationService : IConfigurationService
     public async Task<IEnumerable<IConfigurationValue>> GetConfigurationAsync(string owner)
     {
         using var context = _storageContext.CreateChildContext();
+        context.EnableAutoCreateTable();
 
         var values = new List<IConfigurationValue>();
 

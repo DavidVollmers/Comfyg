@@ -25,5 +25,5 @@ dotnet user-secrets set ComfygSystemClient "system"
 dotnet user-secrets set ComfygSystemClientSecret "YOUR_SYSTEM_PASSWORD"
 ```
 
-> `YOUR_ENCRYPTION_KEY` and `YOUR_SYSTEM_PASSWORD` should be replaced with a password of your choice. Keep in mind
-> changing `YOUR_ENCRYPTION_KEY` mid development will all clients created under the old value.
+> `YOUR_ENCRYPTION_KEY` and `YOUR_SYSTEM_PASSWORD` should be replaced with a password (base 64) of your choice. Keep in
+> mind changing `YOUR_ENCRYPTION_KEY` mid development will all clients created under the old value.

@@ -48,7 +48,7 @@ internal class ComfygSecurityTokenHandler : JwtSecurityTokenHandler
 
         if (clientSecret == null) throw new SecurityTokenInvalidSigningKeyException("Missing client secret.");
 
-        validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(clientSecret));
+        validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(clientSecret));
 
         var principal = base.ValidateToken(token, validationParameters, out validatedToken);
 

@@ -16,30 +16,35 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         _factory.ResetMocks();
     }
 
+    private static string CreateClientSecret()
+    {
+        return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+    }
+
     [Fact]
     public async Task Test_SetupClientAsync()
     {
         var systemClientId = Guid.NewGuid().ToString();
-        var systemClientSecret = Guid.NewGuid().ToString();
+        var systemClientSecret = CreateClientSecret();
         var client = new Contracts.Authentication.Client
         {
             ClientId = Guid.NewGuid().ToString(),
             FriendlyName = "New Client"
         };
-        var clientSecret = Guid.NewGuid().ToString();
+        var clientSecret = CreateClientSecret();
 
         using var httpClient = _factory.CreateClient();
 
         var connectionString =
             $"Endpoint={httpClient.BaseAddress};ClientId={systemClientId};ClientSecret={systemClientSecret}";
         using var comfygClient = new ComfygClient(connectionString, httpClient);
-        
+
         _factory.Mock<IConfiguration>(mock =>
         {
             mock.Setup(c => c["ComfygSystemClient"]).Returns(systemClientId);
             mock.Setup(c => c["ComfygSystemClientSecret"]).Returns(systemClientSecret);
         });
-        
+
         _factory.Mock<IClientService>(mock =>
         {
             mock.Setup(cs => cs.CreateClientAsync(It.IsAny<IClient>())).ReturnsAsync(client);
@@ -63,12 +68,13 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
             mock.Verify(c => c["ComfygSystemClient"], Times.Exactly(2));
             mock.Verify(c => c["ComfygSystemClientSecret"], Times.Once);
         });
-        
+
         _factory.Mock<IClientService>(mock =>
         {
             mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == client.ClientId)), Times.Once);
             mock.Verify(cs => cs.CreateClientAsync(It.Is<IClient>(c => c.ClientId == client.ClientId)), Times.Once);
-            mock.Verify(cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == client.ClientId)), Times.Once);
+            mock.Verify(cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == client.ClientId)),
+                Times.Once);
         });
     }
 
@@ -76,7 +82,7 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
     public async Task Test_EstablishConnectionAsync()
     {
         var clientId = Guid.NewGuid().ToString();
-        var clientSecret = Guid.NewGuid().ToString();
+        var clientSecret = CreateClientSecret();
         var friendlyName = "Test Client";
         var client = new Contracts.Authentication.Client
         {

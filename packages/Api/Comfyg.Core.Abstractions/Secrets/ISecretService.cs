@@ -2,7 +2,7 @@
 
 public interface ISecretService
 {
-    Task<string> ProtectSecretValueAsync(string value);
+    Task<string> ProtectSecretValueAsync(string value, CancellationToken cancellationToken = default);
 
-    Task<string> UnprotectSecretValueAsync(string value);
+    Task<string> UnprotectSecretValueAsync(string value, CancellationToken cancellationToken = default);
 }

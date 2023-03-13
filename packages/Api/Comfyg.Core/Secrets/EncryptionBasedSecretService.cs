@@ -1,23 +1,61 @@
 ﻿using Comfyg.Core.Abstractions.Secrets;
+using System.Security.Cryptography;
 
 namespace Comfyg.Core.Secrets;
 
 public sealed class EncryptionBasedSecretService : ISecretService
 {
-    private readonly string _encryptionKey;
+    private const string IvDelimiter = ".";
+
+    private readonly byte[] _encryptionKey;
 
     public EncryptionBasedSecretService(string encryptionKey)
     {
-        _encryptionKey = encryptionKey ?? throw new ArgumentNullException(nameof(encryptionKey));
+        if (encryptionKey == null) throw new ArgumentNullException(nameof(encryptionKey));
+
+        _encryptionKey = Convert.FromBase64String(encryptionKey);
     }
 
-    public Task<string> ProtectSecretValueAsync(string value)
+    public async Task<string> ProtectSecretValueAsync(string value, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (value == null) throw new ArgumentNullException(nameof(value));
+
+        using var aes = Aes.Create();
+
+        var encryptor = aes.CreateEncryptor(_encryptionKey, aes.IV);
+
+        using var stream = new MemoryStream();
+        await using var crypto = new CryptoStream(stream, encryptor, CryptoStreamMode.Write);
+        await using var writer = new StreamWriter(crypto);
+        await writer.WriteAsync(value).ConfigureAwait(false);
+
+        return Convert.ToBase64String(aes.IV) + IvDelimiter + Convert.ToBase64String(stream.ToArray());
     }
 
-    public Task<string> UnprotectSecretValueAsync(string value)
+    public async Task<string> UnprotectSecretValueAsync(string value, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (value == null) throw new ArgumentNullException(nameof(value));
+
+        byte[] iv;
+        byte[] data;
+        try
+        {
+            var parts = value.Split(IvDelimiter);
+            iv = Convert.FromBase64String(parts[0]);
+            data = Convert.FromBase64String(parts[1]);
+        }
+        catch (Exception exception)
+        {
+            throw new InvalidOperationException("Value is not correctly encrypted.", exception);
+        }
+
+        using var aes = Aes.Create();
+
+        var decryptor = aes.CreateDecryptor(_encryptionKey, iv);
+
+        using var stream = new MemoryStream(data);
+        await using var crypto = new CryptoStream(stream, decryptor, CryptoStreamMode.Read);
+        using var reader = new StreamReader(crypto);
+        return await reader.ReadToEndAsync().ConfigureAwait(false);
     }
 }

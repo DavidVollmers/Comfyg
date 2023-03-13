@@ -33,8 +33,8 @@ public sealed partial class ComfygClient : IDisposable
                 connectionString
                     .Split(';')
                     .Select(i => i.Split('='))
-                    .Where(i => i.Length == 2)
-                    .ToDictionary(i => i[0], i => i[1]);
+                    .Where(i => i.Length >= 2)
+                    .ToDictionary(i => i[0], i => string.Join("=", i.Skip(1)));
 
             if (!connectionInformation.ContainsKey("Endpoint"))
                 throw new Exception("Missing \"Endpoint\" information.");
@@ -80,7 +80,7 @@ public sealed partial class ComfygClient : IDisposable
             return tokenHandler.WriteToken(_token);
         }
 
-        var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_clientSecret));
+        var securityKey = new SymmetricSecurityKey(Convert.FromBase64String(_clientSecret));
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

@@ -92,7 +92,6 @@ internal class State
     {
         using var stream = new MemoryStream();
         await JsonSerializer.SerializeAsync(stream, data, cancellationToken: cancellationToken).ConfigureAwait(false);
-        stream.Position = 0;
         return stream.ToArray();
     }
 

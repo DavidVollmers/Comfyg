@@ -22,7 +22,8 @@ internal class ClientService : IClientService
     public async Task<IClient?> GetClientAsync(string clientId)
     {
         using var context = _storageContext.CreateChildContext();
-        return await context.QueryAsync<ClientEntity>(clientId, clientId, 1).ConfigureAwait(false);
+        return await context.EnableAutoCreateTable().QueryAsync<ClientEntity>(clientId, clientId, 1)
+            .ConfigureAwait(false);
     }
 
     public async Task<string> ReceiveClientSecretAsync(IClient client)
@@ -40,7 +41,7 @@ internal class ClientService : IClientService
         {
             ClientSecret = protectedSecret
         };
-        
+
         using var context = _storageContext.CreateChildContext();
         await context.EnableAutoCreateTable().InsertOrReplaceAsync(clientEntity).ConfigureAwait(false);
 
