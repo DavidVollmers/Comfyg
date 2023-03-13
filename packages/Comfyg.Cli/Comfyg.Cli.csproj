@@ -22,8 +22,4 @@
         <ProjectReference Include="..\Comfyg.Client\Comfyg.Client.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Content Include=".config\dotnet-tools.json" />
-    </ItemGroup>
-
 </Project>
