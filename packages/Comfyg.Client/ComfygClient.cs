@@ -16,6 +16,8 @@ public sealed partial class ComfygClient : IDisposable
 
     private SecurityToken? _token;
 
+    public Uri EndpointUrl => _httpClient.BaseAddress!;
+
     public ComfygClient(string connectionString) : this(connectionString, new HttpClient())
     {
     }

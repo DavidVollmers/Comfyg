@@ -1,10 +1,12 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
+using Comfyg.Cli.Extensions;
 using Comfyg.Client;
+using Spectre.Console;
 
 namespace Comfyg.Cli.Commands;
 
-public class ConnectCommand : Command
+internal class ConnectCommand : Command
 {
     private readonly Argument<string> _connectionStringArgument;
 
@@ -25,6 +27,10 @@ public class ConnectCommand : Command
 
         var cancellationToken = context.GetCancellationToken();
 
-        await client.EstablishConnectionAsync(cancellationToken).ConfigureAwait(false);
+        var result = await client.EstablishConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        AnsiConsole.WriteLine($"[bold green]Successfully connected to {client.EndpointUrl}[/]");
+
+        AnsiConsole.Write(result.Client.Spectre());
     }
 }

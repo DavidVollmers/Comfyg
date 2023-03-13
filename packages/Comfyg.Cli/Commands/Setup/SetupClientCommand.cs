@@ -3,7 +3,7 @@ using System.CommandLine.Invocation;
 
 namespace Comfyg.Cli.Commands.Setup;
 
-public class SetupClientCommand : Command
+internal class SetupClientCommand : Command
 {
     private readonly Argument<string> _clientIdArgument;
 
@@ -17,6 +17,5 @@ public class SetupClientCommand : Command
 
     private async Task HandleCommandAsync(InvocationContext context)
     {
-        
     }
 }

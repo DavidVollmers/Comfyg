@@ -3,9 +3,9 @@ using Comfyg.Cli.Commands;
 using Comfyg.Cli.Commands.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Comfyg.Cli;
+namespace Comfyg.Cli.Extensions;
 
-public static class ComfygCommandExtensions
+internal static class ComfygCommandExtensions
 {
     public static IServiceCollection AddComfygCommands(this IServiceCollection serviceCollection)
     {
