@@ -30,7 +30,11 @@ public sealed partial class ComfygClient : IDisposable
         try
         {
             var connectionInformation =
-                connectionString.Split(';').Select(i => i.Split('=')).ToDictionary(i => i[0], i => i[1]);
+                connectionString
+                    .Split(';')
+                    .Select(i => i.Split('='))
+                    .Where(i => i.Length == 2)
+                    .ToDictionary(i => i[0], i => i[1]);
 
             if (!connectionInformation.ContainsKey("Endpoint")) throw new Exception("Missing \"Endpoint\" information");
             _httpClient.BaseAddress = new Uri(connectionInformation["Endpoint"]);

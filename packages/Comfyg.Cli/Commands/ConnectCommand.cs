@@ -29,7 +29,7 @@ internal class ConnectCommand : Command
 
         var result = await client.EstablishConnectionAsync(cancellationToken).ConfigureAwait(false);
 
-        AnsiConsole.WriteLine($"[bold green]Successfully connected to {client.EndpointUrl}[/]");
+        AnsiConsole.MarkupLine($"[bold green]Successfully connected to {client.EndpointUrl}[/]");
 
         AnsiConsole.Write(result.Client.Spectre());
     }
