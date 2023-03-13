@@ -16,11 +16,11 @@ internal class ConfigurationValueEntity : IConfigurationValue
         Version = configurationValue.Version;
     }
 
-    [PartitionKey] public string Key { get; set; }
+    [PartitionKey] public string Key { get; set; } = null!;
 
-    public string Value { get; set; }
+    public string Value { get; set; } = null!;
 
-    [RowKey] public string Version { get; set; }
+    [RowKey] public string Version { get; set; } = null!;
 
     [IgnoreDataMember] public string[] Tags { get; } = Array.Empty<string>();
 }

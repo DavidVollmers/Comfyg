@@ -6,11 +6,11 @@ namespace Comfyg.Authentication;
 [Storable(nameof(ClientEntity))]
 internal class ClientEntity : IClient
 {
-    [PartitionKey] [RowKey] public string ClientId { get; set; }
+    [PartitionKey] [RowKey] public string ClientId { get; set; } = null!;
 
-    public string ClientSecret { get; set; }
+    public string ClientSecret { get; set; } = null!;
 
-    public string FriendlyName { get; set; }
+    public string FriendlyName { get; set; } = null!;
 
     public ClientEntity()
     {
