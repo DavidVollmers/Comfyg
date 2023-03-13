@@ -1,15 +1,14 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
-using Comfyg.Contracts.Authentication;
 using Comfyg.Contracts.Responses;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Comfyg.Client;
 
-public sealed class ComfygClient : IDisposable
+public sealed partial class ComfygClient : IDisposable
 {
     private readonly HttpClient _httpClient;
     private readonly string _clientId;
@@ -51,13 +50,10 @@ public sealed class ComfygClient : IDisposable
     {
         var token = CreateToken();
 
-        var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, "connections/establish")
-        {
-            Headers =
-            {
-                { "Authorization", $"Bearer {token}" }
-            }
-        }, cancellationToken).ConfigureAwait(false);
+        var request = new HttpRequestMessage(HttpMethod.Post, "connections/establish");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to establish connection", null,

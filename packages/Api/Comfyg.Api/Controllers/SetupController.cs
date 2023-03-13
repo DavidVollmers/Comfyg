@@ -1,5 +1,4 @@
 ﻿using Comfyg.Authentication.Abstractions;
-using Comfyg.Contracts.Authentication;
 using Comfyg.Contracts.Requests;
 using Comfyg.Contracts.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -32,8 +31,10 @@ public class SetupController : ControllerBase
         var existing = await _clientService.GetClientAsync(request.Client.ClientId).ConfigureAwait(false);
         if (existing != null) return BadRequest();
 
-        await _clientService.CreateClientAsync(request.Client).ConfigureAwait(false);
+        var client = await _clientService.CreateClientAsync(request.Client).ConfigureAwait(false);
 
-        return Ok();
+        var clientSecret = await _clientService.ReceiveClientSecretAsync(client).ConfigureAwait(false);
+
+        return Ok(new SetupClientResponse(client, clientSecret));
     }
 }

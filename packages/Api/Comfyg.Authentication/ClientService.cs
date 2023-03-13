@@ -1,5 +1,7 @@
-﻿using Comfyg.Authentication.Abstractions;
+﻿using System.Security.Cryptography;
+using Comfyg.Authentication.Abstractions;
 using Comfyg.Contracts.Authentication;
+using Comfyg.Core.Abstractions.Secrets;
 using CoreHelpers.WindowsAzure.Storage.Table;
 
 namespace Comfyg.Authentication;
@@ -7,28 +9,41 @@ namespace Comfyg.Authentication;
 internal class ClientService : IClientService
 {
     private readonly IStorageContext _storageContext;
+    private readonly ISecretService _secretService;
 
-    public ClientService(IStorageContext storageContext)
+    public ClientService(IStorageContext storageContext, ISecretService secretService)
     {
         _storageContext = storageContext;
+        _secretService = secretService;
 
         _storageContext.AddAttributeMapper<ClientEntity>();
     }
 
-    public async Task<IClient> GetClientAsync(string clientId)
+    public async Task<IClient?> GetClientAsync(string clientId)
     {
         using var context = _storageContext.CreateChildContext();
         return await context.QueryAsync<ClientEntity>(clientId, clientId, 1).ConfigureAwait(false);
     }
 
-    public Task<string> ReceiveClientSecretAsync(IClient client)
+    public async Task<string> ReceiveClientSecretAsync(IClient client)
     {
-        throw new NotImplementedException();
+        return await _secretService.UnprotectSecretValueAsync(client.ClientSecret).ConfigureAwait(false);
     }
 
-    public Task CreateClientAsync(IClient client)
+    public async Task<IClient> CreateClientAsync(IClient client)
     {
-        //TODO client secret
-        throw new NotImplementedException();
+        var clientSecret = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+
+        var protectedSecret = await _secretService.ProtectSecretValueAsync(clientSecret).ConfigureAwait(false);
+
+        var clientEntity = new ClientEntity(client)
+        {
+            ClientSecret = protectedSecret
+        };
+        
+        using var context = _storageContext.CreateChildContext();
+        await context.EnableAutoCreateTable().InsertOrReplaceAsync(clientEntity).ConfigureAwait(false);
+
+        return clientEntity;
     }
 }

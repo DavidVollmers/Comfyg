@@ -7,16 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="CoreHelpers.WindowsAzure.Storage.Table" Version="6.0.3"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CoreHelpers.WindowsAzure.Storage.Table" Version="6.0.3" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Comfyg.Authentication.Abstractions\Comfyg.Authentication.Abstractions.csproj" />
+        <ProjectReference Include="..\Comfyg.Authentication.Abstractions\Comfyg.Authentication.Abstractions.csproj"/>
+        <ProjectReference Include="..\Comfyg.Core\Comfyg.Core.csproj"/>
     </ItemGroup>
 
 </Project>

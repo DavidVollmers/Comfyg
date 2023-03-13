@@ -5,12 +5,12 @@ namespace Comfyg;
 public static class ComfygExtensions
 {
     public static IConfigurationBuilder AddComfyg(this IConfigurationBuilder configurationBuilder,
-        Action<ComfygOptions> optionsProvider)
+        Action<ComfygOptions> optionsConfigurator)
     {
         if (configurationBuilder == null) throw new ArgumentNullException(nameof(configurationBuilder));
-        if (optionsProvider == null) throw new ArgumentNullException(nameof(optionsProvider));
+        if (optionsConfigurator == null) throw new ArgumentNullException(nameof(optionsConfigurator));
 
-        configurationBuilder.Add(new ComfygSource(optionsProvider));
+        configurationBuilder.Add(new ComfygSource(optionsConfigurator));
 
         return configurationBuilder;
     }

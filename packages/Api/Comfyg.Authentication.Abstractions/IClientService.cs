@@ -8,5 +8,5 @@ public interface IClientService
 
     Task<string> ReceiveClientSecretAsync(IClient client);
 
-    Task CreateClientAsync(IClient client);
+    Task<IClient> CreateClientAsync(IClient client);
 }

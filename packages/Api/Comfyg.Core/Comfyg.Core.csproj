@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Comfyg.Core.Abstractions\Comfyg.Core.Abstractions.csproj" />
+    </ItemGroup>
+
 </Project>

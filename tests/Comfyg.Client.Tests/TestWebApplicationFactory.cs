@@ -14,6 +14,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         builder.ConfigureTestServices(services =>
         {
             services.AddSingleton<IClientService>(_ => GetMock<IClientService>().Object);
+            services.AddSingleton<IConfiguration>(_ => GetMock<IConfiguration>().Object);
         });
     }
 
