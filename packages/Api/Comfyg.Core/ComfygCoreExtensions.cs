@@ -24,7 +24,7 @@ public static class ComfygCoreExtensions
         {
             var options = OptionsProvider();
             if (options.AzureTableStorageConnectionString == null)
-                throw new InvalidOperationException("Missing AzureTableStorageConnectionString");
+                throw new InvalidOperationException("Missing AzureTableStorageConnectionString option.");
             return new StorageContext(options.AzureTableStorageConnectionString);
         }
 

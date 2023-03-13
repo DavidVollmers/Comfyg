@@ -20,7 +20,7 @@ public partial class ComfygClient
         var response = await _httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException("Invalid status code when trying to add configuration", null,
+            throw new HttpRequestException("Invalid status code when trying to add configuration.", null,
                 response.StatusCode);
     }
 }

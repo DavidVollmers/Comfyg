@@ -29,7 +29,7 @@ public static class ComfygAuthenticationExtensions
         {
             var options = OptionsProvider();
             if (options.AzureTableStorageConnectionString == null)
-                throw new InvalidOperationException("Missing AzureTableStorageConnectionString");
+                throw new InvalidOperationException("Missing AzureTableStorageConnectionString option.");
             return new StorageContext(options.AzureTableStorageConnectionString);
         }
 
@@ -37,7 +37,7 @@ public static class ComfygAuthenticationExtensions
         {
             var options = OptionsProvider();
             if (options.EncryptionKey == null)
-                throw new InvalidOperationException("Missing EncryptionKey");
+                throw new InvalidOperationException("Missing EncryptionKey option.");
             return new EncryptionBasedSecretService(options.EncryptionKey);
         }
 

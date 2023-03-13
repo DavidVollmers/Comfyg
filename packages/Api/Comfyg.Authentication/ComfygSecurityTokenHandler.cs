@@ -41,12 +41,12 @@ internal class ComfygSecurityTokenHandler : JwtSecurityTokenHandler
         if (client == null)
         {
             client = _clientService.GetClientAsync(jwt.Issuer).GetAwaiter().GetResult();
-            if (client == null) throw new SecurityTokenInvalidIssuerException("Issuer is no valid Comfyg client");
+            if (client == null) throw new SecurityTokenInvalidIssuerException("Issuer is no valid Comfyg client.");
 
             clientSecret = _clientService.ReceiveClientSecretAsync(client).GetAwaiter().GetResult();
         }
 
-        if (clientSecret == null) throw new SecurityTokenInvalidSigningKeyException("Missing client secret");
+        if (clientSecret == null) throw new SecurityTokenInvalidSigningKeyException("Missing client secret.");
 
         validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(clientSecret));
 

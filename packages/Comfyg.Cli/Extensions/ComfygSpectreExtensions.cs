@@ -5,7 +5,7 @@ namespace Comfyg.Cli.Extensions;
 
 internal static class ComfygSpectreExtensions
 {
-    public static Table Spectre(this IClient client, string? clientSecret = null)
+    public static Table ToTable(this IClient client, string? clientSecret = null)
     {
         var table = new Table();
 

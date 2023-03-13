@@ -36,19 +36,21 @@ public sealed partial class ComfygClient : IDisposable
                     .Where(i => i.Length == 2)
                     .ToDictionary(i => i[0], i => i[1]);
 
-            if (!connectionInformation.ContainsKey("Endpoint")) throw new Exception("Missing \"Endpoint\" information");
+            if (!connectionInformation.ContainsKey("Endpoint"))
+                throw new Exception("Missing \"Endpoint\" information.");
             _httpClient.BaseAddress = new Uri(connectionInformation["Endpoint"]);
 
-            if (!connectionInformation.ContainsKey("ClientId")) throw new Exception("Missing \"ClientId\" information");
+            if (!connectionInformation.ContainsKey("ClientId"))
+                throw new Exception("Missing \"ClientId\" information.");
             _clientId = connectionInformation["ClientId"];
 
             if (!connectionInformation.ContainsKey("ClientSecret"))
-                throw new Exception("Missing \"ClientSecret\" information");
+                throw new Exception("Missing \"ClientSecret\" information.");
             _clientSecret = connectionInformation["ClientSecret"];
         }
         catch (Exception exception)
         {
-            throw new ArgumentException("Invalid connection string", nameof(connectionString), exception);
+            throw new ArgumentException("Invalid connection string.", nameof(connectionString), exception);
         }
     }
 
@@ -62,7 +64,7 @@ public sealed partial class ComfygClient : IDisposable
         var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException("Invalid status code when trying to establish connection", null,
+            throw new HttpRequestException("Invalid status code when trying to establish connection.", null,
                 response.StatusCode);
 
         return (await response.Content.ReadFromJsonAsync<ConnectionResponse>(cancellationToken: cancellationToken)

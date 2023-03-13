@@ -21,7 +21,7 @@ public partial class ComfygClient
         var response = await _httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException("Invalid status code when trying to setup client", null,
+            throw new HttpRequestException("Invalid status code when trying to setup client.", null,
                 response.StatusCode);
 
         return (await response.Content.ReadFromJsonAsync<SetupClientResponse>(cancellationToken: cancellationToken)
