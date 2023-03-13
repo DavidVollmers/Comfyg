@@ -31,6 +31,9 @@ internal class ConnectCommand : Command
 
         AnsiConsole.MarkupLine($"[bold green]Successfully connected to {client.EndpointUrl}[/]");
 
-        AnsiConsole.Write(result.Client.Spectre());
+        AnsiConsole.Write(result.Client.ToTable());
+
+        await State.User.StoreAsync(nameof(Comfyg), nameof(ComfygClient), connectionString, cancellationToken)
+            .ConfigureAwait(false);
     }
 }

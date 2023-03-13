@@ -1,4 +1,6 @@
 ﻿using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Parsing;
 using Comfyg.Cli;
 using Comfyg.Cli.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,4 +27,10 @@ if (args.Length == 0)
     AnsiConsole.Write(new FigletText(nameof(Comfyg)).Color(CliConstants.PrimaryColor));
 }
 
-await rootCommand.InvokeAsync(args).ConfigureAwait(false);
+var parser = new CommandLineBuilder(rootCommand)
+    .UseDefaults()
+    .UseExceptionHandler((e, _) => { AnsiConsole.WriteException(e, ExceptionFormats.ShortenEverything); },
+        errorExitCode: 1)
+    .Build();
+
+return await parser.InvokeAsync(args).ConfigureAwait(false);
