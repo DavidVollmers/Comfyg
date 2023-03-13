@@ -6,26 +6,20 @@ namespace Comfyg.Cli.Commands;
 
 public class ConnectCommand : Command
 {
-    private readonly Option<string> _connectionStringOption;
+    private readonly Argument<string> _connectionStringArgument;
 
     public ConnectCommand() : base("connect", "Connect to a Comfyg endpoint")
     {
-        _connectionStringOption = new Option<string>(new[]
-        {
-            "-cs",
-            "--connection-string"
-        }, "The connection string which contains the information how to connect to the Comfyg endpoint")
-        {
-            IsRequired = true
-        };
-        AddOption(_connectionStringOption);
+        _connectionStringArgument = new Argument<string>("connection-string",
+            "The connection string which contains the information on how to connect to the Comfyg endpoint");
+        AddArgument(_connectionStringArgument);
 
         this.SetHandler(HandleCommandAsync);
     }
 
     private async Task<int> HandleCommandAsync(InvocationContext context)
     {
-        var connectionString = context.ParseResult.GetValueForOption(_connectionStringOption)!;
+        var connectionString = context.ParseResult.GetValueForArgument(_connectionStringArgument);
 
         using var client = new ComfygClient(connectionString);
 
