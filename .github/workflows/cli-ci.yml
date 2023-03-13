@@ -4,14 +4,14 @@ on:
   push:
     branches-ignore: 'main'
     paths:
-      - 'packages/Comfyg.Cli'
-      - 'packages/Comfyg.Client'
-      - 'tests/Comfyg.Client.Tests'
+      - 'packages/Comfyg.Cli/**'
+      - 'packages/Comfyg.Client/**'
+      - 'tests/Comfyg.Client.Tests/**'
   pull_request:
     paths:
-      - 'packages/Comfyg.Cli'
-      - 'packages/Comfyg.Client'
-      - 'tests/Comfyg.Client.Tests'
+      - 'packages/Comfyg.Cli/**'
+      - 'packages/Comfyg.Client/**'
+      - 'tests/Comfyg.Client.Tests/**'
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true

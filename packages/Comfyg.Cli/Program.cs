@@ -7,7 +7,10 @@ using var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services => { services.AddComfygCommands(); })
     .Build();
 
-var rootCommand = new RootCommand("Comfyg Command-Line Interface");
+var rootCommand = new RootCommand("Comfyg Command-Line Interface")
+{
+    Name = "comfyg"
+};
 
 var commands = host.Services.GetServices<Command>();
 foreach (var command in commands)
