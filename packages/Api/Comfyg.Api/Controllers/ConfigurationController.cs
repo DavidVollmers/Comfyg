@@ -1,6 +1,7 @@
 ﻿using Comfyg.Authentication.Abstractions;
 using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Requests;
+using Comfyg.Contracts.Responses;
 using Comfyg.Core.Abstractions.Configuration;
 using Comfyg.Core.Abstractions.Permissions;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,17 @@ public class ConfigurationController : ControllerBase
     {
         _configurationService = configurationService;
         _permissionService = permissionService;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<GetConfigurationResponse>> GetConfigurationAsync()
+    {
+        if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
+
+        var configurationValues = await _configurationService
+            .GetConfigurationValuesAsync(clientIdentity.Client.ClientId).ConfigureAwait(false);
+
+        return Ok(new GetConfigurationResponse(configurationValues));
     }
 
     [HttpPost]
