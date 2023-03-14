@@ -7,7 +7,10 @@ namespace Comfyg.Contracts.Authentication;
 
 public interface IClient
 {
-    [Required] [MaxLength(64)] string ClientId { get; }
+    [Required]
+    [MaxLength(64)]
+    [TechnicalIdentifier]
+    string ClientId { get; }
 
     [JsonIgnore]
     [ValidateNever]
