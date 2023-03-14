@@ -3,11 +3,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace Comfyg;
 
-internal class ComfygSource : IConfigurationSource
+internal class ComfygConfigurationSource : IConfigurationSource
 {
     private readonly Action<ComfygOptions> _optionsConfigurator;
 
-    public ComfygSource(Action<ComfygOptions> optionsConfigurator)
+    public ComfygConfigurationSource(Action<ComfygOptions> optionsConfigurator)
     {
         _optionsConfigurator = optionsConfigurator;
     }
@@ -22,6 +22,6 @@ internal class ComfygSource : IConfigurationSource
         var client = options.HttpClient == null
             ? new ComfygClient(options.ConnectionString)
             : new ComfygClient(options.ConnectionString, options.HttpClient);
-        return new ComfygConfigurationProvider(client);
+        return new ComfygConfigurationProvider(client, options.ConfigurationChangeDetectionInterval);
     }
 }

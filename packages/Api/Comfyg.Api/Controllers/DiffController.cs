@@ -35,7 +35,7 @@ public class DiffController : ControllerBase
         var permissions = await _permissionService.GetPermissionsAsync<T>(clientIdentity.Client.ClientId)
             .ConfigureAwait(false);
 
-        var changes = await _changeService.GetChangesSinceAsync<T>(since).ConfigureAwait(false);
+        var changes = await _changeService.GetChangesSinceAsync<T>(since.ToUniversalTime()).ConfigureAwait(false);
 
         var relevantChanges = changes.Where(c => permissions.Any(p => p.TargetId == c.TargetId));
 

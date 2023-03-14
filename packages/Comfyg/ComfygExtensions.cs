@@ -10,7 +10,7 @@ public static class ComfygExtensions
         if (configurationBuilder == null) throw new ArgumentNullException(nameof(configurationBuilder));
         if (optionsConfigurator == null) throw new ArgumentNullException(nameof(optionsConfigurator));
 
-        configurationBuilder.Add(new ComfygSource(optionsConfigurator));
+        configurationBuilder.Add(new ComfygConfigurationSource(optionsConfigurator));
 
         return configurationBuilder;
     }
