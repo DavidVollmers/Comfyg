@@ -1,4 +1,6 @@
-﻿using Comfyg.Contracts.Configuration;
+﻿using Comfyg.Contracts.Changes;
+using Comfyg.Contracts.Configuration;
+using Comfyg.Core.Abstractions.Changes;
 using Comfyg.Core.Abstractions.Configuration;
 using Comfyg.Core.Abstractions.Permissions;
 using CoreHelpers.WindowsAzure.Storage.Table;
@@ -9,14 +11,17 @@ internal class ConfigurationService : IConfigurationService
 {
     private readonly IStorageContext _storageContext;
     private readonly IPermissionService _permissionService;
+    private readonly IChangeService _changeService;
 
-    public ConfigurationService(string systemId, IStorageContext storageContext, IPermissionService permissionService)
+    public ConfigurationService(string systemId, IStorageContext storageContext, IPermissionService permissionService,
+        IChangeService changeService)
     {
         _storageContext = storageContext;
         _permissionService = permissionService;
+        _changeService = changeService;
 
         _storageContext.AddAttributeMapper<ConfigurationValueEntity>();
-        _storageContext.OverrideTableName<ConfigurationValueEntity>($"{nameof(ConfigurationValueEntity)}{systemId}");
+        _storageContext.OverrideTableName<ConfigurationValueEntity>($"{systemId}{nameof(ConfigurationValueEntity)}");
     }
 
     public async Task AddConfigurationValueAsync(string owner, string key, string value)
@@ -32,6 +37,8 @@ internal class ConfigurationService : IConfigurationService
                 Value = value,
                 Version = version
             }).ConfigureAwait(false);
+
+            await _changeService.LogChangeAsync<IConfigurationValue>(key, ChangeType.Add, owner).ConfigureAwait(false);
         }
 
         await _permissionService.SetPermissionAsync<IConfigurationValue>(owner, key).ConfigureAwait(false);
@@ -51,7 +58,7 @@ internal class ConfigurationService : IConfigurationService
             var latest = await context
                 .QueryAsync<ConfigurationValueEntity>(permission.TargetId, CoreConstants.LatestVersion, 1)
                 .ConfigureAwait(false);
-            
+
             if (latest == null) continue;
 
             values.Add(latest);

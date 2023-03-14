@@ -12,9 +12,9 @@ internal class PermissionService : IPermissionService
         _storageContext = storageContext;
 
         _storageContext.AddAttributeMapper<PermissionEntity>();
-        _storageContext.OverrideTableName<PermissionEntity>($"{nameof(PermissionEntity)}{systemId}");
+        _storageContext.OverrideTableName<PermissionEntity>($"{systemId}{nameof(PermissionEntity)}");
         _storageContext.AddAttributeMapper<PermissionEntityMirrored>();
-        _storageContext.OverrideTableName<PermissionEntityMirrored>($"{nameof(PermissionEntityMirrored)}{systemId}");
+        _storageContext.OverrideTableName<PermissionEntityMirrored>($"{systemId}{nameof(PermissionEntityMirrored)}");
     }
 
     public async Task<bool> IsPermittedAsync<T>(string owner, string targetId)
@@ -38,13 +38,15 @@ internal class PermissionService : IPermissionService
     public async Task SetPermissionAsync<T>(string owner, string targetId)
     {
         using var context = _storageContext.CreateChildContext();
-        await context.EnableAutoCreateTable().InsertOrReplaceAsync(new PermissionEntity
+        context.EnableAutoCreateTable();
+        
+        await context.InsertOrReplaceAsync(new PermissionEntity
         {
             Owner = owner,
             TargetId = targetId,
             TargetType = typeof(T).FullName!
         }).ConfigureAwait(false);
-        await context.EnableAutoCreateTable().InsertOrReplaceAsync(new PermissionEntityMirrored
+        await context.InsertOrReplaceAsync(new PermissionEntityMirrored
         {
             Owner = owner,
             TargetId = targetId,

@@ -12,6 +12,6 @@ public sealed class GetConfigurationResponse
 
     public GetConfigurationResponse(IEnumerable<IConfigurationValue> configurationValues)
     {
-        ConfigurationValues = configurationValues;
+        ConfigurationValues = configurationValues ?? throw new ArgumentNullException(nameof(configurationValues));
     }
 }

@@ -34,8 +34,14 @@ comfyg export config export.json
 - Add options to manage configuration, settings and secrets
 - Add option for wildcard permissions
 - Add client side exception handling
-- Build Comfyg SDK for IConfiguration usage
+- Add reload implementation for IConfigurationProvider
 - Add `comfyg setup localhost` command
 - Add Import/Export capabilities
 - Documentation
 - Tests
+
+## TODO CoreHelpers
+
+- Remove Newtonsoft.Json dependency
+- Move TechnicalIdentifierAttribute to CoreHelpers
+- Support other authentication methods

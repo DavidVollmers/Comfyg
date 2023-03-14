@@ -12,7 +12,7 @@ public sealed class SetupClientResponse
 
     public SetupClientResponse(IClient client, string clientSecret)
     {
-        Client = client;
-        ClientSecret = clientSecret;
+        Client = client ?? throw new ArgumentNullException(nameof(client));
+        ClientSecret = clientSecret ?? throw new ArgumentNullException(nameof(clientSecret));
     }
 }

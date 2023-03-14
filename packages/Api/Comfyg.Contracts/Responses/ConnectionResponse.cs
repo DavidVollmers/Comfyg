@@ -10,6 +10,6 @@ public sealed class ConnectionResponse
 
     public ConnectionResponse(IClient client)
     {
-        Client = client;
+        Client = client ?? throw new ArgumentNullException(nameof(client));
     }
 }
