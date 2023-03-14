@@ -1,22 +1,26 @@
 ﻿using Comfyg.Core.Abstractions.Secrets;
 using System.Security.Cryptography;
+using CoreHelpers.WindowsAzure.Storage.Table;
 
 namespace Comfyg.Core.Secrets;
 
-public sealed class EncryptionBasedSecretService : ISecretService
+public sealed class EncryptionBasedSecretService : SecretServiceBase
 {
     private const string IvDelimiter = ".";
 
     private readonly byte[] _encryptionKey;
 
-    public EncryptionBasedSecretService(string encryptionKey)
+    public EncryptionBasedSecretService(string encryptionKey, string systemId = null!,
+        IStorageContext storageContext = null!)
+        : base(systemId, storageContext)
     {
         if (encryptionKey == null) throw new ArgumentNullException(nameof(encryptionKey));
 
         _encryptionKey = Convert.FromBase64String(encryptionKey);
     }
 
-    public async Task<string> ProtectSecretValueAsync(string value, CancellationToken cancellationToken = default)
+    public override async Task<string> ProtectSecretValueAsync(string value,
+        CancellationToken cancellationToken = default)
     {
         if (value == null) throw new ArgumentNullException(nameof(value));
 
@@ -34,7 +38,8 @@ public sealed class EncryptionBasedSecretService : ISecretService
         return Convert.ToBase64String(aes.IV) + IvDelimiter + Convert.ToBase64String(stream.ToArray());
     }
 
-    public async Task<string> UnprotectSecretValueAsync(string value, CancellationToken cancellationToken = default)
+    public override async Task<string> UnprotectSecretValueAsync(string value,
+        CancellationToken cancellationToken = default)
     {
         if (value == null) throw new ArgumentNullException(nameof(value));
 
