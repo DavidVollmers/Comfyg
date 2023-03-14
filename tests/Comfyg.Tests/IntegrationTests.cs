@@ -4,8 +4,6 @@ using Comfyg.Contracts.Changes;
 using Comfyg.Contracts.Configuration;
 using Comfyg.Core.Abstractions.Changes;
 using Comfyg.Core.Abstractions.Configuration;
-using Comfyg.Core.Abstractions.Permissions;
-using Comfyg.Timing;
 using Moq;
 
 namespace Comfyg.Tests;
@@ -122,36 +120,15 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
                 Value = "value2"
             }
         };
-        var configurationValues2 = new[]
+        var configurationValue2Change = new ConfigurationValue
         {
-            new ConfigurationValue
-            {
-                Key = "key2",
-                Value = "newValue2"
-            },
-            new ConfigurationValue
-            {
-                Key = "key3",
-                Value = "value3"
-            }
+            Key = "key2",
+            Value = "newValue2"
         };
-        var permissions = new[]
+        var configurationValue3Change = new ConfigurationValue
         {
-            new Permission<IConfigurationValue>
-            {
-                Owner = clientId,
-                TargetId = "key1"
-            },
-            new Permission<IConfigurationValue>
-            {
-                Owner = clientId,
-                TargetId = "key2"
-            },
-            new Permission<IConfigurationValue>
-            {
-                Owner = clientId,
-                TargetId = "key3"
-            }
+            Key = "key3",
+            Value = "value3"
         };
         var changes = new[]
         {
@@ -170,7 +147,7 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={clientSecret}";
 
         var timer = new TestTimerImplementation();
-        
+
         _factory.Mock<IClientService>(mock =>
         {
             mock.Setup(cs => cs.GetClientAsync(It.IsAny<string>())).ReturnsAsync(client);
@@ -179,20 +156,17 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IConfigurationService>(mock =>
         {
-            mock.SetupSequence(cs => cs.GetConfigurationValuesAsync(It.IsAny<string>()))
-                .ReturnsAsync(configurationValues1)
-                .ReturnsAsync(configurationValues2);
+            mock.Setup(cs => cs.GetConfigurationValuesAsync(It.IsAny<string>())).ReturnsAsync(configurationValues1);
+            mock.SetupSequence(cs => cs.GetConfigurationValueAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(configurationValue2Change)
+                .ReturnsAsync(configurationValue3Change);
         });
 
-        _factory.Mock<IPermissionService>(mock =>
-        {
-            mock.Setup(ps => ps.GetPermissionsAsync<IConfigurationValue>(It.IsAny<string>()))
-                .ReturnsAsync(permissions);
-        });
-        
         _factory.Mock<IChangeService>(mock =>
         {
-            mock.Setup(cs => cs.GetChangesSinceAsync<IConfigurationValue>(It.IsAny<DateTime>())).ReturnsAsync(changes);
+            mock.Setup(cs =>
+                    cs.GetChangesForOwnerAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<DateTime>()))
+                .ReturnsAsync(changes);
         });
 
         var configurationBuilder = new ConfigurationBuilder();
@@ -217,8 +191,20 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         var configuration3 = configuration["key3"];
         Assert.Null(configuration3);
-        
+
         timer.Callback();
+
+        configuration1 = configuration["key1"];
+        Assert.NotNull(configuration1);
+        Assert.Equal("value1", configuration1);
+
+        configuration2 = configuration["key2"];
+        Assert.NotNull(configuration2);
+        Assert.Equal("newValue2", configuration2);
+
+        configuration3 = configuration["key3"];
+        Assert.NotNull(configuration3);
+        Assert.Equal("value3", configuration3);
 
         _factory.Mock<IClientService>(mock =>
         {
@@ -229,18 +215,18 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IConfigurationService>(mock =>
         {
-            mock.Verify(cs => cs.GetConfigurationValuesAsync(It.Is<string>(s => s == clientId)), Times.Exactly(2));
-        });
-
-        _factory.Mock<IPermissionService>(mock =>
-        {
-            mock.Verify(ps => ps.GetPermissionsAsync<IConfigurationValue>(It.Is<string>(s => s == clientId)),
+            mock.Verify(cs => cs.GetConfigurationValuesAsync(It.Is<string>(s => s == clientId)), Times.Once);
+            mock.Verify(cs => cs.GetConfigurationValueAsync(It.Is<string>(s => s == "key2"), It.IsAny<string>()),
+                Times.Once);
+            mock.Verify(cs => cs.GetConfigurationValueAsync(It.Is<string>(s => s == "key3"), It.IsAny<string>()),
                 Times.Once);
         });
-        
+
         _factory.Mock<IChangeService>(mock =>
         {
-            mock.Verify(cs => cs.GetChangesSinceAsync<IConfigurationValue>(It.IsAny<DateTime>()), Times.Once);
+            mock.Verify(
+                cs => cs.GetChangesForOwnerAsync<IConfigurationValue>(It.Is<string>(s => s == clientId),
+                    It.IsAny<DateTime>()), Times.Exactly(2));
         });
     }
 }

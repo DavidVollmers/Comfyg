@@ -13,4 +13,6 @@ public interface IComfygValue
     [Required] [MaxLength(1024)] string Value { get; }
 
     [ValidateNever] string Version { get; }
+    
+    [ValidateNever] DateTime CreatedAt { get; }
 }

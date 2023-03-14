@@ -1,5 +1,6 @@
 ﻿using Comfyg.Contracts.Changes;
 using Comfyg.Core.Abstractions.Changes;
+using Comfyg.Core.Abstractions.Permissions;
 using CoreHelpers.WindowsAzure.Storage.Table;
 
 namespace Comfyg.Core.Changes;
@@ -7,10 +8,12 @@ namespace Comfyg.Core.Changes;
 internal class ChangeService : IChangeService
 {
     private readonly IStorageContext _storageContext;
+    private readonly IPermissionService _permissionService;
 
-    public ChangeService(string systemId, IStorageContext storageContext)
+    public ChangeService(string systemId, IStorageContext storageContext, IPermissionService permissionService)
     {
         _storageContext = storageContext;
+        _permissionService = permissionService;
 
         _storageContext.AddAttributeMapper<ChangeLogEntity>();
         _storageContext.OverrideTableName<ChangeLogEntity>($"{systemId}{nameof(ChangeLogEntity)}");
@@ -52,5 +55,14 @@ internal class ChangeService : IChangeService
                 Value = long.MaxValue - since.Ticks
             }
         }).ConfigureAwait(false);
+    }
+
+    public async Task<IEnumerable<IChangeLog>> GetChangesForOwnerAsync<T>(string owner, DateTime since)
+    {
+        var permissions = await _permissionService.GetPermissionsAsync<T>(owner).ConfigureAwait(false);
+
+        var changes = await GetChangesSinceAsync<T>(since).ConfigureAwait(false);
+
+        return changes.Where(c => permissions.Any(p => p.TargetId == c.TargetId));
     }
 }

@@ -66,4 +66,13 @@ internal class ConfigurationService : IConfigurationService
 
         return values;
     }
+
+    public async Task<IConfigurationValue?> GetConfigurationValueAsync(string key,
+        string version = CoreConstants.LatestVersion)
+    {
+        using var context = _storageContext.CreateChildContext();
+
+        return await context.EnableAutoCreateTable().QueryAsync<ConfigurationValueEntity>(key, version, 1)
+            .ConfigureAwait(false);
+    }
 }

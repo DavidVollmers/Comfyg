@@ -26,7 +26,6 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         {
             services.AddSingleton<IClientService>(_ => GetMock<IClientService>().Object);
             services.AddSingleton<IConfigurationService>(_ => GetMock<IConfigurationService>().Object);
-            services.AddSingleton<IPermissionService>(_ => GetMock<IPermissionService>().Object);
             services.AddSingleton<IChangeService>(_ => GetMock<IChangeService>().Object);
         });
     }

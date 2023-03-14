@@ -7,4 +7,6 @@ public interface IChangeService
     Task LogChangeAsync<T>(string targetId, ChangeType changeType, string changedBy);
 
     Task<IEnumerable<IChangeLog>> GetChangesSinceAsync<T>(DateTime since);
+
+    Task<IEnumerable<IChangeLog>> GetChangesForOwnerAsync<T>(string owner, DateTime since);
 }

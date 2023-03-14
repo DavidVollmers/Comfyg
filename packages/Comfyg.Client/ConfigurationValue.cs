@@ -15,4 +15,6 @@ public sealed class ConfigurationValue : IConfigurationValue
     public string Value { get; }
 
     public string Version => null!;
+    
+    public DateTime CreatedAt => DateTime.UtcNow;
 }

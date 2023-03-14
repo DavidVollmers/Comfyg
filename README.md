@@ -32,6 +32,7 @@ comfyg export config export.json
 ## TODO
 
 - Add options to manage configuration, settings and secrets
+- Add option to use KeyVault instead of system encryption
 - Add option for wildcard permissions
 - Add client side exception handling
 - Add `comfyg setup localhost` command
@@ -43,4 +44,4 @@ comfyg export config export.json
 
 - Remove Newtonsoft.Json dependency
 - Move TechnicalIdentifierAttribute to CoreHelpers
-- Support other authentication methods
+- Support other authentication methods (Azure.Identity)

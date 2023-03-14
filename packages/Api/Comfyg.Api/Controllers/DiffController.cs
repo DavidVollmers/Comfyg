@@ -2,7 +2,6 @@
 using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Responses;
 using Comfyg.Core.Abstractions.Changes;
-using Comfyg.Core.Abstractions.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,12 +12,10 @@ namespace Comfyg.Api.Controllers;
 [Route("diff")]
 public class DiffController : ControllerBase
 {
-    private readonly IPermissionService _permissionService;
     private readonly IChangeService _changeService;
 
-    public DiffController(IPermissionService permissionService, IChangeService changeService)
+    public DiffController(IChangeService changeService)
     {
-        _permissionService = permissionService;
         _changeService = changeService;
     }
 
@@ -32,13 +29,10 @@ public class DiffController : ControllerBase
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var permissions = await _permissionService.GetPermissionsAsync<T>(clientIdentity.Client.ClientId)
-            .ConfigureAwait(false);
+        var changes =
+            await _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since.ToUniversalTime())
+                .ConfigureAwait(false);
 
-        var changes = await _changeService.GetChangesSinceAsync<T>(since.ToUniversalTime()).ConfigureAwait(false);
-
-        var relevantChanges = changes.Where(c => permissions.Any(p => p.TargetId == c.TargetId));
-
-        return Ok(new GetDiffResponse(relevantChanges));
+        return Ok(new GetDiffResponse(changes));
     }
 }

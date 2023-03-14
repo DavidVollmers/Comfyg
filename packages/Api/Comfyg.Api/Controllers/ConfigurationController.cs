@@ -2,6 +2,7 @@
 using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Requests;
 using Comfyg.Contracts.Responses;
+using Comfyg.Core.Abstractions.Changes;
 using Comfyg.Core.Abstractions.Configuration;
 using Comfyg.Core.Abstractions.Permissions;
 using Microsoft.AspNetCore.Authorization;
@@ -16,11 +17,14 @@ public class ConfigurationController : ControllerBase
 {
     private readonly IConfigurationService _configurationService;
     private readonly IPermissionService _permissionService;
+    private readonly IChangeService _changeService;
 
-    public ConfigurationController(IConfigurationService configurationService, IPermissionService permissionService)
+    public ConfigurationController(IConfigurationService configurationService, IPermissionService permissionService,
+        IChangeService changeService)
     {
         _configurationService = configurationService;
         _permissionService = permissionService;
+        _changeService = changeService;
     }
 
     [HttpGet]
@@ -30,6 +34,29 @@ public class ConfigurationController : ControllerBase
 
         var configurationValues = await _configurationService
             .GetConfigurationValuesAsync(clientIdentity.Client.ClientId).ConfigureAwait(false);
+
+        return Ok(new GetConfigurationResponse(configurationValues));
+    }
+
+    [HttpGet("fromDiff")]
+    public async Task<ActionResult<GetConfigurationResponse>> GetConfigurationFromDiffAsync([FromQuery] DateTime since)
+    {
+        if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
+
+        var changes = await _changeService
+            .GetChangesForOwnerAsync<IConfigurationValue>(clientIdentity.Client.ClientId, since.ToUniversalTime())
+            .ConfigureAwait(false);
+
+        var configurationValues = new List<IConfigurationValue>();
+        foreach (var change in changes)
+        {
+            var configurationValue = await _configurationService.GetConfigurationValueAsync(change.TargetId)
+                .ConfigureAwait(false);
+
+            if (configurationValue == null) continue;
+
+            configurationValues.Add(configurationValue);
+        }
 
         return Ok(new GetConfigurationResponse(configurationValues));
     }

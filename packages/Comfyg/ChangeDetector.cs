@@ -10,6 +10,8 @@ internal class ChangeDetector : IDisposable
     private readonly ITimer _timer;
 
     private CancellationTokenSource? _cancellationTokenSource;
+    
+    public DateTime LastDetectionAt { get; private set; }
 
     public ChangeDetector(ComfygClient client, ITimer timer)
     {
@@ -29,8 +31,8 @@ internal class ChangeDetector : IDisposable
 
     private void DetectChanges()
     {
-        var since = DateTime.UtcNow.Add(-_timer.Interval);
-        var result = _client.GetConfigurationDiffAsync(since).GetAwaiter().GetResult();
+        LastDetectionAt = DateTime.UtcNow.Add(-_timer.Interval);
+        var result = _client.GetConfigurationDiffAsync(LastDetectionAt).GetAwaiter().GetResult();
         if (result.ChangeLog.Any())
         {
             _cancellationTokenSource?.Cancel();

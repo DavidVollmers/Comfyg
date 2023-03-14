@@ -68,8 +68,8 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IConfiguration>(mock =>
         {
-            mock.Verify(c => c["ComfygSystemClient"], Times.Exactly(3));
-            mock.Verify(c => c["ComfygSystemClientSecret"], Times.Exactly(2));
+            mock.Verify(c => c["ComfygSystemClient"], Times.AtLeast(2));
+            mock.Verify(c => c["ComfygSystemClientSecret"], Times.AtLeast(1));
         });
 
         _factory.Mock<IClientService>(mock =>

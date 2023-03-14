@@ -32,11 +32,11 @@ public static class ComfygCoreExtensions
             return new StorageContext(options.AzureTableStorageConnectionString);
         }
 
-        serviceCollection.AddScoped<IChangeService, ChangeService>(_ =>
+        serviceCollection.AddScoped<IChangeService, ChangeService>(provider =>
         {
             var storageContext = StorageContextProvider();
             //TODO make systemId configurable
-            return new ChangeService(nameof(Comfyg), storageContext);
+            return new ChangeService(nameof(Comfyg), storageContext, provider.GetRequiredService<IPermissionService>());
         });
 
         serviceCollection.AddScoped<IPermissionService, PermissionService>(_ =>
