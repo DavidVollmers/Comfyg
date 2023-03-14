@@ -1,18 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿namespace Comfyg.Contracts.Configuration;
 
-namespace Comfyg.Contracts.Configuration;
-
-public interface IConfigurationValue
+public interface IConfigurationValue : IComfygValue
 {
-    [Required]
-    [MaxLength(256)]
-    [TechnicalIdentifier]
-    string Key { get; }
-
-    [Required] [MaxLength(1024)] string Value { get; }
-
-    [ValidateNever] string Version { get; }
-
-    [ValidateNever] string[] Tags { get; }
 }

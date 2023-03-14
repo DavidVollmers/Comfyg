@@ -1,6 +1,6 @@
-﻿namespace Comfyg.Contracts.Configuration;
+﻿namespace Comfyg.Contracts.Settings;
 
-public sealed class ConfigurationValue : IConfigurationValue
+public class SettingValue : ISettingValue
 {
     public string Key { get; set; } = null!;
     

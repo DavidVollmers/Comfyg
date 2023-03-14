@@ -6,7 +6,6 @@ using Comfyg.Contracts.Requests;
 
 namespace Comfyg.Cli.Commands.Add;
 
-//TODO tags
 public class AddConfigurationCommand : Command
 {
     private readonly Argument<string> _keyArgument;

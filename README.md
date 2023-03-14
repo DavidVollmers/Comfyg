@@ -31,8 +31,8 @@ comfyg export config export.json
 
 ## TODO
 
-- Add option for wildcard permissions
 - Add options to manage configuration, settings and secrets
+- Add option for wildcard permissions
 - Add client side exception handling
 - Build Comfyg SDK for IConfiguration usage
 - Add `comfyg setup localhost` command

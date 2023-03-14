@@ -51,9 +51,8 @@ internal class ConfigurationService : IConfigurationService
             var latest = await context
                 .QueryAsync<ConfigurationValueEntity>(permission.TargetId, CoreConstants.LatestVersion, 1)
                 .ConfigureAwait(false);
+            
             if (latest == null) continue;
-
-            //TODO tags
 
             values.Add(latest);
         }
