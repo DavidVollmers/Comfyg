@@ -68,8 +68,8 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IConfiguration>(mock =>
         {
-            mock.Verify(c => c["ComfygSystemClient"], Times.Exactly(2));
-            mock.Verify(c => c["ComfygSystemClientSecret"], Times.Once);
+            mock.Verify(c => c["ComfygSystemClient"], Times.Exactly(3));
+            mock.Verify(c => c["ComfygSystemClientSecret"], Times.Exactly(2));
         });
 
         _factory.Mock<IClientService>(mock =>
@@ -134,16 +134,8 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         };
         var configurationValues = new[]
         {
-            new ConfigurationValue
-            {
-                Key = "key1",
-                Value = "value1"
-            },
-            new ConfigurationValue
-            {
-                Key = "key2",
-                Value = "value2"
-            }
+            new ConfigurationValue("key1", "value1"),
+            new ConfigurationValue("key2", "value2")
         };
 
         using var httpClient = _factory.CreateClient();

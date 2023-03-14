@@ -1,6 +1,6 @@
 ﻿namespace Comfyg.Contracts.Secrets;
 
-public class SecretValue : ISecretValue
+internal class SecretValue : ISecretValue
 {
     public string Key { get; set; } = null!;
 

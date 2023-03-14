@@ -1,6 +1,6 @@
 ﻿namespace Comfyg.Contracts.Authentication;
 
-public sealed class Client : IClient
+internal class Client : IClient
 {
     public string ClientId { get; set; } = null!;
 

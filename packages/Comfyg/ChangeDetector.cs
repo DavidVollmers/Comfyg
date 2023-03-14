@@ -1,4 +1,5 @@
 ﻿using Comfyg.Client;
+using Comfyg.Timing;
 using Microsoft.Extensions.Primitives;
 
 namespace Comfyg;
@@ -6,17 +7,16 @@ namespace Comfyg;
 internal class ChangeDetector : IDisposable
 {
     private readonly ComfygClient _client;
-    private readonly TimeSpan _interval;
-    private readonly Timer _timer;
+    private readonly ITimer _timer;
 
     private CancellationTokenSource? _cancellationTokenSource;
 
-    public ChangeDetector(ComfygClient client, TimeSpan interval)
+    public ChangeDetector(ComfygClient client, ITimer timer)
     {
         _client = client;
-        _interval = interval;
+        _timer = timer;
 
-        _timer = new Timer(DetectChanges!, null, TimeSpan.Zero, interval);
+        _timer.RegisterCallback(DetectChanges);
     }
 
     public IChangeToken GetChangeToken()
@@ -27,9 +27,9 @@ internal class ChangeDetector : IDisposable
         return new CancellationChangeToken(_cancellationTokenSource.Token);
     }
 
-    private void DetectChanges(object state)
+    private void DetectChanges()
     {
-        var since = DateTime.UtcNow.Add(-_interval);
+        var since = DateTime.UtcNow.Add(-_timer.Interval);
         var result = _client.GetConfigurationDiffAsync(since).GetAwaiter().GetResult();
         if (result.ChangeLog.Any())
         {
@@ -39,7 +39,6 @@ internal class ChangeDetector : IDisposable
 
     public void Dispose()
     {
-        _client.Dispose();
         _timer.Dispose();
         _cancellationTokenSource?.Dispose();
     }

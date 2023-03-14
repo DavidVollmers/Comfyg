@@ -8,6 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="Comfyg.Client.Tests" />
+        <InternalsVisibleTo Include="Comfyg.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 

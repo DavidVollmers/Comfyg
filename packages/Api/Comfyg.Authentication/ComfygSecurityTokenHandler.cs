@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Comfyg.Authentication.Abstractions;
 using Comfyg.Contracts.Authentication;
 using Microsoft.Extensions.Configuration;
@@ -27,15 +26,11 @@ internal class ComfygSecurityTokenHandler : JwtSecurityTokenHandler
         IClient? client = null;
         string clientSecret = null!;
 
-        var systemClient = _configuration["ComfygSystemClient"];
-        if (systemClient != null && jwt.Issuer == systemClient)
+        var systemClient = new SystemClient(_configuration);
+        if (systemClient.IsConfigured && jwt.Issuer == systemClient.ClientId)
         {
-            clientSecret = _configuration["ComfygSystemClientSecret"];
-            client = new Client
-            {
-                ClientId = systemClient,
-                FriendlyName = "Comfyg System Client"
-            };
+            clientSecret = systemClient.ClientSecret;
+            client = systemClient;
         }
 
         if (client == null)

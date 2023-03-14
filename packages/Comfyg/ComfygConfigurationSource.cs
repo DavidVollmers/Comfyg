@@ -22,6 +22,6 @@ internal class ComfygConfigurationSource : IConfigurationSource
         var client = options.HttpClient == null
             ? new ComfygClient(options.ConnectionString)
             : new ComfygClient(options.ConnectionString, options.HttpClient);
-        return new ComfygConfigurationProvider(client, options.ConfigurationChangeDetectionInterval);
+        return new ComfygConfigurationProvider(client, options.ConfigurationChangeDetectionTimer);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Comfyg.Contracts.Settings;
 
-public class SettingValue : ISettingValue
+internal class SettingValue : ISettingValue
 {
     public string Key { get; set; } = null!;
     

@@ -34,7 +34,6 @@ comfyg export config export.json
 - Add options to manage configuration, settings and secrets
 - Add option for wildcard permissions
 - Add client side exception handling
-- Add reload implementation for IConfigurationProvider
 - Add `comfyg setup localhost` command
 - Add Import/Export capabilities
 - Documentation

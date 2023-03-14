@@ -35,11 +35,7 @@ public class AddConfigurationCommand : Command
         {
             ConfigurationValues = new IConfigurationValue[]
             {
-                new ConfigurationValue
-                {
-                    Key = keyArgument,
-                    Value = valueArgument
-                }
+                new Client.ConfigurationValue(keyArgument, valueArgument)
             }
         }, cancellationToken).ConfigureAwait(false);
     }

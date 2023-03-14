@@ -33,11 +33,7 @@ internal class SetupClientCommand : Command
 
         var result = await client.SetupClientAsync(new SetupClientRequest
         {
-            Client = new Contracts.Authentication.Client
-            {
-                ClientId = clientIdArgument,
-                FriendlyName = friendlyNameArgument
-            }
+            Client = new Client.Client(clientIdArgument, friendlyNameArgument)
         }, cancellationToken).ConfigureAwait(false);
 
         AnsiConsole.MarkupLine($"[bold green]Successfully created a client for {client.EndpointUrl}[/]");
