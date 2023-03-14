@@ -1,5 +1,6 @@
 ﻿using Comfyg.Contracts.Configuration;
 using Comfyg.Core.Abstractions.Configuration;
+using Comfyg.Core.Abstractions.Permissions;
 using CoreHelpers.WindowsAzure.Storage.Table;
 
 namespace Comfyg.Core.Configuration;
@@ -7,19 +8,15 @@ namespace Comfyg.Core.Configuration;
 internal class ConfigurationService : IConfigurationService
 {
     private readonly IStorageContext _storageContext;
+    private readonly IPermissionService _permissionService;
 
-    public ConfigurationService(string systemId, IStorageContext storageContext)
+    public ConfigurationService(string systemId, IStorageContext storageContext, IPermissionService permissionService)
     {
         _storageContext = storageContext;
+        _permissionService = permissionService;
 
         _storageContext.AddAttributeMapper<ConfigurationValueEntity>();
         _storageContext.OverrideTableName<ConfigurationValueEntity>($"{nameof(ConfigurationValueEntity)}{systemId}");
-        _storageContext.AddAttributeMapper<ConfigurationValueOwnerEntity>();
-        _storageContext.OverrideTableName<ConfigurationValueOwnerEntity>(
-            $"{nameof(ConfigurationValueOwnerEntity)}{systemId}");
-        _storageContext.AddAttributeMapper<ConfigurationValueOwnerEntityMirrored>();
-        _storageContext.OverrideTableName<ConfigurationValueOwnerEntityMirrored>(
-            $"{nameof(ConfigurationValueOwnerEntityMirrored)}{systemId}");
     }
 
     public async Task AddConfigurationValueAsync(string owner, string key, string value)
@@ -37,16 +34,7 @@ internal class ConfigurationService : IConfigurationService
             }).ConfigureAwait(false);
         }
 
-        await context.InsertOrReplaceAsync(new ConfigurationValueOwnerEntity
-        {
-            Key = key,
-            Owner = owner
-        }).ConfigureAwait(false);
-        await context.InsertOrReplaceAsync(new ConfigurationValueOwnerEntityMirrored
-        {
-            Key = key,
-            Owner = owner
-        }).ConfigureAwait(false);
+        await _permissionService.SetPermissionAsync<IConfigurationValue>(owner, key).ConfigureAwait(false);
     }
 
     public async Task<IEnumerable<IConfigurationValue>> GetConfigurationValuesAsync(string owner)
@@ -56,11 +44,12 @@ internal class ConfigurationService : IConfigurationService
 
         var values = new List<IConfigurationValue>();
 
-        var ownedValues = await context.QueryAsync<ConfigurationValueOwnerEntity>(owner).ConfigureAwait(false);
-        foreach (var ownedValue in ownedValues)
+        var permissions =
+            await _permissionService.GetPermissionsAsync<IConfigurationValue>(owner).ConfigureAwait(false);
+        foreach (var permission in permissions)
         {
             var latest = await context
-                .QueryAsync<ConfigurationValueEntity>(ownedValue.Key, CoreConstants.LatestVersion, 1)
+                .QueryAsync<ConfigurationValueEntity>(permission.TargetId, CoreConstants.LatestVersion, 1)
                 .ConfigureAwait(false);
             if (latest == null) continue;
 
@@ -70,14 +59,5 @@ internal class ConfigurationService : IConfigurationService
         }
 
         return values;
-    }
-
-    public async Task<bool> IsPermittedToAddAsync(string owner, string key)
-    {
-        using var context = _storageContext.CreateChildContext();
-
-        var ownedValues = (await context.EnableAutoCreateTable().QueryAsync<ConfigurationValueOwnerEntityMirrored>(key)
-            .ConfigureAwait(false)).ToArray();
-        return !ownedValues.Any() || ownedValues.Any(ov => ov.Owner == owner);
     }
 }

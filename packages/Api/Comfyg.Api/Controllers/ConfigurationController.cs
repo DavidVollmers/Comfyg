@@ -1,6 +1,8 @@
 ﻿using Comfyg.Authentication.Abstractions;
+using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Requests;
 using Comfyg.Core.Abstractions.Configuration;
+using Comfyg.Core.Abstractions.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +14,12 @@ namespace Comfyg.Api.Controllers;
 public class ConfigurationController : ControllerBase
 {
     private readonly IConfigurationService _configurationService;
+    private readonly IPermissionService _permissionService;
 
-    public ConfigurationController(IConfigurationService configurationService)
+    public ConfigurationController(IConfigurationService configurationService, IPermissionService permissionService)
     {
         _configurationService = configurationService;
+        _permissionService = permissionService;
     }
 
     [HttpPost]
@@ -25,8 +29,8 @@ public class ConfigurationController : ControllerBase
 
         foreach (var configurationValue in request.ConfigurationValues)
         {
-            var isPermitted = await _configurationService
-                .IsPermittedToAddAsync(clientIdentity.Client.ClientId, configurationValue.Key)
+            var isPermitted = await _permissionService
+                .IsPermittedAsync<IConfigurationValue>(clientIdentity.Client.ClientId, configurationValue.Key)
                 .ConfigureAwait(false);
             if (!isPermitted) return Forbid();
         }

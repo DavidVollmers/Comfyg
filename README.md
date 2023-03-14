@@ -32,8 +32,7 @@ comfyg export config export.json
 ## TODO
 
 - Validate technical identifiers (IClient.ClientId, IConfigurationValue.Key)
-- Build generic permission layer (for configuration, settings and secrets)
-  - Add option for wildcard permissions
+- Add option for wildcard permissions
 - Add options to manage configuration, settings and secrets
 - Add client side exception handling
 - Build Comfyg SDK for IConfiguration usage

@@ -7,6 +7,4 @@ public interface IConfigurationService
     Task AddConfigurationValueAsync(string owner, string key, string value);
 
     Task<IEnumerable<IConfigurationValue>> GetConfigurationValuesAsync(string owner);
-
-    Task<bool> IsPermittedToAddAsync(string owner, string key);
 }
