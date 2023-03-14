@@ -4,12 +4,12 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-      <UserSecretsId>e7b922dc-d2e8-41d0-b82c-a8112e8be873</UserSecretsId>
-  </PropertyGroup>
+        <UserSecretsId>e7b922dc-d2e8-41d0-b82c-a8112e8be873</UserSecretsId>
+    </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Comfyg.Contracts\Comfyg.Contracts.csproj" />
-      <ProjectReference Include="..\Comfyg.Authentication\Comfyg.Authentication.csproj" />
+        <ProjectReference Include="..\Comfyg.Contracts\Comfyg.Contracts.csproj"/>
+        <ProjectReference Include="..\Comfyg.Authentication\Comfyg.Authentication.csproj"/>
     </ItemGroup>
 
 </Project>

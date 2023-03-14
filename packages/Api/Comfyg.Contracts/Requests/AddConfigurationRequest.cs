@@ -7,6 +7,8 @@ namespace Comfyg.Contracts.Requests;
 public sealed class AddConfigurationRequest
 {
     [Required]
-    [JsonConverter(typeof(ContractConverter<IConfigurationValue[], ConfigurationValue[]>))]
-    public IConfigurationValue[] ConfigurationValues { get; set; } = null!;
+    [JsonConverter(
+        typeof(ContractConverter<IEnumerable<IConfigurationValue>, IEnumerable<ConfigurationValue>,
+            IEnumerable<IComfygValue>>))]
+    public IEnumerable<IConfigurationValue> ConfigurationValues { get; set; } = null!;
 }

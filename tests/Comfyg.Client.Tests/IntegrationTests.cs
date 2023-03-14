@@ -1,6 +1,9 @@
 ﻿using Comfyg.Authentication.Abstractions;
 using Comfyg.Contracts.Authentication;
+using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Requests;
+using Comfyg.Core.Abstractions.Configuration;
+using Comfyg.Core.Abstractions.Permissions;
 using Moq;
 
 namespace Comfyg.Client.Tests;
@@ -114,6 +117,79 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         {
             mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId)), Times.Once);
             mock.Verify(cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId)), Times.Once);
+        });
+    }
+
+    [Fact]
+    public async Task Test_AddConfigurationAsync()
+    {
+        var clientId = Guid.NewGuid().ToString();
+        var clientSecret = CreateClientSecret();
+        var friendlyName = "Test Client";
+        var client = new Contracts.Authentication.Client
+        {
+            ClientId = clientId,
+            ClientSecret = clientSecret,
+            FriendlyName = friendlyName
+        };
+        var configurationValues = new[]
+        {
+            new ConfigurationValue
+            {
+                Key = "key1",
+                Value = "value1"
+            },
+            new ConfigurationValue
+            {
+                Key = "key2",
+                Value = "value2"
+            }
+        };
+
+        using var httpClient = _factory.CreateClient();
+
+        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={clientSecret}";
+        using var comfygClient = new ComfygClient(connectionString, httpClient);
+
+        _factory.Mock<IClientService>(mock =>
+        {
+            mock.Setup(cs => cs.GetClientAsync(It.IsAny<string>())).ReturnsAsync(client);
+            mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>())).ReturnsAsync(clientSecret);
+        });
+
+        _factory.Mock<IPermissionService>(mock =>
+        {
+            mock.Setup(ps => ps.IsPermittedAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(true);
+        });
+
+        await comfygClient.AddConfigurationAsync(new AddConfigurationRequest
+        {
+            ConfigurationValues = configurationValues
+        });
+
+        _factory.Mock<IClientService>(mock =>
+        {
+            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId)), Times.Once);
+            mock.Verify(cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId)), Times.Once);
+        });
+
+        _factory.Mock<IPermissionService>(mock =>
+        {
+            mock.Verify(
+                ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == clientId),
+                    It.Is<string>(s => s == "key1")), Times.Once);
+            mock.Verify(
+                ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == clientId),
+                    It.Is<string>(s => s == "key2")), Times.Once);
+        });
+
+        _factory.Mock<IConfigurationService>(mock =>
+        {
+            mock.Verify(cs => cs.AddConfigurationValueAsync(It.Is<string>(s => s == clientId),
+                It.Is<string>(s => s == "key1"), It.Is<string>(s => s == "value1")), Times.Once);
+            mock.Verify(cs => cs.AddConfigurationValueAsync(It.Is<string>(s => s == clientId),
+                It.Is<string>(s => s == "key2"), It.Is<string>(s => s == "value2")), Times.Once);
         });
     }
 }

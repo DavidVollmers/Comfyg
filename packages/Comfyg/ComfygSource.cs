@@ -19,7 +19,9 @@ internal class ComfygSource : IConfigurationSource
         if (options.ConnectionString == null)
             throw new InvalidOperationException(
                 "Please call ComfygOptions.Connect to specify how to connect to the Comfyg API.");
-        var client = new ComfygClient(options.ConnectionString);
+        var client = options.HttpClient == null
+            ? new ComfygClient(options.ConnectionString)
+            : new ComfygClient(options.ConnectionString, options.HttpClient);
         return new ComfygConfigurationProvider(client);
     }
 }

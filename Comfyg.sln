@@ -32,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{1F928028-8E6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Core.Tests", "tests\Api\Comfyg.Core.Tests\Comfyg.Core.Tests.csproj", "{A23FEA90-CD5E-4FED-B576-19D1F6F7A8BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Tests", "tests\Comfyg.Tests\Comfyg.Tests.csproj", "{866E4103-CAED-430B-A546-1538434B83D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,7 @@ Global
 		{87631A3F-DADC-4690-BEC5-D04B69772532} = {CC2ABB50-DCC4-4CE1-BAB4-A1FB82629B2C}
 		{1F928028-8E63-4C32-96E5-AB2852EEADF6} = {CC2ABB50-DCC4-4CE1-BAB4-A1FB82629B2C}
 		{A23FEA90-CD5E-4FED-B576-19D1F6F7A8BA} = {1F928028-8E63-4C32-96E5-AB2852EEADF6}
+		{866E4103-CAED-430B-A546-1538434B83D6} = {CC2ABB50-DCC4-4CE1-BAB4-A1FB82629B2C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{26CF8A96-1AA3-4BDC-A17C-75BE19CC3560}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -98,5 +101,9 @@ Global
 		{A23FEA90-CD5E-4FED-B576-19D1F6F7A8BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A23FEA90-CD5E-4FED-B576-19D1F6F7A8BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A23FEA90-CD5E-4FED-B576-19D1F6F7A8BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{866E4103-CAED-430B-A546-1538434B83D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{866E4103-CAED-430B-A546-1538434B83D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{866E4103-CAED-430B-A546-1538434B83D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{866E4103-CAED-430B-A546-1538434B83D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

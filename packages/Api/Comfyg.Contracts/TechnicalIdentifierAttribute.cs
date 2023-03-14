@@ -11,6 +11,8 @@ internal class TechnicalIdentifierAttribute : ValidationAttribute
 
     public override bool IsValid(object? value)
     {
+        if (value == null) return false;
+        
         if (value is not string s) throw new ValidationException("Only strings can be used as technical identifier.");
 
         return Encoding.UTF8.GetBytes(s).All(b => !DisallowedCharacters.Contains(b));
