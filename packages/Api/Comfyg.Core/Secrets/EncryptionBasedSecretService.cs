@@ -1,5 +1,6 @@
-﻿using Comfyg.Core.Abstractions.Secrets;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
+using Comfyg.Core.Abstractions.Changes;
+using Comfyg.Core.Abstractions.Permissions;
 using CoreHelpers.WindowsAzure.Storage.Table;
 
 namespace Comfyg.Core.Secrets;
@@ -11,8 +12,9 @@ public sealed class EncryptionBasedSecretService : SecretServiceBase
     private readonly byte[] _encryptionKey;
 
     public EncryptionBasedSecretService(string encryptionKey, string systemId = null!,
-        IStorageContext storageContext = null!)
-        : base(systemId, storageContext)
+        IStorageContext storageContext = null!, IChangeService changeService = null!,
+        IPermissionService permissionService = null!)
+        : base(systemId, storageContext, changeService, permissionService)
     {
         if (encryptionKey == null) throw new ArgumentNullException(nameof(encryptionKey));
 
