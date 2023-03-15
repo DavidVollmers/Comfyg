@@ -4,7 +4,7 @@ using Comfyg.Contracts.Configuration;
 
 namespace Comfyg.Contracts.Requests;
 
-public sealed class AddConfigurationRequest
+public sealed class AddConfigurationValuesRequest
 {
     [Required]
     [JsonConverter(

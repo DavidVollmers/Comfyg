@@ -7,7 +7,7 @@ namespace Comfyg.Client;
 
 public partial class ComfygClient
 {
-    public async Task<GetConfigurationResponse> GetConfigurationAsync(CancellationToken cancellationToken = default)
+    public async Task<GetConfigurationValuesResponse> GetConfigurationAsync(CancellationToken cancellationToken = default)
     {
         var token = CreateToken();
 
@@ -20,11 +20,11 @@ public partial class ComfygClient
             throw new HttpRequestException("Invalid status code when trying to get configuration.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<GetConfigurationResponse>(cancellationToken: cancellationToken)
+        return (await response.Content.ReadFromJsonAsync<GetConfigurationValuesResponse>(cancellationToken: cancellationToken)
             .ConfigureAwait(false))!;
     }
 
-    public async Task<GetConfigurationResponse> GetConfigurationFromDiffAsync(DateTime since,
+    public async Task<GetConfigurationValuesResponse> GetConfigurationFromDiffAsync(DateTime since,
         CancellationToken cancellationToken = default)
     {
         var token = CreateToken();
@@ -38,11 +38,11 @@ public partial class ComfygClient
             throw new HttpRequestException("Invalid status code when trying to get configuration from diff.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<GetConfigurationResponse>(cancellationToken: cancellationToken)
+        return (await response.Content.ReadFromJsonAsync<GetConfigurationValuesResponse>(cancellationToken: cancellationToken)
             .ConfigureAwait(false))!;
     }
 
-    public async Task AddConfigurationAsync(AddConfigurationRequest request,
+    public async Task AddConfigurationAsync(AddConfigurationValuesRequest request,
         CancellationToken cancellationToken = default)
     {
         if (request == null) throw new ArgumentNullException(nameof(request));

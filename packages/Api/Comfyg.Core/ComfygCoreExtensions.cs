@@ -1,9 +1,12 @@
-﻿using Comfyg.Core.Abstractions.Changes;
+﻿using Azure.Security.KeyVault.Secrets;
+using Comfyg.Core.Abstractions.Changes;
 using Comfyg.Core.Abstractions.Configuration;
 using Comfyg.Core.Abstractions.Permissions;
+using Comfyg.Core.Abstractions.Secrets;
 using Comfyg.Core.Changes;
 using Comfyg.Core.Configuration;
 using Comfyg.Core.Permissions;
+using Comfyg.Core.Secrets;
 using CoreHelpers.WindowsAzure.Storage.Table;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -53,6 +56,27 @@ public static class ComfygCoreExtensions
             return new ConfigurationService(nameof(Comfyg), storageContext,
                 provider.GetRequiredService<IPermissionService>(),
                 provider.GetRequiredService<IChangeService>());
+        });
+
+        serviceCollection.AddScoped<ISecretService>(provider =>
+        {
+            var options = OptionsProvider();
+
+            if (options.EncryptionKey != null)
+            {
+                //TODO make systemId configurable
+                return new EncryptionBasedSecretService(nameof(Comfyg), options.EncryptionKey);
+            }
+
+            if (!options.UseKeyVault)
+                throw new InvalidOperationException(
+                    "Neither encryption nor Azure Key Vault is configured. Use either ComfygOptions.UseEncryption or ComfygOptions.UseKeyVault to configure secret handling.");
+
+            var storageContext = StorageContextProvider();
+            //TODO make systemId configurable
+            return new KeyVaultSecretService(nameof(Comfyg), provider.GetRequiredService<SecretClient>(),
+                storageContext, provider.GetRequiredService<IChangeService>(),
+                provider.GetRequiredService<IPermissionService>());
         });
 
         return serviceCollection;

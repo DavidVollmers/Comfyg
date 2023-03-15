@@ -155,7 +155,7 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
                 .ReturnsAsync(true);
         });
 
-        await comfygClient.AddConfigurationAsync(new AddConfigurationRequest
+        await comfygClient.AddConfigurationAsync(new AddConfigurationValuesRequest
         {
             ConfigurationValues = configurationValues
         });

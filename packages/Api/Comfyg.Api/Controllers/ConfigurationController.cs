@@ -28,18 +28,19 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetConfigurationResponse>> GetConfigurationAsync()
+    public async Task<ActionResult<GetConfigurationValuesResponse>> GetConfigurationValuesAsync()
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
         var configurationValues = await _configurationService
             .GetConfigurationValuesAsync(clientIdentity.Client.ClientId).ConfigureAwait(false);
 
-        return Ok(new GetConfigurationResponse(configurationValues));
+        return Ok(new GetConfigurationValuesResponse(configurationValues));
     }
 
     [HttpGet("fromDiff")]
-    public async Task<ActionResult<GetConfigurationResponse>> GetConfigurationFromDiffAsync([FromQuery] DateTime since)
+    public async Task<ActionResult<GetConfigurationValuesResponse>> GetConfigurationValuesFromDiffAsync(
+        [FromQuery] DateTime since)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
@@ -58,11 +59,11 @@ public class ConfigurationController : ControllerBase
             configurationValues.Add(configurationValue);
         }
 
-        return Ok(new GetConfigurationResponse(configurationValues));
+        return Ok(new GetConfigurationValuesResponse(configurationValues));
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddConfigurationAsync([FromBody] AddConfigurationRequest request)
+    public async Task<ActionResult> AddConfigurationValuesAsync([FromBody] AddConfigurationValuesRequest request)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
