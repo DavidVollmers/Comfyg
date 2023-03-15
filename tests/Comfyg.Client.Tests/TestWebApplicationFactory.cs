@@ -18,9 +18,11 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
             mock.Value.Reset();
         }
     }
-    
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.ConfigureAppConfiguration(configuration => { configuration.AddJsonFile("appsettings.Test.json"); });
+
         builder.ConfigureTestServices(services =>
         {
             services.AddSingleton<IClientService>(_ => GetMock<IClientService>().Object);
