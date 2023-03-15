@@ -13,10 +13,14 @@ public abstract class SecretServiceBase : ISecretService
     private readonly IChangeService? _changeService;
     private readonly IPermissionService? _permissionService;
 
-    internal SecretServiceBase(string? systemId, IStorageContext storageContext, IChangeService changeService,
-        IPermissionService permissionService)
+    protected string SystemId { get; }
+
+    internal SecretServiceBase(string systemId, IStorageContext? storageContext, IChangeService? changeService,
+        IPermissionService? permissionService)
     {
-        if (systemId == null) return;
+        SystemId = systemId ?? throw new ArgumentNullException(nameof(systemId));
+
+        if (storageContext == null) return;
 
         _storageContext = storageContext ?? throw new ArgumentNullException(nameof(storageContext));
         _changeService = changeService ?? throw new ArgumentNullException(nameof(changeService));

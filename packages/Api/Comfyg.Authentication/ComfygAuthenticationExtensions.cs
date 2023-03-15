@@ -1,4 +1,7 @@
-﻿using Comfyg.Authentication.Abstractions;
+﻿using Azure.Security.KeyVault.Secrets;
+using Comfyg.Authentication.Abstractions;
+using Comfyg.Core.Abstractions.Changes;
+using Comfyg.Core.Abstractions.Permissions;
 using Comfyg.Core.Abstractions.Secrets;
 using Comfyg.Core.Secrets;
 using CoreHelpers.WindowsAzure.Storage.Table;
@@ -33,17 +36,30 @@ public static class ComfygAuthenticationExtensions
             return new StorageContext(options.AzureTableStorageConnectionString);
         }
 
-        ISecretService SecretServiceProvider()
+        ISecretService SecretServiceProvider(IServiceProvider provider)
         {
             var options = OptionsProvider();
-            if (options.EncryptionKey == null)
-                throw new InvalidOperationException("Missing EncryptionKey option.");
-            return new EncryptionBasedSecretService(options.EncryptionKey);
+
+            if (options.EncryptionKey != null)
+            {
+                //TODO make systemId configurable
+                return new EncryptionBasedSecretService(nameof(Authentication), options.EncryptionKey);
+            }
+
+            if (!options.UseKeyVault)
+                throw new InvalidOperationException(
+                    "Neither encryption nor Azure Key Vault is configured. Use either ComfygAuthenticationOptions.UseEncryption or ComfygAuthenticationOptions.UseKeyVault to configure secret handling.");
+
+            var storageContext = StorageContextProvider();
+            //TODO make systemId configurable
+            return new KeyVaultSecretService(nameof(Authentication), provider.GetRequiredService<SecretClient>(),
+                storageContext, provider.GetRequiredService<IChangeService>(),
+                provider.GetRequiredService<IPermissionService>());
         }
 
-        serviceCollection.AddSingleton<IClientService, ClientService>(_ =>
+        serviceCollection.AddSingleton<IClientService, ClientService>(provider =>
         {
-            var secretService = SecretServiceProvider();
+            var secretService = SecretServiceProvider(provider);
             var storageContext = StorageContextProvider();
             return new ClientService(storageContext, secretService);
         });

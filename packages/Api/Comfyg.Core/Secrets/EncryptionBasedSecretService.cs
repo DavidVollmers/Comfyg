@@ -11,7 +11,7 @@ public sealed class EncryptionBasedSecretService : SecretServiceBase
 
     private readonly byte[] _encryptionKey;
 
-    public EncryptionBasedSecretService(string encryptionKey, string systemId = null!,
+    public EncryptionBasedSecretService(string systemId, string encryptionKey,
         IStorageContext storageContext = null!, IChangeService changeService = null!,
         IPermissionService permissionService = null!)
         : base(systemId, storageContext, changeService, permissionService)
