@@ -9,7 +9,7 @@ internal class ComfygConfigurationSource : IConfigurationSource
 
     public ComfygConfigurationSource(Action<ComfygOptions> optionsConfigurator)
     {
-        _optionsConfigurator = optionsConfigurator;
+        _optionsConfigurator = optionsConfigurator ?? throw new ArgumentNullException(nameof(optionsConfigurator));
     }
 
     public IConfigurationProvider Build(IConfigurationBuilder builder)

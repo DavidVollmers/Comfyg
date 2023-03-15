@@ -10,6 +10,8 @@ public partial class ComfygClient
     public async Task<SetupClientResponse> SetupClientAsync(SetupClientRequest request,
         CancellationToken cancellationToken = default)
     {
+        if (request == null) throw new ArgumentNullException(nameof(request));
+        
         var token = CreateToken();
 
         var httpRequest = new HttpRequestMessage(HttpMethod.Post, "setup/client")

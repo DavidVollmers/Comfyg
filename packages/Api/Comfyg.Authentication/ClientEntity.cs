@@ -11,15 +11,4 @@ internal class ClientEntity : IClient
     public string ClientSecret { get; set; } = null!;
 
     public string FriendlyName { get; set; } = null!;
-
-    public ClientEntity()
-    {
-    }
-
-    public ClientEntity(IClient client)
-    {
-        ClientId = client.ClientId;
-        ClientSecret = client.ClientSecret;
-        FriendlyName = client.FriendlyName;
-    }
 }

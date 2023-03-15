@@ -15,8 +15,8 @@ internal class ChangeDetector : IDisposable
 
     public ChangeDetector(ComfygClient client, ITimer timer)
     {
-        _client = client;
-        _timer = timer;
+        _client = client ?? throw new ArgumentNullException(nameof(client));
+        _timer = timer ?? throw new ArgumentNullException(nameof(timer));
 
         _timer.RegisterCallback(DetectChanges);
     }

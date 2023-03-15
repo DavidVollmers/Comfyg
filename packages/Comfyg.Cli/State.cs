@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 
 namespace Comfyg.Cli;
 
@@ -10,17 +11,26 @@ internal class State
 
     private State(string path)
     {
+        if (path == null) throw new ArgumentNullException(nameof(path));
+        
         _directory = new DirectoryInfo(Path.Join(path, ".comfyg"));
     }
 
-    public async Task StoreAsync<T>(string scope, string key, T data, CancellationToken cancellationToken = default)
+    public async Task StoreAsync<T>(string scope, string key, [DisallowNull] T data, CancellationToken cancellationToken = default)
     {
+        if (scope == null) throw new ArgumentNullException(nameof(scope));
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (data == null) throw new ArgumentNullException(nameof(data));
+
         var serializedData = await SerializeAsync(data, cancellationToken).ConfigureAwait(false);
         await StoreAsync(scope, key, serializedData, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<T?> ReadAsync<T>(string scope, string key, CancellationToken cancellationToken = default)
     {
+        if (scope == null) throw new ArgumentNullException(nameof(scope));
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        
         var serializedData = await ReadAsync(scope, key, cancellationToken).ConfigureAwait(false);
         if (serializedData == null) return default;
         return await DeserializeAsync<T>(serializedData, cancellationToken).ConfigureAwait(false);

@@ -10,6 +10,8 @@ internal static class ComfygCommandExtensions
 {
     public static IServiceCollection AddComfygCommands(this IServiceCollection serviceCollection)
     {
+        if (serviceCollection == null) throw new ArgumentNullException(nameof(serviceCollection));
+        
         serviceCollection.AddScoped<Command, ConnectCommand>();
 
         serviceCollection.AddScoped<SetupClientCommand>();

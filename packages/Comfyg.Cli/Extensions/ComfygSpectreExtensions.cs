@@ -7,6 +7,8 @@ internal static class ComfygSpectreExtensions
 {
     public static Table ToTable(this IClient client, string? clientSecret = null)
     {
+        if (client == null) throw new ArgumentNullException(nameof(client));
+        
         var table = new Table();
 
         table.AddColumn(nameof(IClient.ClientId));

@@ -12,8 +12,10 @@ internal class ChangeService : IChangeService
 
     public ChangeService(string systemId, IStorageContext storageContext, IPermissionService permissionService)
     {
-        _storageContext = storageContext;
-        _permissionService = permissionService;
+        if (systemId == null) throw new ArgumentNullException(nameof(systemId));
+        
+        _storageContext = storageContext ?? throw new ArgumentNullException(nameof(storageContext));
+        _permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
 
         _storageContext.AddAttributeMapper<ChangeLogEntity>();
         _storageContext.OverrideTableName<ChangeLogEntity>($"{systemId}{nameof(ChangeLogEntity)}");
@@ -23,6 +25,9 @@ internal class ChangeService : IChangeService
 
     public async Task LogChangeAsync<T>(string targetId, ChangeType changeType, string changedBy)
     {
+        if (targetId == null) throw new ArgumentNullException(nameof(targetId));
+        if (changedBy == null) throw new ArgumentNullException(nameof(changedBy));
+        
         using var context = _storageContext.CreateChildContext();
         context.EnableAutoCreateTable();
 
@@ -59,6 +64,8 @@ internal class ChangeService : IChangeService
 
     public async Task<IEnumerable<IChangeLog>> GetChangesForOwnerAsync<T>(string owner, DateTime since)
     {
+        if (owner == null) throw new ArgumentNullException(nameof(owner));
+        
         var permissions = await _permissionService.GetPermissionsAsync<T>(owner).ConfigureAwait(false);
 
         var changes = await GetChangesSinceAsync<T>(since).ConfigureAwait(false);

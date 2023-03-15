@@ -6,8 +6,8 @@ public sealed class ConfigurationValue : IConfigurationValue
 {
     public ConfigurationValue(string key, string value)
     {
-        Key = key;
-        Value = value;
+        Key = key ?? throw new ArgumentNullException(nameof(key));
+        Value = value ?? throw new ArgumentNullException(nameof(value));
     }
 
     public string Key { get; }

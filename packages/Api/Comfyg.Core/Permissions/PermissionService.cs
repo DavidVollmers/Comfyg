@@ -9,7 +9,9 @@ internal class PermissionService : IPermissionService
 
     public PermissionService(string systemId, IStorageContext storageContext)
     {
-        _storageContext = storageContext;
+        if (systemId == null) throw new ArgumentNullException(nameof(systemId));
+        
+        _storageContext = storageContext ?? throw new ArgumentNullException(nameof(storageContext));
 
         _storageContext.AddAttributeMapper<PermissionEntity>();
         _storageContext.OverrideTableName<PermissionEntity>($"{systemId}{nameof(PermissionEntity)}");
@@ -19,6 +21,9 @@ internal class PermissionService : IPermissionService
 
     public async Task<bool> IsPermittedAsync<T>(string owner, string targetId)
     {
+        if (owner == null) throw new ArgumentNullException(nameof(owner));
+        if (targetId == null) throw new ArgumentNullException(nameof(targetId));
+
         using var context = _storageContext.CreateChildContext();
 
         var partitionKey = $"{typeof(T).FullName}-{targetId}";

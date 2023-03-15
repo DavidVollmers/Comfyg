@@ -16,9 +16,11 @@ internal class ConfigurationService : IConfigurationService
     public ConfigurationService(string systemId, IStorageContext storageContext, IPermissionService permissionService,
         IChangeService changeService)
     {
-        _storageContext = storageContext;
-        _permissionService = permissionService;
-        _changeService = changeService;
+        if (systemId == null) throw new ArgumentNullException(nameof(systemId));
+        
+        _storageContext = storageContext ?? throw new ArgumentNullException(nameof(storageContext));
+        _permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
+        _changeService = changeService ?? throw new ArgumentNullException(nameof(changeService));
 
         _storageContext.AddAttributeMapper<ConfigurationValueEntity>();
         _storageContext.OverrideTableName<ConfigurationValueEntity>($"{systemId}{nameof(ConfigurationValueEntity)}");
@@ -26,6 +28,10 @@ internal class ConfigurationService : IConfigurationService
 
     public async Task AddConfigurationValueAsync(string owner, string key, string value)
     {
+        if (owner == null) throw new ArgumentNullException(nameof(owner));
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (value == null) throw new ArgumentNullException(nameof(value));
+        
         using var context = _storageContext.CreateChildContext();
         context.EnableAutoCreateTable();
 
@@ -46,6 +52,8 @@ internal class ConfigurationService : IConfigurationService
 
     public async Task<IEnumerable<IConfigurationValue>> GetConfigurationValuesAsync(string owner)
     {
+        if (owner == null) throw new ArgumentNullException(nameof(owner));
+        
         using var context = _storageContext.CreateChildContext();
         context.EnableAutoCreateTable();
 
@@ -70,6 +78,9 @@ internal class ConfigurationService : IConfigurationService
     public async Task<IConfigurationValue?> GetConfigurationValueAsync(string key,
         string version = CoreConstants.LatestVersion)
     {
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (version == null) throw new ArgumentNullException(nameof(version));
+        
         using var context = _storageContext.CreateChildContext();
 
         return await context.EnableAutoCreateTable().QueryAsync<ConfigurationValueEntity>(key, version, 1)

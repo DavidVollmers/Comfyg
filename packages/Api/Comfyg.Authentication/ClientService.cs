@@ -37,8 +37,10 @@ internal class ClientService : IClientService
 
         var protectedSecret = await _secretService.ProtectSecretValueAsync(clientSecret).ConfigureAwait(false);
 
-        var clientEntity = new ClientEntity(client)
+        var clientEntity = new ClientEntity
         {
+            ClientId = client.ClientId,
+            FriendlyName = client.FriendlyName,
             ClientSecret = protectedSecret
         };
 

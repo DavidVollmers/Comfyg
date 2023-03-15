@@ -30,13 +30,16 @@ public abstract class SecretServiceBase : ISecretService
         CancellationToken cancellationToken = default)
     {
         if (_storageContext == null) throw new NotImplementedException();
+        if (owner == null) throw new ArgumentNullException(nameof(owner));
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (value == null) throw new ArgumentNullException(nameof(value));
 
         var protectedValue = await ProtectSecretValueAsync(value, cancellationToken).ConfigureAwait(false);
 
         using var context = _storageContext.CreateChildContext();
         context.EnableAutoCreateTable();
 
-        foreach (var version in new[] { CoreConstants.LatestVersion, DateTime.UtcNow.Ticks.ToString() })
+        foreach (var version in new[] {CoreConstants.LatestVersion, DateTime.UtcNow.Ticks.ToString()})
         {
             await context.InsertOrReplaceAsync(new SecretValueEntity
             {
@@ -55,6 +58,7 @@ public abstract class SecretServiceBase : ISecretService
         CancellationToken cancellationToken = default)
     {
         if (_storageContext == null) throw new NotImplementedException();
+        if (owner == null) throw new ArgumentNullException(nameof(owner));
 
         using var context = _storageContext.CreateChildContext();
         context.EnableAutoCreateTable();
@@ -90,6 +94,8 @@ public abstract class SecretServiceBase : ISecretService
         CancellationToken cancellationToken = default)
     {
         if (_storageContext == null) throw new NotImplementedException();
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (version == null) throw new ArgumentNullException(nameof(version));
 
         using var context = _storageContext.CreateChildContext();
 

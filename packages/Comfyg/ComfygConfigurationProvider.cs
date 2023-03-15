@@ -13,7 +13,7 @@ internal class ComfygConfigurationProvider : ConfigurationProvider, IDisposable
 
     public ComfygConfigurationProvider(ComfygClient client, ITimer? timer = null)
     {
-        _client = client;
+        _client = client ?? throw new ArgumentNullException(nameof(client));
 
         if (timer != null)
         {

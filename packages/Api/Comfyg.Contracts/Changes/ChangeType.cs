@@ -2,7 +2,7 @@
 
 public enum ChangeType
 {
+    Unknown,
     Add,
-    Remove,
-    Unknown
+    Remove
 }

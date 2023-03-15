@@ -25,7 +25,8 @@ public sealed partial class ComfygClient : IDisposable
     internal ComfygClient(string connectionString, HttpClient httpClient)
     {
         if (connectionString == null) throw new ArgumentNullException(nameof(connectionString));
-        _httpClient = httpClient;
+        
+        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
         try
         {

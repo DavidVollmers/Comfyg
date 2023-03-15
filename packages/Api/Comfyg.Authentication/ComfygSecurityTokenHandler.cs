@@ -14,13 +14,16 @@ internal class ComfygSecurityTokenHandler : JwtSecurityTokenHandler
 
     public ComfygSecurityTokenHandler(IClientService clientService, IConfiguration configuration)
     {
-        _clientService = clientService;
-        _configuration = configuration;
+        _clientService = clientService ?? throw new ArgumentNullException(nameof(clientService));
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     public override ClaimsPrincipal ValidateToken(string token, TokenValidationParameters validationParameters,
         out SecurityToken validatedToken)
     {
+        if (token == null) throw new ArgumentNullException(nameof(token));
+        if (validationParameters == null) throw new ArgumentNullException(nameof(validationParameters));
+
         var jwt = ReadJwtToken(token);
 
         IClient? client = null;
