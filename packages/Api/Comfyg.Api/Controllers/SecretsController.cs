@@ -13,13 +13,13 @@ namespace Comfyg.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("secrets")]
-public class SecretController : ControllerBase
+public class SecretsController : ControllerBase
 {
     private readonly ISecretService _secretService;
     private readonly IPermissionService _permissionService;
     private readonly IChangeService _changeService;
 
-    public SecretController(ISecretService secretService, IPermissionService permissionService,
+    public SecretsController(ISecretService secretService, IPermissionService permissionService,
         IChangeService changeService)
     {
         _secretService = secretService;
@@ -28,7 +28,7 @@ public class SecretController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetSecretValuesResponse>> GetSecretsAsync()
+    public async Task<ActionResult<GetSecretValuesResponse>> GetSecretValuesAsync()
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
@@ -39,7 +39,7 @@ public class SecretController : ControllerBase
     }
 
     [HttpGet("fromDiff")]
-    public async Task<ActionResult<GetSecretValuesResponse>> GetSecretsFromDiffAsync([FromQuery] DateTime since)
+    public async Task<ActionResult<GetSecretValuesResponse>> GetSecretValuesFromDiffAsync([FromQuery] DateTime since)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
