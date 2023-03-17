@@ -31,9 +31,9 @@ public class AddConfigurationCommand : Command
 
         using var client = await State.User.RequireClientAsync(cancellationToken).ConfigureAwait(false);
 
-        await client.AddConfigurationAsync(new AddConfigurationValuesRequest
+        await client.AddConfigurationValuesAsync(new AddConfigurationValuesRequest
         {
-            ConfigurationValues = new IConfigurationValue[]
+            Values = new IConfigurationValue[]
             {
                 new Client.ConfigurationValue(keyArgument, valueArgument)
             }

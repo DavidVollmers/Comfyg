@@ -3,14 +3,14 @@ using Comfyg.Contracts.Secrets;
 
 namespace Comfyg.Contracts.Responses;
 
-public sealed class GetSecretValuesResponse
+public sealed class GetSecretValuesResponse : GetValuesResponse<ISecretValue>
 {
     [JsonConverter(
         typeof(ContractConverter<IEnumerable<ISecretValue>, IEnumerable<SecretValue>, IEnumerable<IComfygValue>>))]
-    public IEnumerable<ISecretValue> SecretValues { get; }
+    public override IEnumerable<ISecretValue> Values { get; }
 
     public GetSecretValuesResponse(IEnumerable<ISecretValue> secretValues)
     {
-        SecretValues = secretValues ?? throw new ArgumentNullException(nameof(secretValues));
+        Values = secretValues ?? throw new ArgumentNullException(nameof(secretValues));
     }
 }

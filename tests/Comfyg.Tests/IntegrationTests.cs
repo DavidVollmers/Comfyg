@@ -175,8 +175,8 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         {
             // ReSharper disable once AccessToDisposedClosure
             options.Connect(connectionString)
-                .OverrideConfigurationChangeDetectionTimer(timer)
-                .OverrideHttpClient(httpClient);
+                .OverrideHttpClient(httpClient)
+                .Configuration.OverrideChangeDetectionTimer(timer);
         });
 
         var configuration = configurationBuilder.Build();

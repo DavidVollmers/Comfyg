@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Comfyg.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace Comfyg;
 

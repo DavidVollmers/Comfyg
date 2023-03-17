@@ -7,52 +7,52 @@ namespace Comfyg.Client;
 
 public partial class ComfygClient
 {
-    public async Task<GetConfigurationValuesResponse> GetConfigurationValuesAsync(
+    public async Task<GetSecretValuesResponse> GetSecretValuesAsync(
         CancellationToken cancellationToken = default)
     {
         var token = CreateToken();
 
-        var httpRequest = new HttpRequestMessage(HttpMethod.Get, "configuration");
+        var httpRequest = new HttpRequestMessage(HttpMethod.Get, "secrets");
         httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException("Invalid status code when trying to get configuration values.", null,
+            throw new HttpRequestException("Invalid status code when trying to get secret values.", null,
                 response.StatusCode);
 
         return (await response.Content
-            .ReadFromJsonAsync<GetConfigurationValuesResponse>(cancellationToken: cancellationToken)
+            .ReadFromJsonAsync<GetSecretValuesResponse>(cancellationToken: cancellationToken)
             .ConfigureAwait(false))!;
     }
 
-    public async Task<GetConfigurationValuesResponse> GetConfigurationValuesFromDiffAsync(DateTime since,
+    public async Task<GetSecretValuesResponse> GetSecretValuesFromDiffAsync(DateTime since,
         CancellationToken cancellationToken = default)
     {
         var token = CreateToken();
 
-        var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"configuration/fromDiff?since={since:s}");
+        var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"secrets/fromDiff?since={since:s}");
         httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException("Invalid status code when trying to get configuration values from diff.",
+            throw new HttpRequestException("Invalid status code when trying to get secret values from diff.",
                 null, response.StatusCode);
 
         return (await response.Content
-            .ReadFromJsonAsync<GetConfigurationValuesResponse>(cancellationToken: cancellationToken)
+            .ReadFromJsonAsync<GetSecretValuesResponse>(cancellationToken: cancellationToken)
             .ConfigureAwait(false))!;
     }
 
-    public async Task AddConfigurationValuesAsync(AddConfigurationValuesRequest request,
+    public async Task AddSecretValuesAsync(AddSecretValuesRequest request,
         CancellationToken cancellationToken = default)
     {
         if (request == null) throw new ArgumentNullException(nameof(request));
 
         var token = CreateToken();
 
-        var httpRequest = new HttpRequestMessage(HttpMethod.Post, "configuration")
+        var httpRequest = new HttpRequestMessage(HttpMethod.Post, "secrets")
         {
             Content = JsonContent.Create(request)
         };
@@ -61,7 +61,7 @@ public partial class ComfygClient
         var response = await _httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException("Invalid status code when trying to add configuration values.", null,
+            throw new HttpRequestException("Invalid status code when trying to add secret values.", null,
                 response.StatusCode);
     }
 }

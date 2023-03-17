@@ -3,15 +3,15 @@ using Comfyg.Contracts.Configuration;
 
 namespace Comfyg.Contracts.Responses;
 
-public sealed class GetConfigurationValuesResponse
+public sealed class GetConfigurationValuesResponse : GetValuesResponse<IConfigurationValue>
 {
     [JsonConverter(
         typeof(ContractConverter<IEnumerable<IConfigurationValue>, IEnumerable<ConfigurationValue>,
             IEnumerable<IComfygValue>>))]
-    public IEnumerable<IConfigurationValue> ConfigurationValues { get; }
+    public override IEnumerable<IConfigurationValue> Values { get; }
 
-    public GetConfigurationValuesResponse(IEnumerable<IConfigurationValue> configurationValues)
+    public GetConfigurationValuesResponse(IEnumerable<IConfigurationValue> values)
     {
-        ConfigurationValues = configurationValues ?? throw new ArgumentNullException(nameof(configurationValues));
+        Values = values ?? throw new ArgumentNullException(nameof(values));
     }
 }

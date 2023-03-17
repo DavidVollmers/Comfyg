@@ -1,9 +1,9 @@
 ﻿using Comfyg.Client;
 using Microsoft.Extensions.Configuration;
 
-namespace Comfyg;
+namespace Comfyg.Configuration;
 
-internal class ComfygConfigurationSource : IConfigurationSource
+internal class ComfygConfigurationSource<T> : IConfigurationSource
 {
     private readonly Action<ComfygOptions> _optionsConfigurator;
 
@@ -22,6 +22,6 @@ internal class ComfygConfigurationSource : IConfigurationSource
         var client = options.HttpClient == null
             ? new ComfygClient(options.ConnectionString)
             : new ComfygClient(options.ConnectionString, options.HttpClient);
-        return new ComfygConfigurationProvider(client, options.ConfigurationChangeDetectionTimer);
+        return new ComfygConfigurationProvider(client, options.Configuration.ChangeDetectionTimer);
     }
 }

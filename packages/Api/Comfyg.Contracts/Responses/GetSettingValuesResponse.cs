@@ -3,14 +3,14 @@ using Comfyg.Contracts.Settings;
 
 namespace Comfyg.Contracts.Responses;
 
-public class GetSettingValuesResponse
+public class GetSettingValuesResponse : GetValuesResponse<ISettingValue>
 {
     [JsonConverter(
         typeof(ContractConverter<IEnumerable<ISettingValue>, IEnumerable<SettingValue>, IEnumerable<IComfygValue>>))]
-    public IEnumerable<ISettingValue> SettingValues { get; }
+    public override IEnumerable<ISettingValue> Values { get; }
 
     public GetSettingValuesResponse(IEnumerable<ISettingValue> settingValues)
     {
-        SettingValues = settingValues ?? throw new ArgumentNullException(nameof(settingValues));
+        Values = settingValues ?? throw new ArgumentNullException(nameof(settingValues));
     }
 }

@@ -65,7 +65,7 @@ public class SecretsController : ControllerBase
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        foreach (var secretValue in request.SecretValues)
+        foreach (var secretValue in request.Values)
         {
             var isPermitted = await _permissionService
                 .IsPermittedAsync<ISecretValue>(clientIdentity.Client.ClientId, secretValue.Key)
@@ -73,7 +73,7 @@ public class SecretsController : ControllerBase
             if (!isPermitted) return Forbid();
         }
 
-        foreach (var secretValue in request.SecretValues)
+        foreach (var secretValue in request.Values)
         {
             await _secretService
                 .AddSecretValueAsync(clientIdentity.Client.ClientId, secretValue.Key, secretValue.Value)

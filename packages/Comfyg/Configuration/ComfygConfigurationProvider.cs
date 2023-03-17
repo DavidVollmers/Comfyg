@@ -4,7 +4,7 @@ using Comfyg.Timing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 
-namespace Comfyg;
+namespace Comfyg.Configuration;
 
 internal class ComfygConfigurationProvider : ConfigurationProvider, IDisposable
 {
@@ -15,23 +15,21 @@ internal class ComfygConfigurationProvider : ConfigurationProvider, IDisposable
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
 
-        if (timer != null)
-        {
-            _changeDetector = new ChangeDetector(client, timer);
-            ChangeToken.OnChange(_changeDetector.GetChangeToken, () => { LoadDiff(_changeDetector.LastDetectionAt); });
-        }
+        if (timer == null) return;
+        _changeDetector = new ChangeDetector(client, timer);
+        ChangeToken.OnChange(_changeDetector.GetChangeToken, () => { LoadDiff(_changeDetector.LastDetectionAt); });
     }
 
     public override void Load()
     {
-        var result = _client.GetConfigurationAsync().GetAwaiter().GetResult();
-        SetData(result.ConfigurationValues);
+        var result = _client.GetConfigurationValuesAsync().GetAwaiter().GetResult();
+        SetData(result.Values);
     }
 
     private void LoadDiff(DateTime since)
     {
-        var result = _client.GetConfigurationFromDiffAsync(since).GetAwaiter().GetResult();
-        SetData(result.ConfigurationValues, false);
+        var result = _client.GetConfigurationValuesFromDiffAsync(since).GetAwaiter().GetResult();
+        SetData(result.Values, false);
     }
 
     private void SetData(IEnumerable<IComfygValue> values, bool reset = true)
