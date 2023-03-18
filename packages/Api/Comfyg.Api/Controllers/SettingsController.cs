@@ -65,7 +65,7 @@ public class SettingsController : ControllerBase
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        foreach (var settingValue in request.SettingValues)
+        foreach (var settingValue in request.Values)
         {
             var isPermitted = await _permissionService
                 .IsPermittedAsync<ISettingValue>(clientIdentity.Client.ClientId, settingValue.Key)
@@ -73,7 +73,7 @@ public class SettingsController : ControllerBase
             if (!isPermitted) return Forbid();
         }
 
-        foreach (var settingValue in request.SettingValues)
+        foreach (var settingValue in request.Values)
         {
             await _settingService
                 .AddSettingValueAsync(clientIdentity.Client.ClientId, settingValue.Key, settingValue.Value)

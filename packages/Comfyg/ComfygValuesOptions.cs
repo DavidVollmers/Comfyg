@@ -2,7 +2,7 @@
 
 namespace Comfyg;
 
-public abstract class ComfygValuesOptions<T> where T : ComfygValuesOptions<T>
+public sealed class ComfygValuesOptions
 {
     internal TimeSpan? ChangeDetectionInterval { get; private set; }
 
@@ -17,19 +17,19 @@ public abstract class ComfygValuesOptions<T> where T : ComfygValuesOptions<T>
         }
     }
 
-    internal ComfygValuesOptions()
+    internal ComfygValuesOptions(TimeSpan? defaultChangeDetectionInterval = null)
     {
     }
 
-    public T DetectChanges(TimeSpan interval)
+    public ComfygValuesOptions DetectChanges(TimeSpan interval)
     {
         ChangeDetectionInterval = interval;
-        return (T)this;
+        return this;
     }
 
-    internal T OverrideChangeDetectionTimer(ITimer timer)
+    internal ComfygValuesOptions OverrideChangeDetectionTimer(ITimer timer)
     {
         ChangeDetectionTimerOverride = timer ?? throw new ArgumentNullException(nameof(timer));
-        return (T)this;
+        return this;
     }
 }

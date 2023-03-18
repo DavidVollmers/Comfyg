@@ -1,38 +1,38 @@
-﻿using Comfyg.Client;
+﻿using Comfyg.Client.Operations;
 using Comfyg.Contracts;
 using Comfyg.Timing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 
-namespace Comfyg.Configuration;
+namespace Comfyg;
 
-internal class ComfygConfigurationProvider : ConfigurationProvider, IDisposable
+internal class ComfygProvider<T> : ConfigurationProvider, IDisposable where T : IComfygValue
 {
-    private readonly ComfygClient _client;
-    private readonly ChangeDetector? _changeDetector;
+    private readonly IComfygValuesOperations<T> _operations;
+    private readonly ChangeDetector<T>? _changeDetector;
 
-    public ComfygConfigurationProvider(ComfygClient client, ITimer? timer = null)
+    public ComfygProvider(IComfygValuesOperations<T> operations, ITimer? timer = null)
     {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
+        _operations = operations ?? throw new ArgumentNullException(nameof(operations));
 
         if (timer == null) return;
-        _changeDetector = new ChangeDetector(client, timer);
+        _changeDetector = new ChangeDetector<T>(_operations, timer);
         ChangeToken.OnChange(_changeDetector.GetChangeToken, () => { LoadDiff(_changeDetector.LastDetectionAt); });
     }
 
     public override void Load()
     {
-        var result = _client.GetConfigurationValuesAsync().GetAwaiter().GetResult();
+        var result = _operations.GetValuesAsync().GetAwaiter().GetResult();
         SetData(result.Values);
     }
 
     private void LoadDiff(DateTime since)
     {
-        var result = _client.GetConfigurationValuesFromDiffAsync(since).GetAwaiter().GetResult();
+        var result = _operations.GetValuesFromDiffAsync(since).GetAwaiter().GetResult();
         SetData(result.Values, false);
     }
 
-    private void SetData(IEnumerable<IComfygValue> values, bool reset = true)
+    private void SetData(IEnumerable<T> values, bool reset = true)
     {
         if (reset)
         {
@@ -50,6 +50,6 @@ internal class ComfygConfigurationProvider : ConfigurationProvider, IDisposable
     public void Dispose()
     {
         _changeDetector?.Dispose();
-        _client.Dispose();
+        _operations.Dispose();
     }
 }
