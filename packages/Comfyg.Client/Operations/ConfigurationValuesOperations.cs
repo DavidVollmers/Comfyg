@@ -53,7 +53,7 @@ internal class ConfigurationValuesOperations : IComfygValuesOperations<IConfigur
 
         var response = await _client.SendRequestAsync(new HttpRequestMessage(HttpMethod.Post, "configuration")
         {
-            Content = JsonContent.Create(request)
+            Content = JsonContent.Create((AddConfigurationValuesRequest) request)
         }, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)

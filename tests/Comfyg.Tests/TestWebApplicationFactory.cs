@@ -1,7 +1,10 @@
 ﻿using Comfyg.Authentication.Abstractions;
+using Comfyg.Contracts.Settings;
 using Comfyg.Core.Abstractions.Changes;
 using Comfyg.Core.Abstractions.Configuration;
 using Comfyg.Core.Abstractions.Permissions;
+using Comfyg.Core.Abstractions.Secrets;
+using Comfyg.Core.Abstractions.Settings;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Moq;
@@ -28,6 +31,8 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         {
             services.AddSingleton<IClientService>(_ => GetMock<IClientService>().Object);
             services.AddSingleton<IConfigurationService>(_ => GetMock<IConfigurationService>().Object);
+            services.AddSingleton<ISettingService>(_ => GetMock<ISettingService>().Object);
+            services.AddSingleton<ISecretService>(_ => GetMock<ISecretService>().Object);
             services.AddSingleton<IChangeService>(_ => GetMock<IChangeService>().Object);
         });
     }

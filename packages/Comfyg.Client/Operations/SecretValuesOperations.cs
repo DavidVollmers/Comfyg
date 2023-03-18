@@ -52,7 +52,7 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
 
         var response = await _client.SendRequestAsync(new HttpRequestMessage(HttpMethod.Post, "secrets")
         {
-            Content = JsonContent.Create(request)
+            Content = JsonContent.Create((AddSecretValuesRequest) request)
         }, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)

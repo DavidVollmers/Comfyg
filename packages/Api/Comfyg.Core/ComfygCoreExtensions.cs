@@ -3,10 +3,12 @@ using Comfyg.Core.Abstractions.Changes;
 using Comfyg.Core.Abstractions.Configuration;
 using Comfyg.Core.Abstractions.Permissions;
 using Comfyg.Core.Abstractions.Secrets;
+using Comfyg.Core.Abstractions.Settings;
 using Comfyg.Core.Changes;
 using Comfyg.Core.Configuration;
 using Comfyg.Core.Permissions;
 using Comfyg.Core.Secrets;
+using Comfyg.Core.Settings;
 using CoreHelpers.WindowsAzure.Storage.Table;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -54,6 +56,15 @@ public static class ComfygCoreExtensions
             var storageContext = StorageContextProvider();
             //TODO make systemId configurable
             return new ConfigurationService(nameof(Comfyg), storageContext,
+                provider.GetRequiredService<IPermissionService>(),
+                provider.GetRequiredService<IChangeService>());
+        });
+
+        serviceCollection.AddScoped<ISettingService, SettingService>(provider =>
+        {
+            var storageContext = StorageContextProvider();
+            //TODO make systemId configurable
+            return new SettingService(nameof(Comfyg), storageContext,
                 provider.GetRequiredService<IPermissionService>(),
                 provider.GetRequiredService<IChangeService>());
         });
