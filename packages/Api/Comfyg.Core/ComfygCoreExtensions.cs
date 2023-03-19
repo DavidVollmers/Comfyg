@@ -1,9 +1,11 @@
 ﻿using Azure.Security.KeyVault.Secrets;
+using Comfyg.Contracts.Configuration;
+using Comfyg.Contracts.Secrets;
+using Comfyg.Contracts.Settings;
+using Comfyg.Core.Abstractions;
 using Comfyg.Core.Abstractions.Changes;
-using Comfyg.Core.Abstractions.Configuration;
 using Comfyg.Core.Abstractions.Permissions;
 using Comfyg.Core.Abstractions.Secrets;
-using Comfyg.Core.Abstractions.Settings;
 using Comfyg.Core.Changes;
 using Comfyg.Core.Configuration;
 using Comfyg.Core.Permissions;
@@ -37,48 +39,50 @@ public static class ComfygCoreExtensions
             return new StorageContext(options.AzureTableStorageConnectionString);
         }
 
-        serviceCollection.AddScoped<IChangeService, ChangeService>(provider =>
-        {
-            var storageContext = StorageContextProvider();
+        serviceCollection.AddScoped<IChangeService, ChangeService>(provider => new ChangeService(
             //TODO make systemId configurable
-            return new ChangeService(nameof(Comfyg), storageContext, provider.GetRequiredService<IPermissionService>());
-        });
+            nameof(Comfyg),
+            StorageContextProvider(),
+            provider.GetRequiredService<IPermissionService>()));
 
         serviceCollection.AddScoped<IPermissionService, PermissionService>(_ =>
-        {
-            var storageContext = StorageContextProvider();
-            //TODO make systemId configurable
-            return new PermissionService(nameof(Comfyg), storageContext);
-        });
+            new PermissionService(
+                //TODO make systemId configurable
+                nameof(Comfyg),
+                StorageContextProvider()));
 
-        serviceCollection.AddScoped<IConfigurationService, ConfigurationService>(provider =>
-        {
-            var storageContext = StorageContextProvider();
-            //TODO make systemId configurable
-            return new ConfigurationService(nameof(Comfyg), storageContext,
-                provider.GetRequiredService<IPermissionService>(),
-                provider.GetRequiredService<IChangeService>());
-        });
+        serviceCollection
+            .AddScoped<IValueService<IConfigurationValue>, ValueService<IConfigurationValue, ConfigurationValueEntity>>(
+                provider => new ValueService<IConfigurationValue, ConfigurationValueEntity>(
+                    //TODO make systemId configurable
+                    nameof(Comfyg),
+                    StorageContextProvider(),
+                    provider.GetRequiredService<IPermissionService>(),
+                    provider.GetRequiredService<IChangeService>()));
 
-        serviceCollection.AddScoped<ISettingService, SettingService>(provider =>
-        {
-            var storageContext = StorageContextProvider();
-            //TODO make systemId configurable
-            return new SettingService(nameof(Comfyg), storageContext,
+        serviceCollection.AddScoped<IValueService<ISettingValue>, ValueService<ISettingValue, SettingValueEntity>>(
+            provider => new ValueService<ISettingValue, SettingValueEntity>(
+                //TODO make systemId configurable
+                nameof(Comfyg),
+                StorageContextProvider(),
                 provider.GetRequiredService<IPermissionService>(),
-                provider.GetRequiredService<IChangeService>());
-        });
+                provider.GetRequiredService<IChangeService>()));
+
+        serviceCollection.AddScoped<IValueService<ISecretValue>, ValueService<ISecretValue, SecretValueEntity>>(
+            provider => new ValueService<ISecretValue, SecretValueEntity>(
+                //TODO make systemId configurable
+                nameof(Comfyg),
+                StorageContextProvider(),
+                provider.GetRequiredService<IPermissionService>(),
+                provider.GetRequiredService<IChangeService>()));
 
         serviceCollection.AddScoped<ISecretService>(provider =>
         {
             var options = OptionsProvider();
-            var storageContext = StorageContextProvider();
 
             if (options.EncryptionKey != null)
             {
-                //TODO make systemId configurable
-                return new EncryptionBasedSecretService(nameof(Comfyg), options.EncryptionKey, storageContext,
-                    provider.GetRequiredService<IChangeService>(), provider.GetRequiredService<IPermissionService>());
+                return new EncryptionBasedSecretService(options.EncryptionKey);
             }
 
             if (!options.UseKeyVault)
@@ -86,9 +90,7 @@ public static class ComfygCoreExtensions
                     "Neither encryption nor Azure Key Vault is configured. Use either ComfygOptions.UseEncryption or ComfygOptions.UseKeyVault to configure secret handling.");
 
             //TODO make systemId configurable
-            return new KeyVaultSecretService(nameof(Comfyg), provider.GetRequiredService<SecretClient>(),
-                storageContext, provider.GetRequiredService<IChangeService>(),
-                provider.GetRequiredService<IPermissionService>());
+            return new KeyVaultSecretService(nameof(Comfyg), provider.GetRequiredService<SecretClient>());
         });
 
         return serviceCollection;

@@ -4,7 +4,7 @@ using CoreHelpers.WindowsAzure.Storage.Table.Attributes;
 namespace Comfyg.Core.Settings;
 
 [Storable(nameof(SettingValueEntity))]
-internal class SettingValueEntity : ISettingValue
+internal class SettingValueEntity : ISettingValue, ISerializableComfygValue
 {
     [PartitionKey] public string Key { get; set; } = null!;
 

@@ -4,7 +4,7 @@ using CoreHelpers.WindowsAzure.Storage.Table.Attributes;
 namespace Comfyg.Core.Secrets;
 
 [Storable(nameof(SecretValueEntity))]
-internal class SecretValueEntity : ISecretValue
+internal class SecretValueEntity : ISecretValue, ISerializableComfygValue
 {
     [PartitionKey] public string Key { get; set; } = null!;
 

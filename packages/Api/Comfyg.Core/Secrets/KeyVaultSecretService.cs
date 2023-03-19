@@ -1,26 +1,23 @@
 ﻿using Azure.Security.KeyVault.Secrets;
-using Comfyg.Core.Abstractions.Changes;
-using Comfyg.Core.Abstractions.Permissions;
-using CoreHelpers.WindowsAzure.Storage.Table;
+using Comfyg.Core.Abstractions.Secrets;
 
 namespace Comfyg.Core.Secrets;
 
-public sealed class KeyVaultSecretService : SecretServiceBase
+public sealed class KeyVaultSecretService : ISecretService
 {
     private const string SecretNameDelimiter = "--";
     private const int MaxSecretNameGenerationTries = 10;
 
+    private readonly string _systemId;
     private readonly SecretClient _client;
 
-    public KeyVaultSecretService(string systemId, SecretClient client, IStorageContext storageContext,
-        IChangeService changeService, IPermissionService permissionService)
-        : base(systemId, storageContext, changeService, permissionService)
+    public KeyVaultSecretService(string systemId, SecretClient client)
     {
+        _systemId = systemId ?? throw new ArgumentNullException(nameof(systemId));
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public override async Task<string> ProtectSecretValueAsync(string value,
-        CancellationToken cancellationToken = default)
+    public async Task<string> ProtectSecretValueAsync(string value, CancellationToken cancellationToken = default)
     {
         if (value == null) throw new ArgumentNullException(nameof(value));
 
@@ -28,7 +25,7 @@ public sealed class KeyVaultSecretService : SecretServiceBase
         var tries = 0;
         do
         {
-            name = $"{SystemId}{SecretNameDelimiter}{Guid.NewGuid()}";
+            name = $"{_systemId}{SecretNameDelimiter}{Guid.NewGuid()}";
 
             var existing = await _client.GetSecretAsync(name, cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
@@ -44,16 +41,15 @@ public sealed class KeyVaultSecretService : SecretServiceBase
         return name + SecretNameDelimiter + result.Value.Properties.Version;
     }
 
-    public override async Task<string> UnprotectSecretValueAsync(string value,
-        CancellationToken cancellationToken = default)
+    public async Task<string> UnprotectSecretValueAsync(string value, CancellationToken cancellationToken = default)
     {
         if (value == null) throw new ArgumentNullException(nameof(value));
 
         var parts = value.Split(SecretNameDelimiter);
-        if (parts.Length != 3 || parts[0] != SystemId || !Guid.TryParse(parts[1], out var guid))
+        if (parts.Length != 3 || parts[0] != _systemId || !Guid.TryParse(parts[1], out var guid))
             throw new InvalidOperationException("Value is no key vault secret from this system.");
 
-        var name = $"{SystemId}{SecretNameDelimiter}{guid}";
+        var name = $"{_systemId}{SecretNameDelimiter}{guid}";
 
         var result = await _client.GetSecretAsync(name, parts[2], cancellationToken: cancellationToken)
             .ConfigureAwait(false);

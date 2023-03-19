@@ -46,3 +46,4 @@ comfyg export config export.json
 - Move TechnicalIdentifierAttribute to CoreHelpers
 - Support other authentication methods (Azure.Identity)
 - StoreAsJsonObject for PK or RK (virtual)
+- Consistent type constraints

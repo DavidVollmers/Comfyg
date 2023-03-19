@@ -3,7 +3,6 @@ using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Requests;
 using Comfyg.Contracts.Responses;
 using Comfyg.Core.Abstractions.Changes;
-using Comfyg.Core.Abstractions.Configuration;
 using Comfyg.Core.Abstractions.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

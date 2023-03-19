@@ -1,7 +1,5 @@
 ﻿using Azure.Security.KeyVault.Secrets;
 using Comfyg.Authentication.Abstractions;
-using Comfyg.Core.Abstractions.Changes;
-using Comfyg.Core.Abstractions.Permissions;
 using Comfyg.Core.Abstractions.Secrets;
 using Comfyg.Core.Secrets;
 using CoreHelpers.WindowsAzure.Storage.Table;
@@ -42,27 +40,19 @@ public static class ComfygAuthenticationExtensions
 
             if (options.EncryptionKey != null)
             {
-                //TODO make systemId configurable
-                return new EncryptionBasedSecretService(nameof(Authentication), options.EncryptionKey);
+                return new EncryptionBasedSecretService(options.EncryptionKey);
             }
 
             if (!options.UseKeyVault)
                 throw new InvalidOperationException(
                     "Neither encryption nor Azure Key Vault is configured. Use either ComfygAuthenticationOptions.UseEncryption or ComfygAuthenticationOptions.UseKeyVault to configure secret handling.");
 
-            var storageContext = StorageContextProvider();
-            //TODO make systemId configurable
-            return new KeyVaultSecretService(nameof(Authentication), provider.GetRequiredService<SecretClient>(),
-                storageContext, provider.GetRequiredService<IChangeService>(),
-                provider.GetRequiredService<IPermissionService>());
+            return new KeyVaultSecretService(nameof(Comfyg) + nameof(Authentication),
+                provider.GetRequiredService<SecretClient>());
         }
 
         serviceCollection.AddSingleton<IClientService, ClientService>(provider =>
-        {
-            var secretService = SecretServiceProvider(provider);
-            var storageContext = StorageContextProvider();
-            return new ClientService(storageContext, secretService);
-        });
+            new ClientService(StorageContextProvider(), SecretServiceProvider(provider)));
 
         serviceCollection.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, ComfygJwtBearerOptions>();
         serviceCollection.AddSingleton<ComfygSecurityTokenHandler>();
