@@ -44,6 +44,6 @@ internal class SetupClientCommand : Command
 
         AnsiConsole.WriteLine("You can connect with this client using the following connection string:");
         AnsiConsole.MarkupLine(
-            $"[bold]Endpoint={client.EndpointUrl};ClientId={result.Client.ClientId};ClientSecret={result.Client.ClientSecret};[/]");
+            $"[bold]Endpoint={client.EndpointUrl};ClientId={result.Client.ClientId};ClientSecret={result.ClientSecret};[/]");
     }
 }

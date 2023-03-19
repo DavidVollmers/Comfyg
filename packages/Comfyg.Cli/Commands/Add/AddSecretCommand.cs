@@ -3,7 +3,7 @@ using System.CommandLine.Invocation;
 using Comfyg.Cli.Extensions;
 using Comfyg.Client;
 using Comfyg.Contracts.Requests;
-using Comfyg.Contracts.Settings;
+using Comfyg.Contracts.Secrets;
 
 namespace Comfyg.Cli.Commands.Add;
 
@@ -14,10 +14,10 @@ public class AddSecretCommand : Command
 
     public AddSecretCommand() : base("secret", "Adds a secret value on the connected Comfyg endpoint")
     {
-        _keyArgument = new Argument<string>("key", "The key of the setting value");
+        _keyArgument = new Argument<string>("key", "The key of the secret value");
         AddArgument(_keyArgument);
 
-        _valueArgument = new Argument<string>("value", "The setting value");
+        _valueArgument = new Argument<string>("value", "The secret value");
         AddArgument(_valueArgument);
 
         this.SetHandler(HandleCommandAsync);
@@ -32,11 +32,11 @@ public class AddSecretCommand : Command
 
         using var client = await State.User.RequireClientAsync(cancellationToken).ConfigureAwait(false);
 
-        await client.Settings.AddValuesAsync(new AddSettingValuesRequest
+        await client.Secrets.AddValuesAsync(new AddSecretValuesRequest
         {
-            Values = new ISettingValue[]
+            Values = new ISecretValue[]
             {
-                new SettingValue(keyArgument, valueArgument)
+                new SecretValue(keyArgument, valueArgument)
             }
         }, cancellationToken).ConfigureAwait(false);
     }
