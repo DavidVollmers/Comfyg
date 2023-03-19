@@ -22,32 +22,34 @@ public class ConfigurationController : ValueControllerBase<IConfigurationValue>
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetConfigurationValuesResponse>> GetConfigurationValuesAsync()
+    public async Task<ActionResult<GetConfigurationValuesResponse>> GetConfigurationValuesAsync(
+        CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var configurationValues = await GetValuesAsync(clientIdentity).ConfigureAwait(false);
+        var values = await GetValuesAsync(clientIdentity, cancellationToken).ConfigureAwait(false);
 
-        return Ok(new GetConfigurationValuesResponse(configurationValues));
+        return Ok(new GetConfigurationValuesResponse(values));
     }
 
     [HttpGet("fromDiff")]
     public async Task<ActionResult<GetConfigurationValuesResponse>> GetConfigurationValuesFromDiffAsync(
-        [FromQuery] DateTime since)
+        [FromQuery] DateTime since, CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var configurationValues = await GetValuesFromDiffAsync(clientIdentity, since).ConfigureAwait(false);
+        var values = await GetValuesFromDiffAsync(clientIdentity, since, cancellationToken).ConfigureAwait(false);
 
-        return Ok(new GetConfigurationValuesResponse(configurationValues));
+        return Ok(new GetConfigurationValuesResponse(values));
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddConfigurationValuesAsync([FromBody] AddConfigurationValuesRequest request)
+    public async Task<ActionResult> AddConfigurationValuesAsync([FromBody] AddConfigurationValuesRequest request,
+        CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var result = await AddValuesAsync(clientIdentity, request.Values).ConfigureAwait(false);
+        var result = await AddValuesAsync(clientIdentity, request.Values, cancellationToken).ConfigureAwait(false);
 
         if (!result) return Forbid();
 

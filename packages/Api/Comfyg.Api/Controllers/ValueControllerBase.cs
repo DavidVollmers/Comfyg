@@ -21,12 +21,26 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         _changeService = changeService;
     }
 
-    protected async Task<IEnumerable<T>> GetValuesAsync(IClientIdentity clientIdentity)
+    protected async Task<IEnumerable<T>> GetValuesAsync(IClientIdentity clientIdentity,
+        CancellationToken cancellationToken)
     {
-        return await _valueService.GetValuesAsync(clientIdentity.Client.ClientId).ConfigureAwait(false);
+        var values = await _valueService.GetValuesAsync(clientIdentity.Client.ClientId).ConfigureAwait(false);
+
+        var convertedValues = new List<T>();
+        foreach (var value in values)
+        {
+            var convertedValue = await ConvertValueFromAsync(value, cancellationToken).ConfigureAwait(false);
+
+            if (convertedValue == null) continue;
+
+            convertedValues.Add(convertedValue);
+        }
+
+        return convertedValues;
     }
 
-    protected async Task<IEnumerable<T>> GetValuesFromDiffAsync(IClientIdentity clientIdentity, DateTime since)
+    protected async Task<IEnumerable<T>> GetValuesFromDiffAsync(IClientIdentity clientIdentity, DateTime since,
+        CancellationToken cancellationToken)
     {
         var changes = await _changeService
             .GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since.ToUniversalTime())
@@ -39,13 +53,18 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
 
             if (value == null) continue;
 
-            values.Add(value);
+            var convertedValue = await ConvertValueFromAsync(value, cancellationToken).ConfigureAwait(false);
+
+            if (convertedValue == null) continue;
+
+            values.Add(convertedValue);
         }
 
         return values;
     }
 
-    protected async Task<bool> AddValuesAsync(IClientIdentity clientIdentity, IEnumerable<T> values)
+    protected async Task<bool> AddValuesAsync(IClientIdentity clientIdentity, IEnumerable<T> values,
+        CancellationToken cancellationToken)
     {
         var comfygValues = values as T[] ?? values.ToArray();
 
@@ -59,11 +78,25 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
 
         foreach (var value in comfygValues)
         {
+            var convertedValue = await ConvertValueToAsync(value, cancellationToken).ConfigureAwait(false);
+
+            if (convertedValue == null) continue;
+
             await _valueService
-                .AddValueAsync(clientIdentity.Client.ClientId, value.Key, value.Value)
+                .AddValueAsync(clientIdentity.Client.ClientId, convertedValue.Key, convertedValue.Value)
                 .ConfigureAwait(false);
         }
 
         return true;
+    }
+
+    protected virtual Task<T?> ConvertValueToAsync(T value, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(value)!;
+    }
+
+    protected virtual Task<T?> ConvertValueFromAsync(T value, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(value)!;
     }
 }

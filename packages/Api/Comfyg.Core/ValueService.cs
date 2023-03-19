@@ -28,8 +28,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         _storageContext.OverrideTableName<TEntity>($"{systemId}{nameof(TEntity)}");
     }
 
-    public async Task AddValueAsync(string owner, string key, string value,
-        CancellationToken cancellationToken = default)
+    public async Task AddValueAsync(string owner, string key, string value)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
         if (key == null) throw new ArgumentNullException(nameof(key));
@@ -54,7 +53,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         await _permissionService.SetPermissionAsync<TValue>(owner, key).ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<TValue>> GetValuesAsync(string owner, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<TValue>> GetValuesAsync(string owner)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
 
@@ -78,8 +77,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         return values;
     }
 
-    public async Task<TValue?> GetValueAsync(string key, string version = CoreConstants.LatestVersion,
-        CancellationToken cancellationToken = default)
+    public async Task<TValue?> GetValueAsync(string key, string version = CoreConstants.LatestVersion)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (version == null) throw new ArgumentNullException(nameof(version));
