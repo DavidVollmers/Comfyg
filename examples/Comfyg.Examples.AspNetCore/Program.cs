@@ -7,11 +7,7 @@ if (builder.Environment.IsDevelopment())
     builder.Configuration.AddUserSecrets<Program>();
 }
 
-builder.Configuration.AddComfyg(options =>
-{
-    var connectionString = builder.Configuration["ComfygConnectionString"]!;
-    options.Connect(connectionString);
-});
+builder.Configuration.AddComfyg(options => { options.Connect(builder.Configuration["ComfygConnectionString"]!); });
 
 var app = builder.Build();
 

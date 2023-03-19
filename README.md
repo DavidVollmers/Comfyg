@@ -8,31 +8,55 @@ TODO
 
 ### Setup & Configure your Comfyg API
 
+#### Local setup
+
+```shell
+dotnet comfyg setup localhost
+```
+
+#### Docker Image
+
 TODO
 
 ### Create your first client
 
 ```shell
-comfyg connect "YOUR_SYSTEM_CLIENT" "YOUR_SYSTEM_CLIENT_SECRET"
-comfyg setup client "CLIENT_ID" "CLIENT_SECRET"
+dotnet comfyg connect "CONNECTION_STRING"
+dotnet comfyg setup client "CLIENT_ID" "CLIENT_SECRET"
+```
+
+### Create your Comfyg
+
+```shell
+dotnet comfyg connect "CONNECTION_STRING"
+dotnet comfyg add config "ConfigKey" "ConfigValue"
+dotnet comfyg add setting "SettingKey" "SettingValue"
+dotnet comfyg add secret "SecretKey" "SecretValue"
 ```
 
 ```shell
-comfyg connect "YOUR_CLIENT_ID" "YOUR_CLIENT_SECRET"
-comfyg add config "ConfigKey" "ConfigValue"
-comfyg add setting "SettingKey" "SettingValue"
-comfyg add secret "SecretKey" "SecretValue"
+dotnet comfyg import config appsettings.json
+dotnet comfyg export config export.json
 ```
 
+### Use your Comfyg
+
 ```shell
-comfyg import config appsettings.json
-comfyg export config export.json
+dotnet add package Comfyg
 ```
+
+```csharp
+using Comfyg;
+
+// ...
+
+builder.Configuration.AddComfyg(options => { options.Connect("CONNECTION_STRING"); });
+```
+
+> The connection string should be stored as user secret or environment variable and never be committed.
 
 ## TODO
 
-- Add options to manage configuration, settings and secrets
-- Add option to use KeyVault instead of system encryption
 - Add option for wildcard permissions
 - Add client side exception handling
 - Add `comfyg setup localhost` command
