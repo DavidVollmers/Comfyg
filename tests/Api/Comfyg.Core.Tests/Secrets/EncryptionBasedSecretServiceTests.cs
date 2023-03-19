@@ -11,7 +11,7 @@ public class EncryptionBasedSecretServiceTests
         var encryptionKey = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
         var value = Guid.NewGuid().ToString();
 
-        ISecretService secretService = new EncryptionBasedSecretService("Test", encryptionKey);
+        ISecretService secretService = new EncryptionBasedSecretService(encryptionKey);
 
         var encrypted = await secretService.ProtectSecretValueAsync(value);
         Assert.NotNull(encrypted);
