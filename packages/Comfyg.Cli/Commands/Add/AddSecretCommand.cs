@@ -2,22 +2,22 @@
 using System.CommandLine.Invocation;
 using Comfyg.Cli.Extensions;
 using Comfyg.Client;
-using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Requests;
+using Comfyg.Contracts.Settings;
 
 namespace Comfyg.Cli.Commands.Add;
 
-public class AddConfigurationCommand : Command
+public class AddSecretCommand : Command
 {
     private readonly Argument<string> _keyArgument;
     private readonly Argument<string> _valueArgument;
 
-    public AddConfigurationCommand() : base("config", "Adds a configuration value on the connected Comfyg endpoint")
+    public AddSecretCommand() : base("secret", "Adds a secret value on the connected Comfyg endpoint")
     {
-        _keyArgument = new Argument<string>("key", "The key of the configuration value");
+        _keyArgument = new Argument<string>("key", "The key of the setting value");
         AddArgument(_keyArgument);
 
-        _valueArgument = new Argument<string>("value", "The configuration value");
+        _valueArgument = new Argument<string>("value", "The setting value");
         AddArgument(_valueArgument);
 
         this.SetHandler(HandleCommandAsync);
@@ -32,11 +32,11 @@ public class AddConfigurationCommand : Command
 
         using var client = await State.User.RequireClientAsync(cancellationToken).ConfigureAwait(false);
 
-        await client.Configuration.AddValuesAsync(new AddConfigurationValuesRequest
+        await client.Settings.AddValuesAsync(new AddSettingValuesRequest
         {
-            Values = new IConfigurationValue[]
+            Values = new ISettingValue[]
             {
-                new ConfigurationValue(keyArgument, valueArgument)
+                new SettingValue(keyArgument, valueArgument)
             }
         }, cancellationToken).ConfigureAwait(false);
     }

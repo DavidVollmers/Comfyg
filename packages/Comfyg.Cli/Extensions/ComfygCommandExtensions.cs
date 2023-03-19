@@ -18,6 +18,7 @@ internal static class ComfygCommandExtensions
         serviceCollection.AddScoped<Command, SetupCommand>();
 
         serviceCollection.AddScoped<AddConfigurationCommand>();
+        serviceCollection.AddScoped<AddSettingCommand>();
         serviceCollection.AddScoped<Command, AddCommand>();
 
         return serviceCollection;
