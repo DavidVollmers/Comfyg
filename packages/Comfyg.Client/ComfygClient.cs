@@ -16,7 +16,7 @@ public sealed partial class ComfygClient : IDisposable
 {
     private readonly HttpClient _httpClient;
     private readonly string _clientId;
-    private readonly string _clientSecret;
+    private readonly byte[] _clientSecret;
 
     private SecurityToken? _token;
 
@@ -57,7 +57,11 @@ public sealed partial class ComfygClient : IDisposable
 
             if (!connectionInformation.ContainsKey("ClientSecret"))
                 throw new Exception("Missing \"ClientSecret\" information.");
-            _clientSecret = connectionInformation["ClientSecret"];
+            var clientSecret = connectionInformation["ClientSecret"];
+
+            _clientSecret = Convert.FromBase64String(clientSecret);
+            if (_clientSecret.Length < 16)
+                throw new InvalidOperationException("Client secret must be at least 16 bytes long.");
         }
         catch (Exception exception)
         {
@@ -105,10 +109,7 @@ public sealed partial class ComfygClient : IDisposable
             return tokenHandler.WriteToken(_token);
         }
 
-        var bytes = Convert.FromBase64String(_clientSecret);
-        if (bytes.Length < 16) throw new InvalidOperationException("Client secret must be at least 16 bytes long.");
-
-        var securityKey = new SymmetricSecurityKey(bytes);
+        var securityKey = new SymmetricSecurityKey(_clientSecret);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
