@@ -23,7 +23,7 @@ public class SetupController : ControllerBase
     [HttpPost("client")]
     public async Task<ActionResult<SetupClientResponse>> SetupClientAsync([FromBody] SetupClientRequest request)
     {
-        var systemClient = _configuration["ComfygSystemClient"];
+        var systemClient = _configuration["ComfygSystemClientId"];
         if (systemClient == null || User.Identity is not IClientIdentity identity) return BadRequest();
 
         if (identity.Client.ClientId != systemClient) return Forbid();

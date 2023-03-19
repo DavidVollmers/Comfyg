@@ -9,7 +9,7 @@ internal class SystemClient : IClient
     {
         if (configuration == null) throw new ArgumentNullException(nameof(configuration));
         
-        ClientId = configuration["ComfygSystemClient"];
+        ClientId = configuration["ComfygSystemClientId"];
         ClientSecret = configuration["ComfygSystemClientSecret"];
         FriendlyName = "Comfyg System Client";
     }

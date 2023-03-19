@@ -22,7 +22,7 @@ dotnet user-secrets set ComfygAuthenticationEncryptionKey "YOUR_ENCRYPTION_KEY"
 
 dotnet user-secrets set ComfygSystemAzureTableStorageConnectionString "UseDevelopmentStorage=true"
 dotnet user-secrets set ComfygSystemEncryptionKey "YOUR_ENCRYPTION_KEY"
-dotnet user-secrets set ComfygSystemClient "system"
+dotnet user-secrets set ComfygSystemClientId "system"
 dotnet user-secrets set ComfygSystemClientSecret "YOUR_SYSTEM_PASSWORD"
 ```
 

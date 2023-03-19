@@ -4,13 +4,11 @@ using Comfyg.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables(nameof(Comfyg));
+
 if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddUserSecrets<Program>();
-}
-else
-{
-    builder.Configuration.AddEnvironmentVariables(nameof(Comfyg));
 }
 
 builder.Services.AddControllers();

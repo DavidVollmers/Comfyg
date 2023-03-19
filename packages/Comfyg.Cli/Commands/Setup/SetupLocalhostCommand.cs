@@ -1,5 +1,6 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
+using Comfyg.Cli.Docker;
 using Comfyg.Cli.Extensions;
 using Docker.DotNet;
 using Docker.DotNet.Models;
@@ -13,6 +14,12 @@ internal class SetupLocalhostCommand : Command
 
     private readonly Option<FileInfo?> _dockerFileOption;
     private readonly Option<Uri?> _dockerSocketOption;
+    private readonly Option<string> _systemClientIdOption;
+    private readonly Option<string> _systemClientSecretOption;
+    private readonly Option<string> _systemEncryptionKeyOption;
+    private readonly Option<string> _systemAzureTableStorageConnectionStringOption;
+    private readonly Option<string> _authenticationEncryptionKeyOption;
+    private readonly Option<string> _authenticationAzureTableStorageConnectionStringOption;
 
     public SetupLocalhostCommand() : base("localhost", "Setup a new Comfyg API running on your localhost")
     {
@@ -30,6 +37,48 @@ internal class SetupLocalhostCommand : Command
         }, "The URI to the docker socket to use");
         AddOption(_dockerSocketOption);
 
+        _systemClientIdOption = new Option<string>(new[]
+        {
+            "-sci",
+            "--system-client-id"
+        }, "The ID of the Comfyg system client");
+        AddOption(_systemClientIdOption);
+
+        _systemClientSecretOption = new Option<string>(new[]
+        {
+            "-scs",
+            "--system-client-secret"
+        }, "The base64 secret of the Comfyg system client");
+        AddOption(_systemClientSecretOption);
+
+        _systemEncryptionKeyOption = new Option<string>(new[]
+        {
+            "-sek",
+            "--system-encryption-key"
+        }, "The base64 key used to encrypt all Comfyg system secrets");
+        AddOption(_systemEncryptionKeyOption);
+
+        _systemAzureTableStorageConnectionStringOption = new Option<string>(new[]
+        {
+            "-satscs",
+            "--system-azure-table-storage-connection-string"
+        }, "The connection string for the Azure table storage used to store all Comfyg system values");
+        AddOption(_systemAzureTableStorageConnectionStringOption);
+
+        _authenticationEncryptionKeyOption = new Option<string>(new[]
+        {
+            "-aek",
+            "--authentication-encryption-key"
+        }, "The base64 key used to encrypt all Comfyg authentication secrets");
+        AddOption(_authenticationEncryptionKeyOption);
+
+        _authenticationAzureTableStorageConnectionStringOption = new Option<string>(new[]
+        {
+            "-aatscs",
+            "--authentication-azure-table-storage-connection-string"
+        }, "The connection string for the Azure table storage used to store all Comfyg authentication values");
+        AddOption(_authenticationAzureTableStorageConnectionStringOption);
+
         this.SetHandler(HandleCommandAsync);
     }
 
@@ -37,10 +86,30 @@ internal class SetupLocalhostCommand : Command
     {
         var dockerFileOption = context.ParseResult.GetValueForOption(_dockerFileOption);
         var dockerSocketOption = context.ParseResult.GetValueForOption(_dockerSocketOption);
+        var systemClientIdOption = context.ParseResult.GetValueForOption(_systemClientIdOption);
+        var systemClientSecretOption = context.ParseResult.GetValueForOption(_systemClientSecretOption);
+        var systemEncryptionKeyOption = context.ParseResult.GetValueForOption(_systemEncryptionKeyOption);
+        var systemAzureTableStorageConnectionStringOption =
+            context.ParseResult.GetValueForOption(_systemAzureTableStorageConnectionStringOption);
+        var authenticationEncryptionKeyOption =
+            context.ParseResult.GetValueForOption(_authenticationEncryptionKeyOption);
+        var authenticationAzureTableStorageConnectionStringOption =
+            context.ParseResult.GetValueForOption(_authenticationAzureTableStorageConnectionStringOption);
 
         var cancellationToken = context.GetCancellationToken();
 
-        AnsiConsole.WriteLine();
+        var parameters = new RunComfygApiFromDockerImageParameters
+        {
+            SystemClientId = systemClientIdOption!,
+            SystemClientSecret = systemClientSecretOption!,
+            SystemEncryptionKey = systemEncryptionKeyOption!,
+            SystemAzureTableStorageConnectionString = systemAzureTableStorageConnectionStringOption!,
+            AuthenticationEncryptionKey = authenticationEncryptionKeyOption!,
+            AuthenticationAzureTableStorageConnectionString = authenticationAzureTableStorageConnectionStringOption!
+        };
+
+        //TODO prompt missing parameters (support automatic generation)
+
         var progress = new Text("Initializing Setup...");
         await AnsiConsole.Live(progress).StartAsync(async displayContext =>
         {
@@ -79,16 +148,16 @@ internal class SetupLocalhostCommand : Command
                 }
             }
 
-            string image;
             if (dockerFileOption != null)
             {
                 if (!dockerFileOption.Exists)
                     throw new FileNotFoundException("Could not find Dockerfile.", dockerFileOption.FullName);
 
-                image = DockerImageLocalBuildTag;
+                parameters.Image = DockerImageLocalBuildTag;
 
                 await dockerClient
-                    .BuildImageFromDockerfileAsync(dockerFileOption, image, MessageHandler, cancellationToken)
+                    .BuildImageFromDockerfileAsync(dockerFileOption, parameters.Image, MessageHandler,
+                        cancellationToken)
                     .ConfigureAwait(false);
             }
             else
@@ -97,13 +166,13 @@ internal class SetupLocalhostCommand : Command
                 throw new NotImplementedException();
             }
 
-            var containerId = await dockerClient
-                .RunComfygApiFromDockerImageAsync(image, MessageHandler, cancellationToken)
+            var result = await dockerClient
+                .RunComfygApiFromDockerImageAsync(parameters, MessageHandler, cancellationToken)
                 .ConfigureAwait(false);
 
             var containers = await State.User.ReadAsync<List<string>>(nameof(Docker), "Containers", cancellationToken)
                 .ConfigureAwait(false) ?? new List<string>();
-            containers.Add(containerId);
+            containers.Add(result.ContainerId);
 
             await State.User.StoreAsync(nameof(Docker), "Containers", containers, cancellationToken)
                 .ConfigureAwait(false);

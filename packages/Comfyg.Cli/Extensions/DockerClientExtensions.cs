@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Comfyg.Cli.Docker;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 using ICSharpCode.SharpZipLib.Tar;
@@ -7,22 +8,32 @@ namespace Comfyg.Cli.Extensions;
 
 internal static class DockerClientExtensions
 {
-    public static async Task<string> RunComfygApiFromDockerImageAsync(this IDockerClient dockerClient, string image,
+    public static async Task<RunComfygApiFromDockerImageResult> RunComfygApiFromDockerImageAsync(
+        this IDockerClient dockerClient, RunComfygApiFromDockerImageParameters parameters,
         Action<string> messageHandler, CancellationToken cancellationToken)
     {
         if (dockerClient == null) throw new ArgumentNullException(nameof(dockerClient));
-        if (image == null) throw new ArgumentNullException(nameof(image));
+        if (parameters == null) throw new ArgumentNullException(nameof(parameters));
         if (messageHandler == null) throw new ArgumentNullException(nameof(messageHandler));
 
         //TODO calculate free port
         const int hostPort80 = 3421;
-        var environmentVariables = new List<string>();
+
+        var environmentVariables = new List<string>
+        {
+            $"ComfygSystemClientId={parameters.SystemClientId}",
+            $"ComfygSystemClientSecret={parameters.SystemClientSecret}",
+            $"ComfygSystemEncryptionKey={parameters.SystemEncryptionKey}",
+            $"ComfygSystemAzureTableStorageConnectionString={parameters.SystemAzureTableStorageConnectionString}",
+            $"ComfygAuthenticationEncryptionKey={parameters.AuthenticationEncryptionKey}",
+            $"ComfygAuthenticationAzureTableStorageConnectionString={parameters.AuthenticationAzureTableStorageConnectionString}"
+        };
 
         messageHandler("Creating Docker Container...");
 
         var response = await dockerClient.Containers.CreateContainerAsync(new CreateContainerParameters
         {
-            Image = image,
+            Image = parameters.Image,
             Env = environmentVariables,
             HostConfig = new HostConfig
             {
@@ -51,16 +62,16 @@ internal static class DockerClientExtensions
         catch
         {
             messageHandler("Could not start Docker Container. Trying to remove it...");
-            
+
             await dockerClient.Containers.RemoveContainerAsync(response.ID, new ContainerRemoveParameters
             {
                 Force = true
             }, cancellationToken).ConfigureAwait(false);
-            
+
             throw;
         }
 
-        return response.ID;
+        return new RunComfygApiFromDockerImageResult(response.ID, hostPort80);
     }
 
     public static async Task BuildImageFromDockerfileAsync(this IDockerClient dockerClient, FileInfo dockerFile,
