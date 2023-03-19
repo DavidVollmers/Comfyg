@@ -10,6 +10,8 @@ public class AddCommand : Command
         : base("add", "Adds a Comfyg value")
     {
         if (addConfigurationCommand == null) throw new ArgumentNullException(nameof(addConfigurationCommand));
+        if (addSettingCommand == null) throw new ArgumentNullException(nameof(addSettingCommand));
+        if (addSecretCommand == null) throw new ArgumentNullException(nameof(addSecretCommand));
 
         AddCommand(addConfigurationCommand);
         AddCommand(addSettingCommand);
