@@ -90,9 +90,9 @@ public sealed partial class ComfygClient : IDisposable
         CancellationToken cancellationToken)
     {
         var token = CreateToken();
-        
+
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        
+
         return await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
     }
 
@@ -105,7 +105,10 @@ public sealed partial class ComfygClient : IDisposable
             return tokenHandler.WriteToken(_token);
         }
 
-        var securityKey = new SymmetricSecurityKey(Convert.FromBase64String(_clientSecret));
+        var bytes = Convert.FromBase64String(_clientSecret);
+        if (bytes.Length < 16) throw new InvalidOperationException("Client secret must be at least 16 bytes long.");
+
+        var securityKey = new SymmetricSecurityKey(bytes);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
