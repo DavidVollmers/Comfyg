@@ -85,8 +85,8 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IClientService>(mock =>
         {
-            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId)), Times.Once);
-            mock.Verify(cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId)), Times.Once);
+            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId)), Times.Exactly(3));
+            mock.Verify(cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId)), Times.Exactly(3));
         });
 
         _factory.Mock<IConfigurationService>(mock =>
@@ -208,9 +208,9 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IClientService>(mock =>
         {
-            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId)), Times.Exactly(3));
+            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId)), Times.Exactly(5));
             mock.Verify(cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId)),
-                Times.Exactly(3));
+                Times.Exactly(5));
         });
 
         _factory.Mock<IConfigurationService>(mock =>

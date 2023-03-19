@@ -9,8 +9,8 @@ public sealed class GetSecretValuesResponse : GetValuesResponse<ISecretValue>
         typeof(ContractConverter<IEnumerable<ISecretValue>, IEnumerable<SecretValue>, IEnumerable<IComfygValue>>))]
     public override IEnumerable<ISecretValue> Values { get; }
 
-    public GetSecretValuesResponse(IEnumerable<ISecretValue> secretValues)
+    public GetSecretValuesResponse(IEnumerable<ISecretValue> values)
     {
-        Values = secretValues ?? throw new ArgumentNullException(nameof(secretValues));
+        Values = values ?? throw new ArgumentNullException(nameof(values));
     }
 }
