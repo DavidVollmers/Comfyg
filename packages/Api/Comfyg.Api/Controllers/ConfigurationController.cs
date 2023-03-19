@@ -2,6 +2,7 @@
 using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Requests;
 using Comfyg.Contracts.Responses;
+using Comfyg.Core.Abstractions;
 using Comfyg.Core.Abstractions.Changes;
 using Comfyg.Core.Abstractions.Permissions;
 using Microsoft.AspNetCore.Authorization;
@@ -12,18 +13,12 @@ namespace Comfyg.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("configuration")]
-public class ConfigurationController : ControllerBase
+public class ConfigurationController : ValueControllerBase<IConfigurationValue>
 {
-    private readonly IConfigurationService _configurationService;
-    private readonly IPermissionService _permissionService;
-    private readonly IChangeService _changeService;
-
-    public ConfigurationController(IConfigurationService configurationService, IPermissionService permissionService,
-        IChangeService changeService)
+    public ConfigurationController(IValueService<IConfigurationValue> valueService,
+        IPermissionService permissionService, IChangeService changeService)
+        : base(valueService, permissionService, changeService)
     {
-        _configurationService = configurationService;
-        _permissionService = permissionService;
-        _changeService = changeService;
     }
 
     [HttpGet]
@@ -31,8 +26,7 @@ public class ConfigurationController : ControllerBase
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var configurationValues = await _configurationService
-            .GetConfigurationValuesAsync(clientIdentity.Client.ClientId).ConfigureAwait(false);
+        var configurationValues = await GetValuesAsync(clientIdentity).ConfigureAwait(false);
 
         return Ok(new GetConfigurationValuesResponse(configurationValues));
     }
@@ -43,20 +37,7 @@ public class ConfigurationController : ControllerBase
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var changes = await _changeService
-            .GetChangesForOwnerAsync<IConfigurationValue>(clientIdentity.Client.ClientId, since.ToUniversalTime())
-            .ConfigureAwait(false);
-
-        var configurationValues = new List<IConfigurationValue>();
-        foreach (var change in changes)
-        {
-            var configurationValue = await _configurationService.GetConfigurationValueAsync(change.TargetId)
-                .ConfigureAwait(false);
-
-            if (configurationValue == null) continue;
-
-            configurationValues.Add(configurationValue);
-        }
+        var configurationValues = await GetValuesFromDiffAsync(clientIdentity, since).ConfigureAwait(false);
 
         return Ok(new GetConfigurationValuesResponse(configurationValues));
     }
@@ -66,21 +47,9 @@ public class ConfigurationController : ControllerBase
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        foreach (var configurationValue in request.Values)
-        {
-            var isPermitted = await _permissionService
-                .IsPermittedAsync<IConfigurationValue>(clientIdentity.Client.ClientId, configurationValue.Key)
-                .ConfigureAwait(false);
-            if (!isPermitted) return Forbid();
-        }
+        var result = await AddValuesAsync(clientIdentity, request.Values).ConfigureAwait(false);
 
-        foreach (var configurationValue in request.Values)
-        {
-            await _configurationService
-                .AddConfigurationValueAsync(clientIdentity.Client.ClientId, configurationValue.Key,
-                    configurationValue.Value)
-                .ConfigureAwait(false);
-        }
+        if (!result) return Forbid();
 
         return Ok();
     }
