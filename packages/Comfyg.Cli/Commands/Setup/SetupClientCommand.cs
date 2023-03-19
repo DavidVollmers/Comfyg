@@ -40,6 +40,10 @@ internal class SetupClientCommand : Command
 
         AnsiConsole.Write(result.Client.ToTable(result.ClientSecret));
 
-        AnsiConsole.MarkupLine($"[bold yellow]Make sure to copy the client secret before closing the terminal![/]");
+        AnsiConsole.MarkupLine("[bold yellow]Make sure to copy the client secret before closing the terminal![/]");
+
+        AnsiConsole.WriteLine("You can connect with this client using the following connection string:");
+        AnsiConsole.MarkupLine(
+            $"[bold]Endpoint={client.EndpointUrl};ClientId={result.Client.ClientId};ClientSecret={result.Client.ClientSecret};[/]");
     }
 }
