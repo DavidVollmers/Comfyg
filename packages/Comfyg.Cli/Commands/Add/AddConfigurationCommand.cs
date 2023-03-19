@@ -7,7 +7,7 @@ using Comfyg.Contracts.Requests;
 
 namespace Comfyg.Cli.Commands.Add;
 
-public class AddConfigurationCommand : Command
+internal class AddConfigurationCommand : Command
 {
     private readonly Argument<string> _keyArgument;
     private readonly Argument<string> _valueArgument;

@@ -2,7 +2,7 @@
 
 namespace Comfyg.Cli.Commands.Add;
 
-public class AddCommand : Command
+internal class AddCommand : Command
 {
     // ReSharper disable SuggestBaseTypeForParameterInConstructor
     public AddCommand(AddConfigurationCommand addConfigurationCommand, AddSettingCommand addSettingCommand,

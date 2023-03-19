@@ -7,7 +7,7 @@ using Comfyg.Contracts.Secrets;
 
 namespace Comfyg.Cli.Commands.Add;
 
-public class AddSecretCommand : Command
+internal class AddSecretCommand : Command
 {
     private readonly Argument<string> _keyArgument;
     private readonly Argument<string> _valueArgument;
