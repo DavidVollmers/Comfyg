@@ -1,5 +1,8 @@
 ﻿using Comfyg.Authentication.Abstractions;
-using Comfyg.Core.Abstractions.Configuration;
+using Comfyg.Contracts.Configuration;
+using Comfyg.Contracts.Secrets;
+using Comfyg.Contracts.Settings;
+using Comfyg.Core.Abstractions;
 using Comfyg.Core.Abstractions.Permissions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -28,7 +31,10 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
             services.AddSingleton<IClientService>(_ => GetMock<IClientService>().Object);
             services.AddSingleton<IConfiguration>(_ => GetMock<IConfiguration>().Object);
             services.AddSingleton<IPermissionService>(_ => GetMock<IPermissionService>().Object);
-            services.AddSingleton<IConfigurationService>(_ => GetMock<IConfigurationService>().Object);
+            services.AddSingleton<IValueService<IConfigurationValue>>(_ =>
+                GetMock<IValueService<IConfigurationValue>>().Object);
+            services.AddSingleton<IValueService<ISettingValue>>(_ => GetMock<IValueService<ISettingValue>>().Object);
+            services.AddSingleton<IValueService<ISecretValue>>(_ => GetMock<IValueService<ISecretValue>>().Object);
         });
     }
 
@@ -41,7 +47,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
     private Mock<T> GetMock<T>() where T : class
     {
         var key = typeof(T).FullName!;
-        if (_mocks.TryGetValue(key, out var value)) return (Mock<T>) value;
+        if (_mocks.TryGetValue(key, out var value)) return (Mock<T>)value;
 
         var mock = new Mock<T>();
         _mocks.Add(key, mock);

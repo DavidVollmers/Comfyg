@@ -1,10 +1,10 @@
-﻿using Comfyg.Contracts.Secrets;
+﻿using Comfyg.Contracts.Settings;
 using CoreHelpers.WindowsAzure.Storage.Table.Attributes;
 
-namespace Comfyg.Core.Secrets;
+namespace Comfyg.Core.Settings;
 
-[Storable(nameof(SecretValueEntity))]
-internal class SecretValueEntity : ISecretValue, ISerializableComfygValue
+[Storable(nameof(SettingValueEntity))]
+internal class SettingValueEntity : ISettingValue, ISerializableComfygValue
 {
     [PartitionKey] public string Key { get; set; } = null!;
 

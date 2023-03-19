@@ -1,0 +1,27 @@
+name: Application Programming Interface CI
+
+on:
+  push:
+    branches-ignore: 'main'
+    paths:
+      - 'packages/Api/**'
+      - 'tests/Api/**'
+  pull_request:
+    paths:
+      - 'packages/Api/**'
+      - 'tests/Api/**'
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - run: |
+          dotnet test ./tests/Api/Comfyg.Core.Tests

@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization;
-using Comfyg.Contracts.Changes;
+﻿using Comfyg.Contracts.Changes;
 using CoreHelpers.WindowsAzure.Storage.Table.Attributes;
 
 namespace Comfyg.Core.Changes;
@@ -12,9 +11,9 @@ internal abstract class ChangeLogEntityBase : IChangeLog
 
     public DateTime ChangedAt { get; set; } = DateTime.UtcNow;
 
-    public ChangeType ChangeType { get; set; } = ChangeType.Unknown;
+    [StoreAsJsonObject] public ChangeType ChangeType { get; set; } = ChangeType.Unknown;
 
-    public long ChangedAtKey => long.MaxValue - ChangedAt.Ticks;
+    public string ChangedAtKey => (long.MaxValue - ChangedAt.Ticks).ToString();
 
     public string ChangedBy { get; set; } = null!;
 }

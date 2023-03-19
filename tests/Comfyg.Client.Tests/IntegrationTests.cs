@@ -2,7 +2,7 @@
 using Comfyg.Contracts.Authentication;
 using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Requests;
-using Comfyg.Core.Abstractions.Configuration;
+using Comfyg.Core.Abstractions;
 using Comfyg.Core.Abstractions.Permissions;
 using Moq;
 
@@ -155,9 +155,9 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
                 .ReturnsAsync(true);
         });
 
-        await comfygClient.AddConfigurationAsync(new AddConfigurationValuesRequest
+        await comfygClient.Configuration.AddValuesAsync(new AddConfigurationValuesRequest
         {
-            ConfigurationValues = configurationValues
+            Values = configurationValues
         });
 
         _factory.Mock<IClientService>(mock =>
@@ -176,11 +176,11 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
                     It.Is<string>(s => s == "key2")), Times.Once);
         });
 
-        _factory.Mock<IConfigurationService>(mock =>
+        _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
-            mock.Verify(cs => cs.AddConfigurationValueAsync(It.Is<string>(s => s == clientId),
+            mock.Verify(cs => cs.AddValueAsync(It.Is<string>(s => s == clientId),
                 It.Is<string>(s => s == "key1"), It.Is<string>(s => s == "value1")), Times.Once);
-            mock.Verify(cs => cs.AddConfigurationValueAsync(It.Is<string>(s => s == clientId),
+            mock.Verify(cs => cs.AddValueAsync(It.Is<string>(s => s == clientId),
                 It.Is<string>(s => s == "key2"), It.Is<string>(s => s == "value2")), Times.Once);
         });
     }

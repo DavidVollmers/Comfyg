@@ -18,12 +18,19 @@ builder.Services.AddControllers();
 builder.Services.AddComfygAuthentication(options =>
 {
     options.UseAzureTableStorage(builder.Configuration["ComfygAuthenticationAzureTableStorageConnectionString"]);
-    options.UseEncryption(builder.Configuration["ComfygAuthenticationEncryptionKey"]);
+
+    var encryptionKey = builder.Configuration["ComfygAuthenticationEncryptionKey"];
+    if (encryptionKey != null) options.UseEncryption(encryptionKey);
+    else options.UseAzureKeyVault();
 });
 
 builder.Services.AddComfyg(options =>
 {
     options.UseAzureTableStorage(builder.Configuration["ComfygSystemAzureTableStorageConnectionString"]);
+
+    var encryptionKey = builder.Configuration["ComfygSystemEncryptionKey"];
+    if (encryptionKey != null) options.UseEncryption(encryptionKey);
+    else options.UseAzureKeyVault();
 });
 
 var app = builder.Build();

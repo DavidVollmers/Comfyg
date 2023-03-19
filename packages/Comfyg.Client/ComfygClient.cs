@@ -3,7 +3,11 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
+using Comfyg.Client.Operations;
+using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Responses;
+using Comfyg.Contracts.Secrets;
+using Comfyg.Contracts.Settings;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Comfyg.Client;
@@ -12,11 +16,17 @@ public sealed partial class ComfygClient : IDisposable
 {
     private readonly HttpClient _httpClient;
     private readonly string _clientId;
-    private readonly string _clientSecret;
+    private readonly byte[] _clientSecret;
 
     private SecurityToken? _token;
 
     public Uri EndpointUrl => _httpClient.BaseAddress!;
+
+    public IComfygValuesOperations<IConfigurationValue> Configuration { get; }
+
+    public IComfygValuesOperations<ISettingValue> Settings { get; }
+
+    public IComfygValuesOperations<ISecretValue> Secrets { get; }
 
     public ComfygClient(string connectionString) : this(connectionString, new HttpClient())
     {
@@ -25,7 +35,7 @@ public sealed partial class ComfygClient : IDisposable
     internal ComfygClient(string connectionString, HttpClient httpClient)
     {
         if (connectionString == null) throw new ArgumentNullException(nameof(connectionString));
-        
+
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
         try
@@ -47,12 +57,20 @@ public sealed partial class ComfygClient : IDisposable
 
             if (!connectionInformation.ContainsKey("ClientSecret"))
                 throw new Exception("Missing \"ClientSecret\" information.");
-            _clientSecret = connectionInformation["ClientSecret"];
+            var clientSecret = connectionInformation["ClientSecret"];
+
+            _clientSecret = Convert.FromBase64String(clientSecret);
+            if (_clientSecret.Length < 16)
+                throw new InvalidOperationException("Client secret must be at least 16 bytes long.");
         }
         catch (Exception exception)
         {
             throw new ArgumentException("Invalid connection string.", nameof(connectionString), exception);
         }
+
+        Configuration = new ConfigurationValuesOperations(this);
+        Settings = new SettingValuesOperations(this);
+        Secrets = new SecretValuesOperations(this);
     }
 
     public async Task<ConnectionResponse> EstablishConnectionAsync(CancellationToken cancellationToken = default)
@@ -72,6 +90,16 @@ public sealed partial class ComfygClient : IDisposable
             .ConfigureAwait(false))!;
     }
 
+    internal async Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage request,
+        CancellationToken cancellationToken)
+    {
+        var token = CreateToken();
+
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        return await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+    }
+
     private string CreateToken()
     {
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -81,7 +109,7 @@ public sealed partial class ComfygClient : IDisposable
             return tokenHandler.WriteToken(_token);
         }
 
-        var securityKey = new SymmetricSecurityKey(Convert.FromBase64String(_clientSecret));
+        var securityKey = new SymmetricSecurityKey(_clientSecret);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

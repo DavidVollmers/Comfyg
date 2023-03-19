@@ -1,7 +1,9 @@
-﻿using Comfyg.Authentication.Abstractions;
+﻿using Comfyg.Api.Models;
+using Comfyg.Authentication.Abstractions;
 using Comfyg.Contracts.Requests;
 using Comfyg.Contracts.Responses;
 using Comfyg.Contracts.Secrets;
+using Comfyg.Core.Abstractions;
 using Comfyg.Core.Abstractions.Changes;
 using Comfyg.Core.Abstractions.Permissions;
 using Comfyg.Core.Abstractions.Secrets;
@@ -13,73 +15,73 @@ namespace Comfyg.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("secrets")]
-public class SecretsController : ControllerBase
+public class SecretsController : ValueControllerBase<ISecretValue>
 {
     private readonly ISecretService _secretService;
-    private readonly IPermissionService _permissionService;
-    private readonly IChangeService _changeService;
 
-    public SecretsController(ISecretService secretService, IPermissionService permissionService,
-        IChangeService changeService)
+    public SecretsController(IValueService<ISecretValue> valueService, IPermissionService permissionService,
+        IChangeService changeService, ISecretService secretService)
+        : base(valueService, permissionService, changeService)
     {
         _secretService = secretService;
-        _permissionService = permissionService;
-        _changeService = changeService;
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetSecretValuesResponse>> GetSecretValuesAsync()
+    public async Task<ActionResult<GetSecretValuesResponse>> GetSecretValuesAsync(
+        CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var secretValues =
-            await _secretService.GetSecretValuesAsync(clientIdentity.Client.ClientId).ConfigureAwait(false);
+        var values = await GetValuesAsync(clientIdentity, cancellationToken).ConfigureAwait(false);
 
-        return Ok(new GetSecretValuesResponse(secretValues));
+        return Ok(new GetSecretValuesResponse(values));
     }
 
     [HttpGet("fromDiff")]
-    public async Task<ActionResult<GetSecretValuesResponse>> GetSecretValuesFromDiffAsync([FromQuery] DateTime since)
+    public async Task<ActionResult<GetSecretValuesResponse>> GetSecretValuesFromDiffAsync([FromQuery] DateTime since,
+        CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var changes = await _changeService
-            .GetChangesForOwnerAsync<ISecretValue>(clientIdentity.Client.ClientId, since.ToUniversalTime())
-            .ConfigureAwait(false);
+        var values = await GetValuesFromDiffAsync(clientIdentity, since, cancellationToken).ConfigureAwait(false);
 
-        var secretValues = new List<ISecretValue>();
-        foreach (var change in changes)
-        {
-            var secretValue = await _secretService.GetSecretValueAsync(change.TargetId).ConfigureAwait(false);
-
-            if (secretValue == null) continue;
-
-            secretValues.Add(secretValue);
-        }
-
-        return Ok(new GetSecretValuesResponse(secretValues));
+        return Ok(new GetSecretValuesResponse(values));
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddSecretValuesAsync([FromBody] AddSecretValuesRequest request)
+    public async Task<ActionResult> AddSecretValuesAsync([FromBody] AddSecretValuesRequest request,
+        CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        foreach (var secretValue in request.SecretValues)
-        {
-            var isPermitted = await _permissionService
-                .IsPermittedAsync<ISecretValue>(clientIdentity.Client.ClientId, secretValue.Key)
-                .ConfigureAwait(false);
-            if (!isPermitted) return Forbid();
-        }
+        var result = await AddValuesAsync(clientIdentity, request.Values, cancellationToken).ConfigureAwait(false);
 
-        foreach (var secretValue in request.SecretValues)
-        {
-            await _secretService
-                .AddSecretValueAsync(clientIdentity.Client.ClientId, secretValue.Key, secretValue.Value)
-                .ConfigureAwait(false);
-        }
+        if (!result) return Forbid();
 
         return Ok();
+    }
+
+    protected override async Task<ISecretValue?> ConvertValueToAsync(ISecretValue value,
+        CancellationToken cancellationToken)
+    {
+        var protectedValue = await _secretService.ProtectSecretValueAsync(value.Value, cancellationToken)
+            .ConfigureAwait(false);
+
+        return new SecretValueModel(value)
+        {
+            Value = protectedValue
+        };
+    }
+
+    protected override async Task<ISecretValue?> ConvertValueFromAsync(ISecretValue value,
+        CancellationToken cancellationToken)
+    {
+        var unprotectedValue = await _secretService.UnprotectSecretValueAsync(value.Value, cancellationToken)
+            .ConfigureAwait(false);
+
+        return new SecretValueModel(value)
+        {
+            Value = unprotectedValue
+        };
     }
 }

@@ -29,6 +29,7 @@ public sealed class ComfygOptions
         return this;
     }
 
+    //TODO support provide SecretClient option
     public ComfygOptions UseAzureKeyVault()
     {
         if (EncryptionKey != null) throw new InvalidOperationException(UseEitherEncryptionOrKeyVaultExceptionMessage);

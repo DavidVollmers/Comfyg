@@ -1,21 +1,22 @@
-﻿using Comfyg.Client;
+﻿using Comfyg.Client.Operations;
+using Comfyg.Contracts;
 using Comfyg.Timing;
 using Microsoft.Extensions.Primitives;
 
 namespace Comfyg;
 
-internal class ChangeDetector : IDisposable
+internal class ChangeDetector<T> : IDisposable where T : IComfygValue
 {
-    private readonly ComfygClient _client;
+    private readonly IComfygValuesOperations<T> _operations;
     private readonly ITimer _timer;
 
     private CancellationTokenSource? _cancellationTokenSource;
     
     public DateTime LastDetectionAt { get; private set; }
 
-    public ChangeDetector(ComfygClient client, ITimer timer)
+    public ChangeDetector(IComfygValuesOperations<T> operations, ITimer timer)
     {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
+        _operations = operations ?? throw new ArgumentNullException(nameof(operations));
         _timer = timer ?? throw new ArgumentNullException(nameof(timer));
 
         _timer.RegisterCallback(DetectChanges);
@@ -32,7 +33,7 @@ internal class ChangeDetector : IDisposable
     private void DetectChanges()
     {
         LastDetectionAt = DateTime.UtcNow.Add(-_timer.Interval);
-        var result = _client.GetConfigurationDiffAsync(LastDetectionAt).GetAwaiter().GetResult();
+        var result = _operations.GetDiffAsync(LastDetectionAt).GetAwaiter().GetResult();
         if (result.ChangeLog.Any())
         {
             _cancellationTokenSource?.Cancel();

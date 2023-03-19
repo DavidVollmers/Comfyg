@@ -5,6 +5,10 @@
 ### Build & Test
 
 ```shell
+dotnet new tool-manifest
+```
+
+```shell
 dotnet tool uninstall Comfyg.Cli
 dotnet pack
 dotnet tool install --add-source ./bin/Debug Comfyg.Cli --prerelease

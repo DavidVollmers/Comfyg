@@ -4,10 +4,10 @@ using Comfyg.Contracts.Settings;
 
 namespace Comfyg.Contracts.Requests;
 
-public class AddSettingValuesRequest
+public class AddSettingValuesRequest : AddValuesRequest<ISettingValue>
 {
     [Required]
     [JsonConverter(
         typeof(ContractConverter<IEnumerable<ISettingValue>, IEnumerable<SettingValue>, IEnumerable<IComfygValue>>))]
-    public IEnumerable<ISettingValue> SettingValues { get; set; } = null!;
+    public override IEnumerable<ISettingValue> Values { get; set; } = null!;
 }
