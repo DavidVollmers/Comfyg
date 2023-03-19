@@ -72,18 +72,19 @@ public static class ComfygCoreExtensions
         serviceCollection.AddScoped<ISecretService>(provider =>
         {
             var options = OptionsProvider();
+            var storageContext = StorageContextProvider();
 
             if (options.EncryptionKey != null)
             {
                 //TODO make systemId configurable
-                return new EncryptionBasedSecretService(nameof(Comfyg), options.EncryptionKey);
+                return new EncryptionBasedSecretService(nameof(Comfyg), options.EncryptionKey, storageContext,
+                    provider.GetRequiredService<IChangeService>(), provider.GetRequiredService<IPermissionService>());
             }
 
             if (!options.UseKeyVault)
                 throw new InvalidOperationException(
                     "Neither encryption nor Azure Key Vault is configured. Use either ComfygOptions.UseEncryption or ComfygOptions.UseKeyVault to configure secret handling.");
 
-            var storageContext = StorageContextProvider();
             //TODO make systemId configurable
             return new KeyVaultSecretService(nameof(Comfyg), provider.GetRequiredService<SecretClient>(),
                 storageContext, provider.GetRequiredService<IChangeService>(),
