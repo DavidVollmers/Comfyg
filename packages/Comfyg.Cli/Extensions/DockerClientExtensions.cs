@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Comfyg.Cli.Docker;
+using Comfyg.Client;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 using ICSharpCode.SharpZipLib.Tar;
@@ -53,6 +54,8 @@ internal static class DockerClientExtensions
 
         try
         {
+            messageHandler("Starting Docker Container...");
+            
             var result = await dockerClient.Containers
                 .StartContainerAsync(response.ID, new ContainerStartParameters(), cancellationToken)
                 .ConfigureAwait(false);
@@ -71,6 +74,34 @@ internal static class DockerClientExtensions
             throw;
         }
 
+        try
+        {
+            messageHandler("Establishing connection to Comfyg API...");
+            
+            var connectionString =
+                $"Endpoint=http://localhost:{hostPort80};ClientId={parameters.SystemClientId};ClientSecret={parameters.SystemClientSecret};";
+            using var client = new ComfygClient(connectionString);
+
+            await client.EstablishConnectionAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            messageHandler(
+                "Could not establish a connection to the Comfyg API. Trying to stop and remove the Docker Container...");
+            
+            await dockerClient.Containers
+                .StopContainerAsync(response.ID, new ContainerStopParameters(), cancellationToken)
+                .ConfigureAwait(false);
+
+            await dockerClient.Containers.RemoveContainerAsync(response.ID,
+                new ContainerRemoveParameters
+                {
+                    Force = true
+                }, cancellationToken).ConfigureAwait(false);
+            
+            throw;
+        }
+        
         return new RunComfygApiFromDockerImageResult(response.ID, hostPort80);
     }
 
