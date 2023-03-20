@@ -55,7 +55,7 @@ internal static class DockerClientExtensions
         try
         {
             messageHandler("Starting Docker Container...");
-            
+
             var result = await dockerClient.Containers
                 .StartContainerAsync(response.ID, new ContainerStartParameters(), cancellationToken)
                 .ConfigureAwait(false);
@@ -77,7 +77,7 @@ internal static class DockerClientExtensions
         try
         {
             messageHandler("Establishing connection to Comfyg API...");
-            
+
             var connectionString =
                 $"Endpoint=http://localhost:{hostPort80};ClientId={parameters.SystemClientId};ClientSecret={parameters.SystemClientSecret};";
             using var client = new ComfygClient(connectionString);
@@ -90,7 +90,7 @@ internal static class DockerClientExtensions
                 "Could not establish a connection to the Comfyg API. Trying to stop and remove the Docker Container...");
             
             await dockerClient.Containers
-                .StopContainerAsync(response.ID, new ContainerStopParameters(), cancellationToken)
+                .KillContainerAsync(response.ID, new ContainerKillParameters(), cancellationToken)
                 .ConfigureAwait(false);
 
             await dockerClient.Containers.RemoveContainerAsync(response.ID,
@@ -98,10 +98,10 @@ internal static class DockerClientExtensions
                 {
                     Force = true
                 }, cancellationToken).ConfigureAwait(false);
-            
+
             throw;
         }
-        
+
         return new RunComfygApiFromDockerImageResult(response.ID, hostPort80);
     }
 

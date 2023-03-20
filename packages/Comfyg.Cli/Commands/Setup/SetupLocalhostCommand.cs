@@ -110,7 +110,22 @@ internal class SetupLocalhostCommand : Command
 
         //TODO prompt missing parameters (support automatic generation)
 
+        while (string.IsNullOrWhiteSpace(parameters.SystemClientId))
+        {
+            parameters.SystemClientId = AnsiConsole.Ask<string>("[bold]System Client ID[/]:");
+        }
+
+        if (!ValidateClientSecret(parameters.SystemClientSecret)) parameters.SystemClientSecret = null!;
+        while (string.IsNullOrWhiteSpace(parameters.SystemClientSecret))
+        {
+            parameters.SystemClientSecret = AnsiConsole.Ask<string>("[bold]System Client Secret[/]:");
+            
+            if (!ValidateClientSecret(parameters.SystemClientSecret)) parameters.SystemClientSecret = null!;
+        }
+
         RunComfygApiFromDockerImageResult result = null!;
+        
+        AnsiConsole.Clear();
         
         await AnsiConsole
             .Live(new Text("Initializing Setup"))
@@ -138,9 +153,9 @@ internal class SetupLocalhostCommand : Command
                     {
                         ctx.UpdateTarget(new Markup(
                             $"[bold yellow]Removing existing Comfyg API Container: {existingContainerId}[/]"));
-
+                        
                         await dockerClient.Containers
-                            .StopContainerAsync(existingContainerId, new ContainerStopParameters(), cancellationToken)
+                            .KillContainerAsync(existingContainerId, new ContainerKillParameters(), cancellationToken)
                             .ConfigureAwait(false);
 
                         await dockerClient.Containers.RemoveContainerAsync(existingContainerId,
@@ -193,5 +208,28 @@ internal class SetupLocalhostCommand : Command
         AnsiConsole.WriteLine("You can connect to your local Comfyg API using the following connection string:");
         AnsiConsole.MarkupLine(
             $"[bold]Endpoint=http://localhost:{result.Port};ClientId={parameters.SystemClientId};ClientSecret={parameters.SystemClientSecret};[/]");
+    }
+
+    private static bool ValidateClientSecret(string? clientSecret)
+    {
+        if (clientSecret == null) return false;
+        
+        try
+        {
+            var bytes = Convert.FromBase64String(clientSecret);
+            if (bytes.Length >= 16) return true;
+            
+            AnsiConsole.WriteLine("Client secrets must be at least 16 bytes long.");
+            return false;
+        }
+        catch (FormatException)
+        {
+            AnsiConsole.WriteLine("Client secrets must be base64 encoded.");
+            return false;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
