@@ -17,9 +17,6 @@ internal static class DockerClientExtensions
         if (parameters == null) throw new ArgumentNullException(nameof(parameters));
         if (messageHandler == null) throw new ArgumentNullException(nameof(messageHandler));
 
-        //TODO calculate free port
-        const int hostPort80 = 3421;
-
         var environmentVariables = new List<string>
         {
             $"ComfygSystemClientId={parameters.SystemClientId}",
@@ -38,15 +35,7 @@ internal static class DockerClientExtensions
             Env = environmentVariables,
             HostConfig = new HostConfig
             {
-                PortBindings = new Dictionary<string, IList<PortBinding>>
-                {
-                    {
-                        80.ToString(), new List<PortBinding>
-                        {
-                            new() { HostPort = hostPort80.ToString() }
-                        }
-                    }
-                }
+                PublishAllPorts = true
             }
         }, cancellationToken).ConfigureAwait(false);
 
@@ -61,34 +50,32 @@ internal static class DockerClientExtensions
                 .ConfigureAwait(false);
 
             if (!result) throw new Exception("Could not start Docker Container!");
-        }
-        catch
-        {
-            messageHandler("Could not start Docker Container. Trying to remove it...");
 
-            await dockerClient.Containers.RemoveContainerAsync(response.ID, new ContainerRemoveParameters
-            {
-                Force = true
-            }, cancellationToken).ConfigureAwait(false);
+            messageHandler("Inspecting Docker Container...");
 
-            throw;
-        }
+            var inspectionResult = await dockerClient.Containers.InspectContainerAsync(response.ID, cancellationToken)
+                .ConfigureAwait(false);
 
-        try
-        {
+            if (inspectionResult == null) throw new Exception("Could not inspect Docker Container!");
+
+            //TODO support https
+            var port80Binding = int.Parse(inspectionResult.NetworkSettings.Ports["80/tcp"].First().HostPort);
+
             messageHandler("Establishing connection to Comfyg API...");
 
             var connectionString =
-                $"Endpoint=http://localhost:{hostPort80};ClientId={parameters.SystemClientId};ClientSecret={parameters.SystemClientSecret};";
+                $"Endpoint=http://localhost:{port80Binding};ClientId={parameters.SystemClientId};ClientSecret={parameters.SystemClientSecret};";
             using var client = new ComfygClient(connectionString);
 
             await client.EstablishConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+            return new RunComfygApiFromDockerImageResult(response.ID, port80Binding);
         }
         catch
         {
             messageHandler(
-                "Could not establish a connection to the Comfyg API. Trying to stop and remove the Docker Container...");
-            
+                "Could not successfully start Comfyg API. Trying to stop and remove the Docker Container...");
+
             await dockerClient.Containers
                 .KillContainerAsync(response.ID, new ContainerKillParameters(), cancellationToken)
                 .ConfigureAwait(false);
@@ -101,8 +88,6 @@ internal static class DockerClientExtensions
 
             throw;
         }
-
-        return new RunComfygApiFromDockerImageResult(response.ID, hostPort80);
     }
 
     public static async Task BuildImageFromDockerfileAsync(this IDockerClient dockerClient, FileInfo dockerFile,
