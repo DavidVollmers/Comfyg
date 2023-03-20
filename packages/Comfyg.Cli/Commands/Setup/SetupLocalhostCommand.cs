@@ -110,74 +110,88 @@ internal class SetupLocalhostCommand : Command
 
         //TODO prompt missing parameters (support automatic generation)
 
-        var progress = new Text("Initializing Setup...");
-        await AnsiConsole.Live(progress).StartAsync(async displayContext =>
-        {
-            var dockerConfiguration = dockerSocketOption == null
-                ? new DockerClientConfiguration()
-                : new DockerClientConfiguration(dockerSocketOption);
-
-            using var dockerClient = dockerConfiguration.CreateClient();
-
-            void MessageHandler(string message)
+        RunComfygApiFromDockerImageResult result = null!;
+        
+        await AnsiConsole
+            .Live(new Text("Initializing Setup"))
+            .StartAsync(async ctx =>
             {
-                displayContext.UpdateTarget(new Text(message));
-            }
+                var dockerConfiguration = dockerSocketOption == null
+                    ? new DockerClientConfiguration()
+                    : new DockerClientConfiguration(dockerSocketOption);
 
-            var existingContainers = await State.User
-                .ReadAsync<List<string>>(nameof(Docker), "Containers", cancellationToken)
-                .ConfigureAwait(false);
-            if (existingContainers != null && existingContainers.Any())
-            {
-                displayContext.UpdateTarget(
-                    new Markup("[bold yellow]Removing existing Comfyg API Containers...[/]"));
-                foreach (var existingContainerId in existingContainers)
+                using var dockerClient = dockerConfiguration.CreateClient();
+
+                void MessageHandler(string message)
                 {
-                    displayContext.UpdateTarget(
-                        new Markup($"[bold yellow]Removing existing Comfyg API Container: {existingContainerId}[/]"));
-
-                    await dockerClient.Containers
-                        .StopContainerAsync(existingContainerId, new ContainerStopParameters(), cancellationToken)
-                        .ConfigureAwait(false);
-
-                    await dockerClient.Containers.RemoveContainerAsync(existingContainerId,
-                        new ContainerRemoveParameters
-                        {
-                            Force = true
-                        }, cancellationToken).ConfigureAwait(false);
+                    ctx.UpdateTarget(new Text(message));
                 }
-            }
 
-            if (dockerFileOption != null)
-            {
-                if (!dockerFileOption.Exists)
-                    throw new FileNotFoundException("Could not find Dockerfile.", dockerFileOption.FullName);
-
-                parameters.Image = DockerImageLocalBuildTag;
-
-                await dockerClient
-                    .BuildImageFromDockerfileAsync(dockerFileOption, parameters.Image, MessageHandler,
-                        cancellationToken)
+                var existingContainers = await State.User
+                    .ReadAsync<List<string>>(nameof(Docker), "Containers", cancellationToken)
                     .ConfigureAwait(false);
-            }
-            else
-            {
-                //TODO use docker registry to pull image
-                throw new NotImplementedException();
-            }
+                if (existingContainers != null && existingContainers.Any())
+                {
+                    ctx.UpdateTarget(new Markup("[bold yellow]Removing existing Comfyg API Containers...[/]"));
 
-            var result = await dockerClient
-                .RunComfygApiFromDockerImageAsync(parameters, MessageHandler, cancellationToken)
-                .ConfigureAwait(false);
+                    foreach (var existingContainerId in existingContainers)
+                    {
+                        ctx.UpdateTarget(new Markup(
+                            $"[bold yellow]Removing existing Comfyg API Container: {existingContainerId}[/]"));
 
-            var containers = await State.User.ReadAsync<List<string>>(nameof(Docker), "Containers", cancellationToken)
-                .ConfigureAwait(false) ?? new List<string>();
-            containers.Add(result.ContainerId);
+                        await dockerClient.Containers
+                            .StopContainerAsync(existingContainerId, new ContainerStopParameters(), cancellationToken)
+                            .ConfigureAwait(false);
 
-            await State.User.StoreAsync(nameof(Docker), "Containers", containers, cancellationToken)
-                .ConfigureAwait(false);
+                        await dockerClient.Containers.RemoveContainerAsync(existingContainerId,
+                            new ContainerRemoveParameters
+                            {
+                                Force = true
+                            }, cancellationToken).ConfigureAwait(false);
 
-            displayContext.UpdateTarget(new Markup("[bold green]Successfully started Comfyg API![/]"));
-        }).ConfigureAwait(false);
+                        ctx.UpdateTarget(
+                            new Markup($"Removed existing Comfyg API Container: [bold]{existingContainerId}[/]"));
+                    }
+                }
+
+                await State.User.StoreAsync(nameof(Docker), "Containers", Array.Empty<string>(), cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (dockerFileOption != null)
+                {
+                    if (!dockerFileOption.Exists)
+                        throw new FileNotFoundException("Could not find Dockerfile.", dockerFileOption.FullName);
+
+                    parameters.Image = DockerImageLocalBuildTag;
+
+                    await dockerClient
+                        .BuildImageFromDockerfileAsync(dockerFileOption, parameters.Image, MessageHandler,
+                            cancellationToken)
+                        .ConfigureAwait(false);
+                }
+                else
+                {
+                    //TODO use docker registry to pull image
+                    throw new NotImplementedException();
+                }
+
+                result = await dockerClient
+                    .RunComfygApiFromDockerImageAsync(parameters, MessageHandler, cancellationToken)
+                    .ConfigureAwait(false);
+
+                var containers = await State.User
+                    .ReadAsync<List<string>>(nameof(Docker), "Containers", cancellationToken)
+                    .ConfigureAwait(false) ?? new List<string>();
+                containers.Add(result.ContainerId);
+
+                await State.User.StoreAsync(nameof(Docker), "Containers", containers, cancellationToken)
+                    .ConfigureAwait(false);
+
+                ctx.UpdateTarget(new Markup("[bold green]Successfully started Comfyg API![/]"));
+            }).ConfigureAwait(false);
+        
+        AnsiConsole.WriteLine("You can connect to your local Comfyg API using the following connection string:");
+        AnsiConsole.MarkupLine(
+            $"[bold]Endpoint=http://localhost:{result.Port};ClientId={parameters.SystemClientId};ClientSecret={parameters.SystemClientSecret};[/]");
     }
 }

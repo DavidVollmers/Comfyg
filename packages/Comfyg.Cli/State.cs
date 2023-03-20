@@ -81,10 +81,12 @@ internal class State
             {
                 content.Add(key, dataValue);
             }
+
+            file.Delete();
         }
 
         var serializedContent = await SerializeAsync(content, cancellationToken).ConfigureAwait(false);
-
+        
         await using var writer = file.OpenWrite();
         await writer.WriteAsync(serializedContent, cancellationToken).ConfigureAwait(false);
     }
