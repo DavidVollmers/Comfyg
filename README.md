@@ -72,3 +72,4 @@ builder.Configuration.AddComfyg(options => { options.Connect("CONNECTION_STRING"
 - Support other authentication methods (Azure.Identity)
 - StoreAsJsonObject for PK or RK (virtual)
 - Consistent type constraints
+- Cancellation Token support

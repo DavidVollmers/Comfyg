@@ -1,5 +1,7 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Security.Cryptography;
+using Azure.Data.Tables;
 using Comfyg.Cli.Docker;
 using Comfyg.Cli.Extensions;
 using Docker.DotNet;
@@ -108,25 +110,12 @@ internal class SetupLocalhostCommand : Command
             AuthenticationAzureTableStorageConnectionString = authenticationAzureTableStorageConnectionStringOption!
         };
 
-        //TODO prompt missing parameters (support automatic generation)
-
-        while (string.IsNullOrWhiteSpace(parameters.SystemClientId))
-        {
-            parameters.SystemClientId = AnsiConsole.Ask<string>("[bold]System Client ID[/]:");
-        }
-
-        if (!ValidateClientSecret(parameters.SystemClientSecret)) parameters.SystemClientSecret = null!;
-        while (string.IsNullOrWhiteSpace(parameters.SystemClientSecret))
-        {
-            parameters.SystemClientSecret = AnsiConsole.Ask<string>("[bold]System Client Secret[/]:");
-            
-            if (!ValidateClientSecret(parameters.SystemClientSecret)) parameters.SystemClientSecret = null!;
-        }
+        await PromptMissingParametersAsync(parameters, cancellationToken).ConfigureAwait(false);
 
         RunComfygApiFromDockerImageResult result = null!;
-        
+
         AnsiConsole.Clear();
-        
+
         await AnsiConsole
             .Live(new Text("Initializing Setup"))
             .StartAsync(async ctx =>
@@ -153,7 +142,7 @@ internal class SetupLocalhostCommand : Command
                     {
                         ctx.UpdateTarget(new Markup(
                             $"[bold yellow]Removing existing Comfyg API Container: {existingContainerId}[/]"));
-                        
+
                         await dockerClient.Containers
                             .KillContainerAsync(existingContainerId, new ContainerKillParameters(), cancellationToken)
                             .ConfigureAwait(false);
@@ -204,31 +193,91 @@ internal class SetupLocalhostCommand : Command
 
                 ctx.UpdateTarget(new Markup("[bold green]Successfully started Comfyg API![/]"));
             }).ConfigureAwait(false);
-        
+
         AnsiConsole.WriteLine("You can connect to your local Comfyg API using the following connection string:");
         AnsiConsole.MarkupLine(
             $"[bold]Endpoint=http://localhost:{result.Port};ClientId={parameters.SystemClientId};ClientSecret={parameters.SystemClientSecret};[/]");
     }
 
-    private static bool ValidateClientSecret(string? clientSecret)
+    private static async Task PromptMissingParametersAsync(RunComfygApiFromDockerImageParameters parameters,
+        CancellationToken cancellationToken)
     {
-        if (clientSecret == null) return false;
-        
+        AnsiConsole.WriteLine("Before the setup please provide all necessary values to run your Comfyg API...");
+
+        while (string.IsNullOrWhiteSpace(parameters.SystemClientId))
+        {
+            parameters.SystemClientId = AnsiConsole.Ask<string>("[bold]System Client ID[/]:");
+        }
+
+        while (!ValidateSecurityValue(parameters.SystemClientSecret, "Client secret"))
+        {
+            var generate = AnsiConsole.Prompt(new ConfirmationPrompt("Do you want to generate a new client secret?"));
+
+            parameters.SystemClientSecret = generate
+                ? Convert.ToBase64String(RandomNumberGenerator.GetBytes(64))
+                : AnsiConsole.Ask<string>("[bold]System Client Secret[/]:");
+        }
+
+        while (!ValidateSecurityValue(parameters.SystemEncryptionKey, "Encryption key"))
+        {
+            var generate = AnsiConsole.Prompt(new ConfirmationPrompt("Do you want to generate a new encryption key?"));
+
+            parameters.SystemEncryptionKey = generate
+                ? Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
+                : AnsiConsole.Ask<string>("[bold]System Encryption Key[/]:");
+        }
+
+        while (!await ValidateAzureTableStorageConnectionStringAsync(
+                   parameters.SystemAzureTableStorageConnectionString, cancellationToken).ConfigureAwait(false))
+        {
+            parameters.SystemAzureTableStorageConnectionString =
+                AnsiConsole.Ask<string>("[bold]System Azure Table Storage[/]:");
+        }
+
+        //TODO prompt missing parameters (support automatic generation)
+    }
+
+    private static bool ValidateSecurityValue(string? value, string name)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return false;
+
         try
         {
-            var bytes = Convert.FromBase64String(clientSecret);
+            var bytes = Convert.FromBase64String(value);
             if (bytes.Length >= 16) return true;
-            
-            AnsiConsole.WriteLine("Client secrets must be at least 16 bytes long.");
+
+            AnsiConsole.MarkupLine($"[bold red]{name}s must be at least 16 bytes long.[/]");
             return false;
         }
         catch (FormatException)
         {
-            AnsiConsole.WriteLine("Client secrets must be base64 encoded.");
+            AnsiConsole.MarkupLine($"[bold red]{name}s must be base64 encoded.[/]");
             return false;
         }
         catch
         {
+            return false;
+        }
+    }
+
+    private static async Task<bool> ValidateAzureTableStorageConnectionStringAsync(string connectionString,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(connectionString)) return false;
+
+        try
+        {
+            var serviceClient = new TableServiceClient(connectionString);
+
+            await serviceClient.GetPropertiesAsync(cancellationToken).ConfigureAwait(false);
+
+            return true;
+        }
+        catch
+        {
+            AnsiConsole.MarkupLine(
+                "[bold red]Could not connect to Azure Table Storage. Please make sure that the connection string is valid.[/]");
+
             return false;
         }
     }

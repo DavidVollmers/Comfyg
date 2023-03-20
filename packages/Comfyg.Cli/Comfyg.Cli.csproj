@@ -10,6 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Azure.Data.Tables" Version="12.6.1" />
         <PackageReference Include="Docker.DotNet" Version="3.125.13" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
         <PackageReference Include="MinVer" Version="4.3.0">
