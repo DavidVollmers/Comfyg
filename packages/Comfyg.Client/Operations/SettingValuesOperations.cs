@@ -34,7 +34,7 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
         CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"settings/fromDiff?since={since:s}"),
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"settings/fromDiff?since={since.ToUniversalTime():s}Z"),
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
@@ -64,7 +64,7 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
     public async Task<GetDiffResponse> GetDiffAsync(DateTime since, CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"diff/settings?since={since:s}"),
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"diff/settings?since={since.ToUniversalTime():s}Z"),
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)

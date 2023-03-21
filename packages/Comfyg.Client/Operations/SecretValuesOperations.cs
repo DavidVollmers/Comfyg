@@ -34,7 +34,7 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
         CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"secrets/fromDiff?since={since:s}"),
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"secrets/fromDiff?since={since.ToUniversalTime():s}Z"),
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
@@ -64,7 +64,7 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
     public async Task<GetDiffResponse> GetDiffAsync(DateTime since, CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"diff/secrets?since={since:s}"),
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"diff/secrets?since={since.ToUniversalTime():s}Z"),
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)

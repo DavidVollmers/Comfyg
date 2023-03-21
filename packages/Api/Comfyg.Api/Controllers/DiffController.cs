@@ -44,7 +44,7 @@ public class DiffController : ControllerBase
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
         var changes =
-            await _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since.ToUniversalTime())
+            await _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since)
                 .ConfigureAwait(false);
 
         return Ok(new GetDiffResponse(changes));

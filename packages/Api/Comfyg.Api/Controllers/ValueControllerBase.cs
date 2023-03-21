@@ -43,7 +43,7 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         CancellationToken cancellationToken)
     {
         var changes = await _changeService
-            .GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since.ToUniversalTime())
+            .GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since)
             .ConfigureAwait(false);
 
         var values = new List<T>();
