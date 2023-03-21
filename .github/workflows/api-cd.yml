@@ -34,4 +34,4 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/comfyg:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/comfyg:$VERSION
+            ${{ secrets.DOCKERHUB_USERNAME }}/comfyg:${{ env.VERSION }}
