@@ -40,9 +40,6 @@ jobs:
     name: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-        with:
-          # https://github.com/actions/checkout/issues/701 https://github.com/actions/checkout/pull/579
-          fetch-depth: 0
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: |

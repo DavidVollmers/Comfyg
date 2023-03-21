@@ -1,6 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <PackageId>Comfyg</PackageId>
+        <Authors>david@vollmers.org</Authors>
+        <Copyright>David Vollmers</Copyright>
+        <Description>Comfy configuration, settings and secrets management/distribution platform</Description>
+        <PackageProjectUrl>https://github.com/DavidVollmers/Comfyg</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/DavidVollmers/Comfyg.git</RepositoryUrl>
         <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -16,6 +25,11 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Comfyg.Client\Comfyg.Client.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

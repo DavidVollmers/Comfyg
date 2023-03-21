@@ -1,6 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <PackageId>Comfyg.Client</PackageId>
+        <Authors>david@vollmers.org</Authors>
+        <Copyright>David Vollmers</Copyright>
+        <Description>Comfyg Client Library</Description>
+        <PackageProjectUrl>https://github.com/DavidVollmers/Comfyg</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/DavidVollmers/Comfyg.git</RepositoryUrl>
         <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -17,6 +26,11 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Api\Comfyg.Contracts\Comfyg.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>
