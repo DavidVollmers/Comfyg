@@ -48,7 +48,7 @@ jobs:
           dotnet-version: |
             7.0.x
             6.0.x
-      - run: dotnet pack -c Release -p:PackageOutputPath=./nupkg
+      - run: dotnet pack -p:PackageOutputPath=./nupkg
       - uses: actions/upload-artifact@v3
         with:
           name: NuGet

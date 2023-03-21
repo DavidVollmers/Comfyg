@@ -1,0 +1,37 @@
+name: Application Programming Interface CD
+
+on:
+  push:
+    branches: 'main'
+    tags: '**'
+    paths:
+      - 'packages/Api/**'
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  Publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - run: echo "VERSION=$(git describe --tags --dirty)" >> $GITHUB_ENV
+      - run: |
+          dotnet publish -c Release ./packages/Api/Comfyg.Api/Comfyg.Api.csproj
+      - uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v2
+      - uses: docker/build-push-action@v4
+        with:
+          context: ./packages/Api/Comfyg.Api
+          file: ./packages/Api/Comfyg.Api/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/comfyg:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/comfyg:$VERSION
