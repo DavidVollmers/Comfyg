@@ -100,12 +100,33 @@ internal static class DockerClientExtensions
         }
     }
 
+    public static async Task PullImageFromDockerHubAsync(this IDockerClient dockerClient, string image, string tag,
+        Action<string> messageHandler, CancellationToken cancellationToken)
+    {
+        if (dockerClient == null) throw new ArgumentNullException(nameof(dockerClient));
+        if (image == null) throw new ArgumentNullException(nameof(image));
+        if (tag == null) throw new ArgumentNullException(nameof(tag));
+        if (messageHandler == null) throw new ArgumentNullException(nameof(messageHandler));
+        
+        var progress = new Progress<JSONMessage>();
+        progress.ProgressChanged += (_, message) =>
+        {
+            if (message.Stream != null) messageHandler(message.Stream);
+        };
+
+        await dockerClient.Images.CreateImageAsync(new ImagesCreateParameters
+        {
+            FromImage = image,
+            Tag = tag
+        }, null, progress, cancellationToken).ConfigureAwait(false);
+    }
+
     public static async Task BuildImageFromDockerfileAsync(this IDockerClient dockerClient, FileInfo dockerFile,
-        string image, Action<string> messageHandler, CancellationToken cancellationToken)
+        string tag, Action<string> messageHandler, CancellationToken cancellationToken)
     {
         if (dockerClient == null) throw new ArgumentNullException(nameof(dockerClient));
         if (dockerFile == null) throw new ArgumentNullException(nameof(dockerFile));
-        if (image == null) throw new ArgumentNullException(nameof(image));
+        if (tag == null) throw new ArgumentNullException(nameof(tag));
         if (messageHandler == null) throw new ArgumentNullException(nameof(messageHandler));
 
         await using var stream =
@@ -123,7 +144,7 @@ internal static class DockerClientExtensions
                 Dockerfile = dockerFile.Name,
                 Tags = new List<string>
                 {
-                    image
+                    tag
                 }
             }, stream, Array.Empty<AuthConfig>(), new Dictionary<string, string>(), progress, cancellationToken)
             .ConfigureAwait(false);

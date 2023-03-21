@@ -13,6 +13,7 @@ namespace Comfyg.Cli.Commands.Setup;
 internal class SetupLocalhostCommand : Command
 {
     private const string DockerImageLocalBuildTag = "comfyg-local-build";
+    private const string DockerImagePublic = "dvol/comfyg";
 
     private readonly Option<FileInfo?> _dockerFileOption;
     private readonly Option<Uri?> _dockerSocketOption;
@@ -22,7 +23,8 @@ internal class SetupLocalhostCommand : Command
     private readonly Option<string> _systemAzureTableStorageConnectionStringOption;
     private readonly Option<string> _authenticationEncryptionKeyOption;
     private readonly Option<string> _authenticationAzureTableStorageConnectionStringOption;
-    private readonly Option<bool> _leaveContainerOnError;
+    private readonly Option<bool> _leaveContainerOnErrorOption;
+    private readonly Option<string> _versionOption;
 
     public SetupLocalhostCommand() : base("localhost", "Setup a new Comfyg API running on your localhost")
     {
@@ -82,12 +84,20 @@ internal class SetupLocalhostCommand : Command
         }, "The connection string for the Azure table storage used to store all Comfyg authentication values");
         AddOption(_authenticationAzureTableStorageConnectionStringOption);
 
-        _leaveContainerOnError = new Option<bool>(new[]
+        _leaveContainerOnErrorOption = new Option<bool>(new[]
         {
             "-lcoe",
             "--leave-container-on-error"
         }, "Do not stop/remove the Docker Container when there is an error");
-        AddOption(_leaveContainerOnError);
+        AddOption(_leaveContainerOnErrorOption);
+
+        _versionOption = new Option<string>(new[]
+        {
+            "-v",
+            "--version"
+        }, "The version of the Comfyg API to use");
+        _versionOption.SetDefaultValue("latest");
+        AddOption(_versionOption);
 
         this.SetHandler(HandleCommandAsync);
     }
@@ -105,7 +115,8 @@ internal class SetupLocalhostCommand : Command
             context.ParseResult.GetValueForOption(_authenticationEncryptionKeyOption);
         var authenticationAzureTableStorageConnectionStringOption =
             context.ParseResult.GetValueForOption(_authenticationAzureTableStorageConnectionStringOption);
-        var leaveContainerOnError = context.ParseResult.GetValueForOption(_leaveContainerOnError);
+        var leaveContainerOnErrorOption = context.ParseResult.GetValueForOption(_leaveContainerOnErrorOption);
+        var versionOption = context.ParseResult.GetValueForOption(_versionOption);
 
         var cancellationToken = context.GetCancellationToken();
 
@@ -117,7 +128,7 @@ internal class SetupLocalhostCommand : Command
             SystemAzureTableStorageConnectionString = systemAzureTableStorageConnectionStringOption!,
             AuthenticationEncryptionKey = authenticationEncryptionKeyOption!,
             AuthenticationAzureTableStorageConnectionString = authenticationAzureTableStorageConnectionStringOption!,
-            LeaveContainerOnError = leaveContainerOnError
+            LeaveContainerOnError = leaveContainerOnErrorOption
         };
 
         await PromptMissingParametersAsync(parameters, cancellationToken).ConfigureAwait(false);
@@ -176,17 +187,20 @@ internal class SetupLocalhostCommand : Command
                     if (!dockerFileOption.Exists)
                         throw new FileNotFoundException("Could not find Dockerfile.", dockerFileOption.FullName);
 
-                    parameters.Image = DockerImageLocalBuildTag;
-
                     await dockerClient
-                        .BuildImageFromDockerfileAsync(dockerFileOption, parameters.Image, MessageHandler,
+                        .BuildImageFromDockerfileAsync(dockerFileOption, DockerImageLocalBuildTag, MessageHandler,
                             cancellationToken)
                         .ConfigureAwait(false);
+
+                    parameters.Image = DockerImageLocalBuildTag;
                 }
                 else
                 {
-                    //TODO use docker registry to pull image
-                    throw new NotImplementedException();
+                    await dockerClient
+                        .PullImageFromDockerHubAsync(DockerImagePublic, versionOption!, MessageHandler,
+                            cancellationToken).ConfigureAwait(false);
+                    
+                    parameters.Image = DockerImagePublic + ":" + versionOption;
                 }
 
                 result = await dockerClient
