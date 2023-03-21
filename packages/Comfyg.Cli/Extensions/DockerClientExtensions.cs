@@ -4,6 +4,7 @@ using Comfyg.Client;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 using ICSharpCode.SharpZipLib.Tar;
+using Spectre.Console;
 
 namespace Comfyg.Cli.Extensions;
 
@@ -65,6 +66,12 @@ internal static class DockerClientExtensions
 
             var connectionString =
                 $"Endpoint=http://localhost:{port80Binding};ClientId={parameters.SystemClientId};ClientSecret={parameters.SystemClientSecret};";
+#if DEBUG
+            AnsiConsole.MarkupLine("[bold yellow]Debug connection string output:[/]");
+            AnsiConsole.MarkupLine(
+                $"[bold yellow]Endpoint=http://localhost:{port80Binding};ClientId={parameters.SystemClientId};ClientSecret={parameters.SystemClientSecret};[/]");
+#endif
+
             using var client = new ComfygClient(connectionString);
 
             await client.EstablishConnectionAsync(cancellationToken).ConfigureAwait(false);
@@ -73,6 +80,8 @@ internal static class DockerClientExtensions
         }
         catch
         {
+            if (parameters.LeaveContainerOnError) throw;
+
             messageHandler(
                 "Could not successfully start Comfyg API. Trying to stop and remove the Docker Container...");
 

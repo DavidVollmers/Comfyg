@@ -22,6 +22,7 @@ internal class SetupLocalhostCommand : Command
     private readonly Option<string> _systemAzureTableStorageConnectionStringOption;
     private readonly Option<string> _authenticationEncryptionKeyOption;
     private readonly Option<string> _authenticationAzureTableStorageConnectionStringOption;
+    private readonly Option<bool> _leaveContainerOnError;
 
     public SetupLocalhostCommand() : base("localhost", "Setup a new Comfyg API running on your localhost")
     {
@@ -81,6 +82,13 @@ internal class SetupLocalhostCommand : Command
         }, "The connection string for the Azure table storage used to store all Comfyg authentication values");
         AddOption(_authenticationAzureTableStorageConnectionStringOption);
 
+        _leaveContainerOnError = new Option<bool>(new[]
+        {
+            "-lcoe",
+            "--leave-container-on-error"
+        }, "Do not stop/remove the Docker Container when there is an error");
+        AddOption(_leaveContainerOnError);
+
         this.SetHandler(HandleCommandAsync);
     }
 
@@ -97,6 +105,7 @@ internal class SetupLocalhostCommand : Command
             context.ParseResult.GetValueForOption(_authenticationEncryptionKeyOption);
         var authenticationAzureTableStorageConnectionStringOption =
             context.ParseResult.GetValueForOption(_authenticationAzureTableStorageConnectionStringOption);
+        var leaveContainerOnError = context.ParseResult.GetValueForOption(_leaveContainerOnError);
 
         var cancellationToken = context.GetCancellationToken();
 
@@ -107,7 +116,8 @@ internal class SetupLocalhostCommand : Command
             SystemEncryptionKey = systemEncryptionKeyOption!,
             SystemAzureTableStorageConnectionString = systemAzureTableStorageConnectionStringOption!,
             AuthenticationEncryptionKey = authenticationEncryptionKeyOption!,
-            AuthenticationAzureTableStorageConnectionString = authenticationAzureTableStorageConnectionStringOption!
+            AuthenticationAzureTableStorageConnectionString = authenticationAzureTableStorageConnectionStringOption!,
+            LeaveContainerOnError = leaveContainerOnError
         };
 
         await PromptMissingParametersAsync(parameters, cancellationToken).ConfigureAwait(false);
