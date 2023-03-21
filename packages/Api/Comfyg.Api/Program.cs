@@ -4,7 +4,7 @@ using Comfyg.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddEnvironmentVariables(nameof(Comfyg));
+builder.Configuration.AddEnvironmentVariables("COMFYG_");
 
 if (builder.Environment.IsDevelopment())
 {
@@ -15,18 +15,18 @@ builder.Services.AddControllers();
 
 builder.Services.AddComfygAuthentication(options =>
 {
-    options.UseAzureTableStorage(builder.Configuration["ComfygAuthenticationAzureTableStorageConnectionString"]);
+    options.UseAzureTableStorage(builder.Configuration["AuthenticationAzureTableStorageConnectionString"]);
 
-    var encryptionKey = builder.Configuration["ComfygAuthenticationEncryptionKey"];
+    var encryptionKey = builder.Configuration["AuthenticationEncryptionKey"];
     if (encryptionKey != null) options.UseEncryption(encryptionKey);
     else options.UseAzureKeyVault();
 });
 
 builder.Services.AddComfyg(options =>
 {
-    options.UseAzureTableStorage(builder.Configuration["ComfygSystemAzureTableStorageConnectionString"]);
+    options.UseAzureTableStorage(builder.Configuration["SystemAzureTableStorageConnectionString"]);
 
-    var encryptionKey = builder.Configuration["ComfygSystemEncryptionKey"];
+    var encryptionKey = builder.Configuration["SystemEncryptionKey"];
     if (encryptionKey != null) options.UseEncryption(encryptionKey);
     else options.UseAzureKeyVault();
 });

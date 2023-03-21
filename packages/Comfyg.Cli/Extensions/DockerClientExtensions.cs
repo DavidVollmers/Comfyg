@@ -20,13 +20,20 @@ internal static class DockerClientExtensions
 
         var environmentVariables = new List<string>
         {
-            $"ComfygSystemClientId={parameters.SystemClientId}",
-            $"ComfygSystemClientSecret={parameters.SystemClientSecret}",
-            $"ComfygSystemEncryptionKey={parameters.SystemEncryptionKey}",
-            $"ComfygSystemAzureTableStorageConnectionString={parameters.SystemAzureTableStorageConnectionString}",
-            $"ComfygAuthenticationEncryptionKey={parameters.AuthenticationEncryptionKey}",
-            $"ComfygAuthenticationAzureTableStorageConnectionString={parameters.AuthenticationAzureTableStorageConnectionString}"
+            $"COMFYG_SystemClientId={parameters.SystemClientId}",
+            $"COMFYG_SystemClientSecret={parameters.SystemClientSecret}",
+            $"COMFYG_SystemEncryptionKey={parameters.SystemEncryptionKey}",
+            $"COMFYG_SystemAzureTableStorageConnectionString={parameters.SystemAzureTableStorageConnectionString}",
+            $"COMFYG_AuthenticationEncryptionKey={parameters.AuthenticationEncryptionKey}",
+            $"COMFYG_AuthenticationAzureTableStorageConnectionString={parameters.AuthenticationAzureTableStorageConnectionString}"
         };
+
+#if DEBUG
+        environmentVariables.Add($"ASPNETCORE_ENVIRONMENT=Development");
+#endif
+#if !DEBUG
+        environmentVariables.Add($"ASPNETCORE_ENVIRONMENT=Production");
+#endif
 
         messageHandler("Creating Docker Container...");
 
@@ -59,7 +66,6 @@ internal static class DockerClientExtensions
 
             if (inspectionResult == null) throw new Exception("Could not inspect Docker Container!");
 
-            //TODO support https
             var port80Binding = int.Parse(inspectionResult.NetworkSettings.Ports["80/tcp"].First().HostPort);
 
             messageHandler("Establishing connection to Comfyg API...");

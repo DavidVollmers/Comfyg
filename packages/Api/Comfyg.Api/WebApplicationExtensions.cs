@@ -6,12 +6,12 @@ internal static class WebApplicationExtensions
     {
         try
         {
-            var systemClientId = app.Configuration["ComfygSystemClientId"];
-            var systemClientSecret = app.Configuration["ComfygSystemClientSecret"];
+            var systemClientId = app.Configuration["SystemClientId"];
+            var systemClientSecret = app.Configuration["SystemClientSecret"];
             if (systemClientId == null || systemClientSecret == null)
             {
                 app.Logger.LogWarning(
-                    "No system client configured. To be able to use all features of the Comfyg API you should configure both ComfygSystemClientId and ComfygSystemClientSecret.");
+                    "No system client configured. To be able to use all features of the Comfyg API you should configure both SystemClientId and SystemClientSecret.");
                 return;
             }
 

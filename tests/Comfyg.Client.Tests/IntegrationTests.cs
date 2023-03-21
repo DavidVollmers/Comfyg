@@ -44,8 +44,8 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IConfiguration>(mock =>
         {
-            mock.Setup(c => c["ComfygSystemClientId"]).Returns(systemClientId);
-            mock.Setup(c => c["ComfygSystemClientSecret"]).Returns(systemClientSecret);
+            mock.Setup(c => c["SystemClientId"]).Returns(systemClientId);
+            mock.Setup(c => c["SystemClientSecret"]).Returns(systemClientSecret);
         });
 
         _factory.Mock<IClientService>(mock =>
@@ -68,8 +68,8 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IConfiguration>(mock =>
         {
-            mock.Verify(c => c["ComfygSystemClientId"], Times.AtLeast(2));
-            mock.Verify(c => c["ComfygSystemClientSecret"], Times.AtLeast(1));
+            mock.Verify(c => c["SystemClientId"], Times.AtLeast(2));
+            mock.Verify(c => c["SystemClientSecret"], Times.AtLeast(1));
         });
 
         _factory.Mock<IClientService>(mock =>

@@ -45,7 +45,7 @@ public static class ComfygAuthenticationExtensions
 
             if (!options.UseKeyVault)
                 throw new InvalidOperationException(
-                    "Neither encryption nor Azure Key Vault is configured. Use either ComfygAuthenticationOptions.UseEncryption or ComfygAuthenticationOptions.UseKeyVault to configure secret handling.");
+                    "Neither encryption nor Azure Key Vault is configured. Use either AuthenticationOptions.UseEncryption or AuthenticationOptions.UseKeyVault to configure secret handling.");
 
             return new KeyVaultSecretService(nameof(Comfyg) + nameof(Authentication),
                 provider.GetRequiredService<SecretClient>());
