@@ -22,14 +22,28 @@ internal class ComfygProvider<T> : ConfigurationProvider, IDisposable where T : 
 
     public override void Load()
     {
-        var result = _operations.GetValuesAsync().GetAwaiter().GetResult();
-        SetData(result.Values);
+        try
+        {
+            var result = _operations.GetValuesAsync().GetAwaiter().GetResult();
+            SetData(result.Values);
+        }
+        catch
+        {
+            //TODO log exception
+        }
     }
 
     private void LoadDiff(DateTime since)
     {
-        var result = _operations.GetValuesFromDiffAsync(since).GetAwaiter().GetResult();
-        SetData(result.Values, false);
+        try
+        {
+            var result = _operations.GetValuesFromDiffAsync(since).GetAwaiter().GetResult();
+            SetData(result.Values, false);
+        }
+        catch
+        {
+            //TODO log exception
+        }
     }
 
     private void SetData(IEnumerable<T> values, bool reset = true)
