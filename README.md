@@ -72,3 +72,6 @@ var secretValue = configuration["SecretKey"];
 - StoreAsJsonObject for PK or RK (virtual)
 - Consistent type constraints
 - Cancellation Token support
+- QueryFilter for different types (long, DateTime)
+- Get-only properties
+- Redundant storage of non-virtual PK/RK properties

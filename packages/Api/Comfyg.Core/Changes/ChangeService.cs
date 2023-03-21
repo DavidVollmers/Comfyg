@@ -53,9 +53,9 @@ internal class ChangeService : IChangeService
         {
             new QueryFilter
             {
-                Property = nameof(ChangeLogEntityBase.ChangedAtKey),
-                Operator = QueryFilterOperator.LowerEqual,
-                Value = long.MaxValue - since.Ticks
+                Property = nameof(ChangeLogEntity.ChangedAt),
+                Operator = QueryFilterOperator.GreaterEqual,
+                Value = $"datetime'{since:s}Z'"
             }
         }).ConfigureAwait(false);
     }
