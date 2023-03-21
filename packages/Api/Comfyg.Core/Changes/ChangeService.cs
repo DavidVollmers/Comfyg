@@ -55,7 +55,7 @@ internal class ChangeService : IChangeService
             {
                 Property = nameof(ChangeLogEntity.ChangedAt),
                 Operator = QueryFilterOperator.GreaterEqual,
-                Value = $"datetime'{since.ToUniversalTime():s}Z'"
+                Value = since
             }
         }).ConfigureAwait(false);
     }
