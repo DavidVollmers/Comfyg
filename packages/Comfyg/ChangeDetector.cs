@@ -11,7 +11,7 @@ internal class ChangeDetector<T> : IDisposable where T : IComfygValue
     private readonly ITimer _timer;
 
     private CancellationTokenSource? _cancellationTokenSource;
-    
+
     public DateTime LastDetectionAt { get; private set; }
 
     public ChangeDetector(IComfygValuesOperations<T> operations, ITimer timer)
@@ -32,11 +32,18 @@ internal class ChangeDetector<T> : IDisposable where T : IComfygValue
 
     private void DetectChanges()
     {
-        LastDetectionAt = DateTime.UtcNow.Add(-_timer.Interval);
-        var result = _operations.GetDiffAsync(LastDetectionAt).GetAwaiter().GetResult();
-        if (result.ChangeLog.Any())
+        try
         {
-            _cancellationTokenSource?.Cancel();
+            LastDetectionAt = DateTime.UtcNow.Add(-_timer.Interval);
+            var result = _operations.GetDiffAsync(LastDetectionAt).GetAwaiter().GetResult();
+            if (result.ChangeLog.Any())
+            {
+                _cancellationTokenSource?.Cancel();
+            }
+        }
+        catch
+        {
+            //TODO log exception
         }
     }
 
