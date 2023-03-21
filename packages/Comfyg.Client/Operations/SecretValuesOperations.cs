@@ -17,7 +17,8 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
     public async Task<GetValuesResponse<ISecretValue>> GetValuesAsync(CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(new HttpRequestMessage(HttpMethod.Get, "secrets"), cancellationToken)
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "secrets"),
+                cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
@@ -33,8 +34,8 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
         CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(new HttpRequestMessage(HttpMethod.Get, $"secrets/fromDiff?since={since:s}"),
-                cancellationToken).ConfigureAwait(false);
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"secrets/fromDiff?since={since:s}"),
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to get secret values from diff.",
@@ -50,10 +51,10 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
     {
         if (request == null) throw new ArgumentNullException(nameof(request));
 
-        var response = await _client.SendRequestAsync(new HttpRequestMessage(HttpMethod.Post, "secrets")
+        var response = await _client.SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Post, "secrets")
         {
-            Content = JsonContent.Create((AddSecretValuesRequest) request)
-        }, cancellationToken).ConfigureAwait(false);
+            Content = JsonContent.Create((AddSecretValuesRequest)request)
+        }, cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to add secret values.", null,
@@ -63,8 +64,8 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
     public async Task<GetDiffResponse> GetDiffAsync(DateTime since, CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(new HttpRequestMessage(HttpMethod.Get, $"diff/secrets?since={since:s}"),
-                cancellationToken).ConfigureAwait(false);
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"diff/secrets?since={since:s}"),
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to get secrets diff.", null,

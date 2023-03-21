@@ -17,7 +17,8 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
     public async Task<GetValuesResponse<ISettingValue>> GetValuesAsync(CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(new HttpRequestMessage(HttpMethod.Get, "settings"), cancellationToken)
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "settings"),
+                cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
@@ -33,8 +34,8 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
         CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(new HttpRequestMessage(HttpMethod.Get, $"settings/fromDiff?since={since:s}"),
-                cancellationToken).ConfigureAwait(false);
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"settings/fromDiff?since={since:s}"),
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to get setting values from diff.",
@@ -50,10 +51,10 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
     {
         if (request == null) throw new ArgumentNullException(nameof(request));
 
-        var response = await _client.SendRequestAsync(new HttpRequestMessage(HttpMethod.Post, "settings")
+        var response = await _client.SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Post, "settings")
         {
-            Content = JsonContent.Create((AddSettingValuesRequest) request)
-        }, cancellationToken).ConfigureAwait(false);
+            Content = JsonContent.Create((AddSettingValuesRequest)request)
+        }, cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to add setting values.", null,
@@ -63,8 +64,8 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
     public async Task<GetDiffResponse> GetDiffAsync(DateTime since, CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(new HttpRequestMessage(HttpMethod.Get, $"diff/settings?since={since:s}"),
-                cancellationToken).ConfigureAwait(false);
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"diff/settings?since={since:s}"),
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to get settings diff.", null,

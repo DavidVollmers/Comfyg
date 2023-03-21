@@ -72,10 +72,6 @@ internal static class DockerClientExtensions
 
             var connectionString =
                 $"Endpoint=http://localhost:{port80Binding};ClientId={parameters.SystemClientId};ClientSecret={parameters.SystemClientSecret};";
-#if DEBUG
-            AnsiConsole.MarkupLine("[bold yellow]Debug connection string output:[/]");
-            AnsiConsole.MarkupLine($"[bold yellow]{connectionString}[/]");
-#endif
 
             using var client = new ComfygClient(connectionString);
 

@@ -75,12 +75,8 @@ public sealed partial class ComfygClient : IDisposable
 
     public async Task<ConnectionResponse> EstablishConnectionAsync(CancellationToken cancellationToken = default)
     {
-        var token = CreateToken();
-
-        var request = new HttpRequestMessage(HttpMethod.Post, "connections/establish");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        var response = await SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Post, "connections/establish"),
+            5, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to establish connection.", null,
@@ -90,14 +86,28 @@ public sealed partial class ComfygClient : IDisposable
             .ConfigureAwait(false))!;
     }
 
-    internal async Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage request,
-        CancellationToken cancellationToken)
+    internal async Task<HttpResponseMessage> SendRequestAsync(Func<HttpRequestMessage> requestProvider,
+        int maxTries = 1, CancellationToken cancellationToken = default)
     {
         var token = CreateToken();
 
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var tries = 0;
+        do
+        {
+            var request = requestProvider();
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        return await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+            try
+            {
+                return await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+            }
+            catch (HttpRequestException)
+            {
+                if (++tries >= maxTries) throw;
+
+                await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
+            }
+        } while (true);
     }
 
     private string CreateToken()

@@ -18,7 +18,8 @@ internal class ConfigurationValuesOperations : IComfygValuesOperations<IConfigur
         CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(new HttpRequestMessage(HttpMethod.Get, "configuration"), cancellationToken)
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "configuration"),
+                cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
@@ -34,8 +35,8 @@ internal class ConfigurationValuesOperations : IComfygValuesOperations<IConfigur
         CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(new HttpRequestMessage(HttpMethod.Get, $"configuration/fromDiff?since={since:s}"),
-                cancellationToken).ConfigureAwait(false);
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"configuration/fromDiff?since={since:s}"),
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to get configuration values from diff.",
@@ -51,10 +52,10 @@ internal class ConfigurationValuesOperations : IComfygValuesOperations<IConfigur
     {
         if (request == null) throw new ArgumentNullException(nameof(request));
 
-        var response = await _client.SendRequestAsync(new HttpRequestMessage(HttpMethod.Post, "configuration")
+        var response = await _client.SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Post, "configuration")
         {
-            Content = JsonContent.Create((AddConfigurationValuesRequest) request)
-        }, cancellationToken).ConfigureAwait(false);
+            Content = JsonContent.Create((AddConfigurationValuesRequest)request)
+        }, cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to add configuration values.", null,
@@ -64,8 +65,8 @@ internal class ConfigurationValuesOperations : IComfygValuesOperations<IConfigur
     public async Task<GetDiffResponse> GetDiffAsync(DateTime since, CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(new HttpRequestMessage(HttpMethod.Get, $"diff/configuration?since={since:s}"),
-                cancellationToken).ConfigureAwait(false);
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"diff/configuration?since={since:s}"),
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to get configuration diff.", null,
