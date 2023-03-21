@@ -9,7 +9,7 @@
 ## Installation
 
 ```shell
-dotnet add package Comfyg.Cli
+dotnet tool install --global Comfyg.Cli
 ```
 
 Visit [nuget.org](https://www.nuget.org/packages/Comfyg.Cli) for more information.
