@@ -1,6 +1,8 @@
 ﻿using Comfyg.Authentication.Abstractions;
 using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Responses;
+using Comfyg.Contracts.Secrets;
+using Comfyg.Contracts.Settings;
 using Comfyg.Core.Abstractions.Changes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +25,18 @@ public class DiffController : ControllerBase
     public async Task<ActionResult<GetDiffResponse>> GetConfigurationDiffAsync([FromQuery] DateTime since)
     {
         return await CalculateDiffAsync<IConfigurationValue>(since);
+    }
+
+    [HttpGet("settings")]
+    public async Task<ActionResult<GetDiffResponse>> GetSettingsDiffAsync([FromQuery] DateTime since)
+    {
+        return await CalculateDiffAsync<ISettingValue>(since);
+    }
+
+    [HttpGet("secrets")]
+    public async Task<ActionResult<GetDiffResponse>> GetSecretsDiffAsync([FromQuery] DateTime since)
+    {
+        return await CalculateDiffAsync<ISecretValue>(since);
     }
 
     private async Task<ActionResult<GetDiffResponse>> CalculateDiffAsync<T>(DateTime since)

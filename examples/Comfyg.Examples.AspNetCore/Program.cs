@@ -15,6 +15,8 @@ builder.Configuration.AddComfyg(options =>
     options.Settings.DetectChanges(TimeSpan.FromSeconds(10));
 });
 
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
 app.MapControllers();
