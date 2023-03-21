@@ -199,7 +199,7 @@ internal class SetupLocalhostCommand : Command
                     await dockerClient
                         .PullImageFromDockerHubAsync(DockerImagePublic, versionOption!, MessageHandler,
                             cancellationToken).ConfigureAwait(false);
-                    
+
                     parameters.Image = DockerImagePublic + ":" + versionOption;
                 }
 
@@ -230,12 +230,14 @@ internal class SetupLocalhostCommand : Command
 
         while (string.IsNullOrWhiteSpace(parameters.SystemClientId))
         {
-            parameters.SystemClientId = AnsiConsole.Ask<string>("[bold]System Client ID[/]:");
+            parameters.SystemClientId = AnsiConsole.Ask<string>("[bold]System Client ID[/]:", "system");
         }
 
         while (!ValidateSecurityValue(parameters.SystemClientSecret, "Client secret"))
         {
-            var generate = AnsiConsole.Prompt(new ConfirmationPrompt("Do you want to generate a new client secret?"));
+            var generate =
+                AnsiConsole.Prompt(
+                    new ConfirmationPrompt("[bold]System Client Secret[/]: Generate a new client secret?"));
 
             parameters.SystemClientSecret = generate
                 ? Convert.ToBase64String(RandomNumberGenerator.GetBytes(64))
@@ -244,7 +246,9 @@ internal class SetupLocalhostCommand : Command
 
         while (!ValidateSecurityValue(parameters.SystemEncryptionKey, "Encryption key"))
         {
-            var generate = AnsiConsole.Prompt(new ConfirmationPrompt("Do you want to generate a new encryption key?"));
+            var generate =
+                AnsiConsole.Prompt(
+                    new ConfirmationPrompt("[bold]System Encryption Key[/]: Generate a new encryption key?"));
 
             parameters.SystemEncryptionKey = generate
                 ? Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
@@ -260,7 +264,9 @@ internal class SetupLocalhostCommand : Command
 
         while (!ValidateSecurityValue(parameters.AuthenticationEncryptionKey, "Encryption key"))
         {
-            var generate = AnsiConsole.Prompt(new ConfirmationPrompt("Do you want to generate a new encryption key?"));
+            var generate =
+                AnsiConsole.Prompt(
+                    new ConfirmationPrompt("[bold]Authentication Encryption Key[/]: Generate a new encryption key?"));
 
             parameters.AuthenticationEncryptionKey = generate
                 ? Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
