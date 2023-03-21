@@ -10,13 +10,11 @@ internal class PermissionService : IPermissionService
     public PermissionService(string systemId, IStorageContext storageContext)
     {
         if (systemId == null) throw new ArgumentNullException(nameof(systemId));
-        
+
         _storageContext = storageContext ?? throw new ArgumentNullException(nameof(storageContext));
 
-        _storageContext.AddAttributeMapper<PermissionEntity>();
-        _storageContext.OverrideTableName<PermissionEntity>($"{systemId}{nameof(PermissionEntity)}");
-        _storageContext.AddAttributeMapper<PermissionEntityMirrored>();
-        _storageContext.OverrideTableName<PermissionEntityMirrored>($"{systemId}{nameof(PermissionEntityMirrored)}");
+        _storageContext.AddAttributeMapper<PermissionEntity>($"{systemId}{nameof(PermissionEntity)}");
+        _storageContext.AddAttributeMapper<PermissionEntityMirrored>($"{systemId}{nameof(PermissionEntityMirrored)}");
     }
 
     public async Task<bool> IsPermittedAsync<T>(string owner, string targetId)
@@ -44,7 +42,7 @@ internal class PermissionService : IPermissionService
     {
         using var context = _storageContext.CreateChildContext();
         context.EnableAutoCreateTable();
-        
+
         await context.InsertOrReplaceAsync(new PermissionEntity
         {
             Owner = owner,

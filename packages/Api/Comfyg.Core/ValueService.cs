@@ -24,8 +24,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         _permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
         _changeService = changeService ?? throw new ArgumentNullException(nameof(changeService));
 
-        _storageContext.AddAttributeMapper<TEntity>();
-        _storageContext.OverrideTableName<TEntity>($"{systemId}{nameof(TEntity)}");
+        _storageContext.AddAttributeMapper<TEntity>($"{systemId}{typeof(TEntity).Name}");
     }
 
     public async Task AddValueAsync(string owner, string key, string value)

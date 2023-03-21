@@ -8,6 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="Comfyg.Core.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\Comfyg.Core.Abstractions\Comfyg.Core.Abstractions.csproj" />
     </ItemGroup>
 
