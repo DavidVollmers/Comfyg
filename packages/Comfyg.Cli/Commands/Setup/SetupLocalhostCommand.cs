@@ -234,7 +234,21 @@ internal class SetupLocalhostCommand : Command
                 AnsiConsole.Ask<string>("[bold]System Azure Table Storage[/]:");
         }
 
-        //TODO prompt missing parameters (support automatic generation)
+        while (!ValidateSecurityValue(parameters.AuthenticationEncryptionKey, "Encryption key"))
+        {
+            var generate = AnsiConsole.Prompt(new ConfirmationPrompt("Do you want to generate a new encryption key?"));
+
+            parameters.AuthenticationEncryptionKey = generate
+                ? Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
+                : AnsiConsole.Ask<string>("[bold]Authentication Encryption Key[/]:");
+        }
+
+        while (!await ValidateAzureTableStorageConnectionStringAsync(
+                   parameters.AuthenticationAzureTableStorageConnectionString, cancellationToken).ConfigureAwait(false))
+        {
+            parameters.AuthenticationAzureTableStorageConnectionString =
+                AnsiConsole.Ask<string>("[bold]Authentication Azure Table Storage[/]:");
+        }
     }
 
     private static bool ValidateSecurityValue(string? value, string name)

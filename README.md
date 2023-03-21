@@ -58,6 +58,7 @@ builder.Configuration.AddComfyg(options => { options.Connect("CONNECTION_STRING"
 ## TODO
 
 - Add option to use Azure KeyVault instead of system encryption
+- Make systemId configurable
 - Add option for wildcard permissions
 - Add client side exception handling
 - Add `comfyg setup localhost` command
