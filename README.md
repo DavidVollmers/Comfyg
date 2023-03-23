@@ -32,7 +32,7 @@ comfyg add secret "SecretKey" "SecretValue"
 
 ### Use your Comfyg
 
-```shell
+```shellc
 dotnet add package Comfyg
 ```
 
@@ -63,15 +63,3 @@ var secretValue = configuration["SecretKey"];
 - Add Import/Export capabilities
 - Documentation
 - Tests
-
-## TODO CoreHelpers
-
-- Remove Newtonsoft.Json dependency
-- Move TechnicalIdentifierAttribute to CoreHelpers
-- Support other authentication methods (Azure.Identity)
-- StoreAsJsonObject for PK or RK (virtual)
-- Consistent type constraints
-- Cancellation Token support
-- Get-only properties
-- Redundant storage of non-virtual PK/RK properties
-- throw Exception on null as PK/RK when querying
