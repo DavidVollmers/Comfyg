@@ -14,5 +14,5 @@ public interface IComfygValue
 
     [ValidateNever] string Version { get; }
     
-    [ValidateNever] DateTime CreatedAt { get; }
+    [ValidateNever] DateTimeOffset CreatedAt { get; }
 }

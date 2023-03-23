@@ -4,9 +4,12 @@ namespace Comfyg.Core.Abstractions.Changes;
 
 public interface IChangeService
 {
-    Task LogChangeAsync<T>(string targetId, ChangeType changeType, string changedBy);
+    Task LogChangeAsync<T>(string targetId, ChangeType changeType, string changedBy,
+        CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<IChangeLog>> GetChangesSinceAsync<T>(DateTime since);
+    IAsyncEnumerable<IChangeLog> GetChangesSinceAsync<T>(DateTimeOffset since,
+        CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<IChangeLog>> GetChangesForOwnerAsync<T>(string owner, DateTime since);
+    IAsyncEnumerable<IChangeLog> GetChangesForOwnerAsync<T>(string owner, DateTimeOffset since,
+        CancellationToken cancellationToken = default);
 }

@@ -1,9 +1,8 @@
-﻿using Comfyg.Contracts.Configuration;
-using CoreHelpers.WindowsAzure.Storage.Table.Attributes;
+﻿using Azure.Data.Tables.Poco;
+using Comfyg.Contracts.Configuration;
 
 namespace Comfyg.Core.Configuration;
 
-[Storable(nameof(ConfigurationValueEntity))]
 internal class ConfigurationValueEntity : IConfigurationValue, ISerializableComfygValue
 {
     [PartitionKey] public string Key { get; set; } = null!;
@@ -12,5 +11,5 @@ internal class ConfigurationValueEntity : IConfigurationValue, ISerializableComf
 
     [RowKey] public string Version { get; set; } = null!;
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
 }

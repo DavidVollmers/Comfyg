@@ -2,11 +2,11 @@
 
 public interface IChangeLog
 {
-    string TargetType { get; }
+    Type TargetType { get; }
     
     string TargetId { get; }
     
-    DateTime ChangedAt { get; }
+    DateTimeOffset ChangedAt { get; }
     
     ChangeType ChangeType { get; }
     

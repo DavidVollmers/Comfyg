@@ -10,5 +10,5 @@ internal interface ISerializableComfygValue : IComfygValue
 
     new string Version { get; set; }
 
-    new DateTime CreatedAt { get; set; }
+    new DateTimeOffset CreatedAt { get; set; }
 }

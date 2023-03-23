@@ -2,9 +2,9 @@
 
 public interface IPermissionService
 {
-    Task<bool> IsPermittedAsync<T>(string owner, string targetId);
+    Task<bool> IsPermittedAsync<T>(string owner, string targetId, CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<IPermission>> GetPermissionsAsync<T>(string owner);
+    IAsyncEnumerable<IPermission> GetPermissionsAsync<T>(string owner, CancellationToken cancellationToken = default);
 
-    Task SetPermissionAsync<T>(string owner, string targetId);
+    Task SetPermissionAsync<T>(string owner, string targetId, CancellationToken cancellationToken = default);
 }

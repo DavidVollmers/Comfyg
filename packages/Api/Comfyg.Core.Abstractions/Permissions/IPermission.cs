@@ -6,5 +6,7 @@ public interface IPermission
     
     string TargetId { get; }
     
-    string TargetType { get; }
+    Type TargetType { get; }
+    
+    DateTimeOffset CreatedAt { get; }
 }
