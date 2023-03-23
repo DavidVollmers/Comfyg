@@ -12,7 +12,7 @@ internal static class DockerClientExtensions
 {
     public static async Task<RunComfygApiFromDockerImageResult> RunComfygApiFromDockerImageAsync(
         this IDockerClient dockerClient, RunComfygApiFromDockerImageParameters parameters,
-        Action<string> messageHandler, CancellationToken cancellationToken)
+        Action<string> messageHandler, CancellationToken cancellationToken = default)
     {
         if (dockerClient == null) throw new ArgumentNullException(nameof(dockerClient));
         if (parameters == null) throw new ArgumentNullException(nameof(parameters));
@@ -86,28 +86,21 @@ internal static class DockerClientExtensions
             messageHandler(
                 "Could not successfully start Comfyg API. Trying to stop and remove the Docker Container...");
 
-            await dockerClient.Containers
-                .KillContainerAsync(response.ID, new ContainerKillParameters(), cancellationToken)
+            await dockerClient.TryKillAndRemoveDockerContainerAsync(response.ID, cancellationToken)
                 .ConfigureAwait(false);
-
-            await dockerClient.Containers.RemoveContainerAsync(response.ID,
-                new ContainerRemoveParameters
-                {
-                    Force = true
-                }, cancellationToken).ConfigureAwait(false);
 
             throw;
         }
     }
 
     public static async Task PullImageFromDockerHubAsync(this IDockerClient dockerClient, string image, string tag,
-        Action<string> messageHandler, CancellationToken cancellationToken)
+        Action<string> messageHandler, CancellationToken cancellationToken = default)
     {
         if (dockerClient == null) throw new ArgumentNullException(nameof(dockerClient));
         if (image == null) throw new ArgumentNullException(nameof(image));
         if (tag == null) throw new ArgumentNullException(nameof(tag));
         if (messageHandler == null) throw new ArgumentNullException(nameof(messageHandler));
-        
+
         var progress = new Progress<JSONMessage>();
         progress.ProgressChanged += (_, message) =>
         {
@@ -122,7 +115,7 @@ internal static class DockerClientExtensions
     }
 
     public static async Task BuildImageFromDockerfileAsync(this IDockerClient dockerClient, FileInfo dockerFile,
-        string tag, Action<string> messageHandler, CancellationToken cancellationToken)
+        string tag, Action<string> messageHandler, CancellationToken cancellationToken = default)
     {
         if (dockerClient == null) throw new ArgumentNullException(nameof(dockerClient));
         if (dockerFile == null) throw new ArgumentNullException(nameof(dockerFile));
@@ -148,6 +141,30 @@ internal static class DockerClientExtensions
                 }
             }, stream, Array.Empty<AuthConfig>(), new Dictionary<string, string>(), progress, cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    public static async Task TryKillAndRemoveDockerContainerAsync(this IDockerClient dockerClient, string containerId,
+        CancellationToken cancellationToken = default)
+    {
+        if (dockerClient == null) throw new ArgumentNullException(nameof(dockerClient));
+        if (containerId == null) throw new ArgumentNullException(nameof(containerId));
+
+        try
+        {
+            await dockerClient.Containers
+                .KillContainerAsync(containerId, new ContainerKillParameters(), cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch
+        {
+            // ignored
+        }
+
+        await dockerClient.Containers.RemoveContainerAsync(containerId,
+            new ContainerRemoveParameters
+            {
+                Force = true
+            }, cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task<Stream> CreateStreamFromDockerfileDirectoryAsync(FileSystemInfo directoryInfo,

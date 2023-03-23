@@ -164,15 +164,8 @@ internal class SetupLocalhostCommand : Command
                         ctx.UpdateTarget(new Markup(
                             $"[bold yellow]Removing existing Comfyg API Container: {existingContainerId}[/]"));
 
-                        await dockerClient.Containers
-                            .KillContainerAsync(existingContainerId, new ContainerKillParameters(), cancellationToken)
+                        await dockerClient.TryKillAndRemoveDockerContainerAsync(existingContainerId, cancellationToken)
                             .ConfigureAwait(false);
-
-                        await dockerClient.Containers.RemoveContainerAsync(existingContainerId,
-                            new ContainerRemoveParameters
-                            {
-                                Force = true
-                            }, cancellationToken).ConfigureAwait(false);
 
                         ctx.UpdateTarget(
                             new Markup($"Removed existing Comfyg API Container: [bold]{existingContainerId}[/]"));
