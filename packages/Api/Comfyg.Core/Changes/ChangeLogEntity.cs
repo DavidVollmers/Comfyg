@@ -21,12 +21,12 @@ internal class ChangeLogEntity : ChangeLogEntityBase
 {
     [PartitionKey] [IgnoreDataMember] public string Partition => $"{TargetType.FullName}-{TargetId}";
 
-    [RowKey] [IgnoreDataMember] public string Row => $"{ChangedAt}";
+    [RowKey] [IgnoreDataMember] public string Row => $"{ChangedAt.Ticks}";
 }
 
 internal class ChangeLogEntityMirrored : ChangeLogEntityBase
 {
     [PartitionKey] [IgnoreDataMember] public string Partition => $"{TargetType.FullName}";
 
-    [RowKey] [IgnoreDataMember] public string Row => $"{TargetId}-{ChangedAt}";
+    [RowKey] [IgnoreDataMember] public string Row => $"{TargetId}-{ChangedAt.Ticks}";
 }
