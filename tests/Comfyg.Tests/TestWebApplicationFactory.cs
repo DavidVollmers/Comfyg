@@ -4,6 +4,7 @@ using Comfyg.Contracts.Secrets;
 using Comfyg.Contracts.Settings;
 using Comfyg.Core.Abstractions;
 using Comfyg.Core.Abstractions.Changes;
+using Comfyg.Core.Abstractions.Permissions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Moq;
@@ -30,6 +31,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         {
             services.AddSingleton<IClientService>(_ => GetMock<IClientService>().Object);
             services.AddSingleton<IChangeService>(_ => GetMock<IChangeService>().Object);
+            services.AddSingleton<IPermissionService>(_ => GetMock<IPermissionService>().Object);
             services.AddSingleton<IValueService<IConfigurationValue>>(_ =>
                 GetMock<IValueService<IConfigurationValue>>().Object);
             services.AddSingleton<IValueService<ISettingValue>>(_ => GetMock<IValueService<ISettingValue>>().Object);

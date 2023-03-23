@@ -50,8 +50,10 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IClientService>(mock =>
         {
-            mock.Setup(cs => cs.CreateClientAsync(It.IsAny<IClient>())).ReturnsAsync(client);
-            mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>())).ReturnsAsync(clientSecret);
+            mock.Setup(cs => cs.CreateClientAsync(It.IsAny<IClient>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(client);
+            mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(clientSecret);
         });
 
         var response = await comfygClient.SetupClientAsync(new SetupClientRequest
@@ -74,9 +76,15 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IClientService>(mock =>
         {
-            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == client.ClientId)), Times.Once);
-            mock.Verify(cs => cs.CreateClientAsync(It.Is<IClient>(c => c.ClientId == client.ClientId)), Times.Once);
-            mock.Verify(cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == client.ClientId)),
+            mock.Verify(
+                cs => cs.GetClientAsync(It.Is<string>(s => s == client.ClientId), It.IsAny<CancellationToken>()),
+                Times.Once);
+            mock.Verify(
+                cs => cs.CreateClientAsync(It.Is<IClient>(c => c.ClientId == client.ClientId),
+                    It.IsAny<CancellationToken>()), Times.Once);
+            mock.Verify(
+                cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == client.ClientId),
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
         });
     }
@@ -101,8 +109,9 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IClientService>(mock =>
         {
-            mock.Setup(cs => cs.GetClientAsync(It.IsAny<string>())).ReturnsAsync(client);
-            mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>())).ReturnsAsync(clientSecret);
+            mock.Setup(cs => cs.GetClientAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(client);
+            mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(clientSecret);
         });
 
         var response = await comfygClient.EstablishConnectionAsync();
@@ -115,8 +124,11 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IClientService>(mock =>
         {
-            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId)), Times.Once);
-            mock.Verify(cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId)), Times.Once);
+            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()),
+                Times.Once);
+            mock.Verify(
+                cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId),
+                    It.IsAny<CancellationToken>()), Times.Once);
         });
     }
 
@@ -145,13 +157,16 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IClientService>(mock =>
         {
-            mock.Setup(cs => cs.GetClientAsync(It.IsAny<string>())).ReturnsAsync(client);
-            mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>())).ReturnsAsync(clientSecret);
+            mock.Setup(cs => cs.GetClientAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(client);
+            mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(clientSecret);
         });
 
         _factory.Mock<IPermissionService>(mock =>
         {
-            mock.Setup(ps => ps.IsPermittedAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<string>()))
+            mock.Setup(ps =>
+                    ps.IsPermittedAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<string>(),
+                        It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
         });
 
@@ -162,26 +177,31 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
 
         _factory.Mock<IClientService>(mock =>
         {
-            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId)), Times.Once);
-            mock.Verify(cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId)), Times.Once);
+            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()),
+                Times.Once);
+            mock.Verify(
+                cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId),
+                    It.IsAny<CancellationToken>()), Times.Once);
         });
 
         _factory.Mock<IPermissionService>(mock =>
         {
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == clientId),
-                    It.Is<string>(s => s == "key1")), Times.Once);
+                    It.Is<string>(s => s == "key1"), It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == clientId),
-                    It.Is<string>(s => s == "key2")), Times.Once);
+                    It.Is<string>(s => s == "key2"), It.IsAny<CancellationToken>()), Times.Once);
         });
 
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
             mock.Verify(cs => cs.AddValueAsync(It.Is<string>(s => s == clientId),
-                It.Is<string>(s => s == "key1"), It.Is<string>(s => s == "value1")), Times.Once);
+                    It.Is<string>(s => s == "key1"), It.Is<string>(s => s == "value1"), It.IsAny<CancellationToken>()),
+                Times.Once);
             mock.Verify(cs => cs.AddValueAsync(It.Is<string>(s => s == clientId),
-                It.Is<string>(s => s == "key2"), It.Is<string>(s => s == "value2")), Times.Once);
+                    It.Is<string>(s => s == "key2"), It.Is<string>(s => s == "value2"), It.IsAny<CancellationToken>()),
+                Times.Once);
         });
     }
 }
