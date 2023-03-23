@@ -8,5 +8,7 @@ public interface IValueService<T> where T : IComfygValue
 
     IAsyncEnumerable<T> GetValuesAsync(string owner, CancellationToken cancellationToken = default);
 
-    Task<T?> GetValueAsync(string key, string version = null!, CancellationToken cancellationToken = default);
+    Task<T?> GetValueAsync(string key, string version, CancellationToken cancellationToken = default);
+
+    Task<T?> GetLatestValueAsync(string key, CancellationToken cancellationToken = default);
 }

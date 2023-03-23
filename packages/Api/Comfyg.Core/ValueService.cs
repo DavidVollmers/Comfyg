@@ -47,10 +47,10 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
                 Value = value,
                 Version = version
             }, cancellationToken: cancellationToken).ConfigureAwait(false);
-
-            await _changeService.LogChangeAsync<TValue>(key, ChangeType.Add, owner, cancellationToken)
-                .ConfigureAwait(false);
         }
+
+        await _changeService.LogChangeAsync<TValue>(key, ChangeType.Add, owner, cancellationToken)
+            .ConfigureAwait(false);
 
         await _permissionService.SetPermissionAsync<TValue>(owner, key, cancellationToken).ConfigureAwait(false);
     }
@@ -76,8 +76,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         }
     }
 
-    public async Task<TValue?> GetValueAsync(string key, string version = CoreConstants.LatestVersion,
-        CancellationToken cancellationToken = default)
+    public async Task<TValue?> GetValueAsync(string key, string version, CancellationToken cancellationToken = default)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (version == null) throw new ArgumentNullException(nameof(version));
@@ -86,4 +85,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
 
         return await _values.GetIfExistsAsync(key, version, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    public async Task<TValue?> GetLatestValueAsync(string key, CancellationToken cancellationToken = default)
+        => await GetValueAsync(key, CoreConstants.LatestVersion, cancellationToken).ConfigureAwait(false);
 }

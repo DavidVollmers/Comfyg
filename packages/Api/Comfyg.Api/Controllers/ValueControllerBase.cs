@@ -43,9 +43,9 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         var changes =
             _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since, cancellationToken);
 
-        await foreach (var change in changes.ConfigureAwait(false))
+        await foreach (var change in changes.GroupBy(c => c.TargetId).ConfigureAwait(false))
         {
-            var value = await _valueService.GetValueAsync(change.TargetId, cancellationToken: cancellationToken)
+            var value = await _valueService.GetLatestValueAsync(change.Key, cancellationToken)
                 .ConfigureAwait(false);
 
             if (value == null) continue;
