@@ -56,19 +56,19 @@ internal class PermissionService : IPermissionService
         if (targetId == null) throw new ArgumentNullException(nameof(targetId));
 
         await _permissions.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
-        await _permissions.AddAsync(new PermissionEntity
+        await _permissions.UpsertAsync(new PermissionEntity
         {
             Owner = owner,
             TargetId = targetId,
             TargetType = typeof(T)
-        }, cancellationToken).ConfigureAwait(false);
+        }, cancellationToken: cancellationToken).ConfigureAwait(false);
 
         await _permissionsMirrored.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
-        await _permissionsMirrored.AddAsync(new PermissionEntityMirrored
+        await _permissionsMirrored.UpsertAsync(new PermissionEntityMirrored
         {
             Owner = owner,
             TargetId = targetId,
             TargetType = typeof(T)
-        }, cancellationToken).ConfigureAwait(false);
+        }, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 }

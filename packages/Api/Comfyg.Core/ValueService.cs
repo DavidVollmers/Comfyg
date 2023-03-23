@@ -41,12 +41,12 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         foreach (var version in new[]
                      { CoreConstants.LatestVersion, (long.MaxValue - DateTimeOffset.UtcNow.Ticks).ToString() })
         {
-            await _values.AddAsync(new TEntity
+            await _values.UpsertAsync(new TEntity
             {
                 Key = key,
                 Value = value,
                 Version = version
-            }, cancellationToken).ConfigureAwait(false);
+            }, cancellationToken: cancellationToken).ConfigureAwait(false);
 
             await _changeService.LogChangeAsync<TValue>(key, ChangeType.Add, owner, cancellationToken)
                 .ConfigureAwait(false);
