@@ -128,7 +128,7 @@ public sealed partial class ComfygClient : IDisposable
                 new Claim(ClaimTypes.NameIdentifier, _clientId)
             }),
             //TODO adjustable
-            Expires = DateTimeOffset.UtcNow.AddDays(1).AddMinutes(5),
+            Expires = DateTime.UtcNow.AddDays(1).AddMinutes(5),
             Issuer = _clientId,
             Audience = _clientId,
             SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature)

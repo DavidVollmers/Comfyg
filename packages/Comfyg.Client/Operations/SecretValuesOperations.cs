@@ -30,11 +30,12 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
             .ConfigureAwait(false))!;
     }
 
-    public async Task<GetValuesResponse<ISecretValue>> GetValuesFromDiffAsync(DateTime since,
+    public async Task<GetValuesResponse<ISecretValue>> GetValuesFromDiffAsync(DateTimeOffset since,
         CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"secrets/fromDiff?since={since.ToUniversalTime():s}Z"),
+            .SendRequestAsync(
+                () => new HttpRequestMessage(HttpMethod.Get, $"secrets/fromDiff?since={since.ToUniversalTime():s}Z"),
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
@@ -61,10 +62,11 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
                 response.StatusCode);
     }
 
-    public async Task<GetDiffResponse> GetDiffAsync(DateTime since, CancellationToken cancellationToken = default)
+    public async Task<GetDiffResponse> GetDiffAsync(DateTimeOffset since, CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"diff/secrets?since={since.ToUniversalTime():s}Z"),
+            .SendRequestAsync(
+                () => new HttpRequestMessage(HttpMethod.Get, $"diff/secrets?since={since.ToUniversalTime():s}Z"),
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)

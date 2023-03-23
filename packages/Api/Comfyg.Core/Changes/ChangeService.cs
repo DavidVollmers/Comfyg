@@ -56,7 +56,8 @@ internal class ChangeService : IChangeService
     {
         await _changeLogMirrored.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
 
-        var changedAtFilter = TypedTableClient<ChangeLogEntityMirrored>.CreateQueryFilter(c => c.ChangedAt >= since);
+        var changedAtFilter =
+            TypedTableClient<ChangeLogEntityMirrored>.CreateQueryFilter(c => c.ChangedAt >= since.ToUniversalTime());
         var filter = $"PartitionKey eq '{typeof(T).FullName}' and {changedAtFilter}";
 
         var changes = _changeLogMirrored.QueryAsync(filter, cancellationToken: cancellationToken);

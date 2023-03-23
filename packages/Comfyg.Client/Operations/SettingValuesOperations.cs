@@ -30,11 +30,12 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
             .ConfigureAwait(false))!;
     }
 
-    public async Task<GetValuesResponse<ISettingValue>> GetValuesFromDiffAsync(DateTime since,
+    public async Task<GetValuesResponse<ISettingValue>> GetValuesFromDiffAsync(DateTimeOffset since,
         CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"settings/fromDiff?since={since.ToUniversalTime():s}Z"),
+            .SendRequestAsync(
+                () => new HttpRequestMessage(HttpMethod.Get, $"settings/fromDiff?since={since.ToUniversalTime():s}Z"),
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
@@ -61,10 +62,11 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
                 response.StatusCode);
     }
 
-    public async Task<GetDiffResponse> GetDiffAsync(DateTime since, CancellationToken cancellationToken = default)
+    public async Task<GetDiffResponse> GetDiffAsync(DateTimeOffset since, CancellationToken cancellationToken = default)
     {
         var response = await _client
-            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, $"diff/settings?since={since.ToUniversalTime():s}Z"),
+            .SendRequestAsync(
+                () => new HttpRequestMessage(HttpMethod.Get, $"diff/settings?since={since.ToUniversalTime():s}Z"),
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)

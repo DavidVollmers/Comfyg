@@ -12,7 +12,7 @@ internal class ChangeDetector<T> : IDisposable where T : IComfygValue
 
     private CancellationTokenSource? _cancellationTokenSource;
 
-    public DateTime LastDetectionAt { get; private set; }
+    public DateTimeOffset LastDetectionAt { get; private set; }
 
     public ChangeDetector(IComfygValuesOperations<T> operations, ITimer timer)
     {

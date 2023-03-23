@@ -33,7 +33,7 @@ internal class ComfygProvider<T> : ConfigurationProvider, IDisposable where T : 
         }
     }
 
-    private void LoadDiff(DateTime since)
+    private void LoadDiff(DateTimeOffset since)
     {
         try
         {
