@@ -1,4 +1,5 @@
-﻿using Comfyg.Authentication.Abstractions;
+﻿using System.Runtime.CompilerServices;
+using Comfyg.Authentication.Abstractions;
 using Comfyg.Contracts;
 using Comfyg.Core.Abstractions;
 using Comfyg.Core.Abstractions.Changes;
@@ -21,35 +22,31 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         _changeService = changeService;
     }
 
-    protected async Task<IEnumerable<T>> GetValuesAsync(IClientIdentity clientIdentity,
-        CancellationToken cancellationToken)
+    protected async IAsyncEnumerable<T> GetValuesAsync(IClientIdentity clientIdentity,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        var values = await _valueService.GetValuesAsync(clientIdentity.Client.ClientId).ConfigureAwait(false);
+        var values = _valueService.GetValuesAsync(clientIdentity.Client.ClientId, cancellationToken);
 
-        var convertedValues = new List<T>();
-        foreach (var value in values)
+        await foreach (var value in values.ConfigureAwait(false))
         {
             var convertedValue = await ConvertValueFromAsync(value, cancellationToken).ConfigureAwait(false);
 
             if (convertedValue == null) continue;
 
-            convertedValues.Add(convertedValue);
+            yield return convertedValue;
         }
-
-        return convertedValues;
     }
 
-    protected async Task<IEnumerable<T>> GetValuesFromDiffAsync(IClientIdentity clientIdentity, DateTime since,
-        CancellationToken cancellationToken)
+    protected async IAsyncEnumerable<T> GetValuesFromDiffAsync(IClientIdentity clientIdentity, DateTimeOffset since,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        var changes = await _changeService
-            .GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since)
-            .ConfigureAwait(false);
+        var changes =
+            _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since, cancellationToken);
 
-        var values = new List<T>();
-        foreach (var change in changes)
+        await foreach (var change in changes.ConfigureAwait(false))
         {
-            var value = await _valueService.GetValueAsync(change.TargetId).ConfigureAwait(false);
+            var value = await _valueService.GetValueAsync(change.TargetId, cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
 
             if (value == null) continue;
 
@@ -57,10 +54,8 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
 
             if (convertedValue == null) continue;
 
-            values.Add(convertedValue);
+            yield return convertedValue;
         }
-
-        return values;
     }
 
     protected async Task<bool> AddValuesAsync(IClientIdentity clientIdentity, IEnumerable<T> values,
@@ -71,7 +66,7 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         foreach (var value in comfygValues)
         {
             var isPermitted = await _permissionService
-                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key)
+                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, cancellationToken)
                 .ConfigureAwait(false);
             if (!isPermitted) return false;
         }
@@ -83,7 +78,8 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
             if (convertedValue == null) continue;
 
             await _valueService
-                .AddValueAsync(clientIdentity.Client.ClientId, convertedValue.Key, convertedValue.Value)
+                .AddValueAsync(clientIdentity.Client.ClientId, convertedValue.Key, convertedValue.Value,
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
 

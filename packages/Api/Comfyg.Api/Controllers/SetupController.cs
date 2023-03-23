@@ -21,19 +21,22 @@ public class SetupController : ControllerBase
     }
 
     [HttpPost("client")]
-    public async Task<ActionResult<SetupClientResponse>> SetupClientAsync([FromBody] SetupClientRequest request)
+    public async Task<ActionResult<SetupClientResponse>> SetupClientAsync([FromBody] SetupClientRequest request,
+        CancellationToken cancellationToken = default)
     {
         var systemClient = _configuration["SystemClientId"];
         if (systemClient == null || User.Identity is not IClientIdentity identity) return BadRequest();
 
         if (identity.Client.ClientId != systemClient) return Forbid();
 
-        var existing = await _clientService.GetClientAsync(request.Client.ClientId).ConfigureAwait(false);
+        var existing = await _clientService.GetClientAsync(request.Client.ClientId, cancellationToken)
+            .ConfigureAwait(false);
         if (existing != null) return BadRequest();
 
-        var client = await _clientService.CreateClientAsync(request.Client).ConfigureAwait(false);
+        var client = await _clientService.CreateClientAsync(request.Client, cancellationToken).ConfigureAwait(false);
 
-        var clientSecret = await _clientService.ReceiveClientSecretAsync(client).ConfigureAwait(false);
+        var clientSecret =
+            await _clientService.ReceiveClientSecretAsync(client, cancellationToken).ConfigureAwait(false);
 
         return Ok(new SetupClientResponse(client, clientSecret));
     }

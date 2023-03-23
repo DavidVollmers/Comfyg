@@ -1,9 +1,8 @@
-﻿using Comfyg.Contracts.Secrets;
-using CoreHelpers.WindowsAzure.Storage.Table.Attributes;
+﻿using Azure.Data.Tables.Poco;
+using Comfyg.Contracts.Secrets;
 
 namespace Comfyg.Core.Secrets;
 
-[Storable(nameof(SecretValueEntity))]
 internal class SecretValueEntity : ISecretValue, ISerializableComfygValue
 {
     [PartitionKey] public string Key { get; set; } = null!;
@@ -12,5 +11,5 @@ internal class SecretValueEntity : ISecretValue, ISerializableComfygValue
 
     [RowKey] public string Version { get; set; } = null!;
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }

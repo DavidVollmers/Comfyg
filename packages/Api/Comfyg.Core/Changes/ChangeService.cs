@@ -60,7 +60,6 @@ internal class ChangeService : IChangeService
         var filter = $"PartitionKey eq '{typeof(T).FullName}' and {changedAtFilter}";
 
         var changes = _changeLogMirrored.QueryAsync(filter, cancellationToken: cancellationToken);
-
         await foreach (var change in changes.ConfigureAwait(false)) yield return change;
     }
 
@@ -74,7 +73,6 @@ internal class ChangeService : IChangeService
 
         var changes = GetChangesSinceAsync<T>(since, cancellationToken)
             .Where(c => permissions.Any(p => p.TargetId == c.TargetId));
-
         await foreach (var change in changes.ConfigureAwait(false)) yield return change;
     }
 }

@@ -1,8 +1,8 @@
-﻿using Azure.Security.KeyVault.Secrets;
+﻿using Azure.Data.Tables;
+using Azure.Security.KeyVault.Secrets;
 using Comfyg.Authentication.Abstractions;
 using Comfyg.Core.Abstractions.Secrets;
 using Comfyg.Core.Secrets;
-using CoreHelpers.WindowsAzure.Storage.Table;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,12 +26,12 @@ public static class ComfygAuthenticationExtensions
             return options;
         }
 
-        IStorageContext StorageContextProvider()
+        TableServiceClient TableServiceClientProvider()
         {
             var options = OptionsProvider();
             if (options.AzureTableStorageConnectionString == null)
                 throw new InvalidOperationException("Missing AzureTableStorageConnectionString option.");
-            return new StorageContext(options.AzureTableStorageConnectionString);
+            return new TableServiceClient(options.AzureTableStorageConnectionString);
         }
 
         ISecretService SecretServiceProvider(IServiceProvider provider)
@@ -52,7 +52,7 @@ public static class ComfygAuthenticationExtensions
         }
 
         serviceCollection.AddSingleton<IClientService, ClientService>(provider =>
-            new ClientService(StorageContextProvider(), SecretServiceProvider(provider)));
+            new ClientService(TableServiceClientProvider(), SecretServiceProvider(provider)));
 
         serviceCollection.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, ComfygJwtBearerOptions>();
         serviceCollection.AddSingleton<ComfygSecurityTokenHandler>();

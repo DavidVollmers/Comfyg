@@ -1,41 +1,46 @@
 ﻿using System.Security.Cryptography;
+using Azure.Data.Tables;
+using Azure.Data.Tables.Poco;
 using Comfyg.Authentication.Abstractions;
 using Comfyg.Contracts.Authentication;
 using Comfyg.Core.Abstractions.Secrets;
-using CoreHelpers.WindowsAzure.Storage.Table;
 
 namespace Comfyg.Authentication;
 
 internal class ClientService : IClientService
 {
-    private readonly IStorageContext _storageContext;
+    private readonly TypedTableClient<ClientEntity> _clients;
     private readonly ISecretService _secretService;
 
-    public ClientService(IStorageContext storageContext, ISecretService secretService)
+    public ClientService(TableServiceClient tableServiceClient, ISecretService secretService)
     {
-        _storageContext = storageContext;
-        _secretService = secretService;
+        if (tableServiceClient == null) throw new ArgumentNullException(nameof(tableServiceClient));
 
-        _storageContext.AddAttributeMapper<ClientEntity>();
+        _secretService = secretService ?? throw new ArgumentNullException(nameof(secretService));
+
+        _clients = tableServiceClient.GetTableClient<ClientEntity>();
     }
 
-    public async Task<IClient?> GetClientAsync(string clientId)
+    public async Task<IClient?> GetClientAsync(string clientId, CancellationToken cancellationToken = default)
     {
-        using var context = _storageContext.CreateChildContext();
-        return await context.EnableAutoCreateTable().QueryAsync<ClientEntity>(clientId, clientId, 1)
+        await _clients.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
+
+        return await _clients.GetIfExistsAsync(clientId, clientId, cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
-    public async Task<string> ReceiveClientSecretAsync(IClient client)
+    public async Task<string> ReceiveClientSecretAsync(IClient client, CancellationToken cancellationToken = default)
     {
-        return await _secretService.UnprotectSecretValueAsync(client.ClientSecret).ConfigureAwait(false);
+        return await _secretService.UnprotectSecretValueAsync(client.ClientSecret, cancellationToken)
+            .ConfigureAwait(false);
     }
 
-    public async Task<IClient> CreateClientAsync(IClient client)
+    public async Task<IClient> CreateClientAsync(IClient client, CancellationToken cancellationToken = default)
     {
         var clientSecret = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 
-        var protectedSecret = await _secretService.ProtectSecretValueAsync(clientSecret).ConfigureAwait(false);
+        var protectedSecret = await _secretService.ProtectSecretValueAsync(clientSecret, cancellationToken)
+            .ConfigureAwait(false);
 
         var clientEntity = new ClientEntity
         {
@@ -44,8 +49,9 @@ internal class ClientService : IClientService
             ClientSecret = protectedSecret
         };
 
-        using var context = _storageContext.CreateChildContext();
-        await context.EnableAutoCreateTable().InsertOrReplaceAsync(clientEntity).ConfigureAwait(false);
+        await _clients.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
+
+        await _clients.AddAsync(clientEntity, cancellationToken).ConfigureAwait(false);
 
         return clientEntity;
     }

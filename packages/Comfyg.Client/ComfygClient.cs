@@ -114,7 +114,7 @@ public sealed partial class ComfygClient : IDisposable
     {
         var tokenHandler = new JwtSecurityTokenHandler();
 
-        if (_token != null && _token.ValidTo > DateTime.UtcNow.AddMinutes(5))
+        if (_token != null && _token.ValidTo > DateTimeOffset.UtcNow.AddMinutes(5))
         {
             return tokenHandler.WriteToken(_token);
         }
@@ -128,7 +128,7 @@ public sealed partial class ComfygClient : IDisposable
                 new Claim(ClaimTypes.NameIdentifier, _clientId)
             }),
             //TODO adjustable
-            Expires = DateTime.UtcNow.AddDays(1).AddMinutes(5),
+            Expires = DateTimeOffset.UtcNow.AddDays(1).AddMinutes(5),
             Issuer = _clientId,
             Audience = _clientId,
             SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature)

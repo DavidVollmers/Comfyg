@@ -61,5 +61,6 @@ var secretValue = configuration["SecretKey"];
 - Add option for wildcard permissions
 - Add client side exception handling
 - Add Import/Export capabilities
+- Support other authentication options for Azure Table Storage
 - Documentation
 - Tests

@@ -11,5 +11,5 @@ internal class ConfigurationValueEntity : IConfigurationValue, ISerializableComf
 
     [RowKey] public string Version { get; set; } = null!;
 
-    public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }

@@ -1,4 +1,5 @@
-﻿using Azure.Security.KeyVault.Secrets;
+﻿using Azure.Data.Tables;
+using Azure.Security.KeyVault.Secrets;
 using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Secrets;
 using Comfyg.Contracts.Settings;
@@ -11,7 +12,6 @@ using Comfyg.Core.Configuration;
 using Comfyg.Core.Permissions;
 using Comfyg.Core.Secrets;
 using Comfyg.Core.Settings;
-using CoreHelpers.WindowsAzure.Storage.Table;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Comfyg.Core;
@@ -31,32 +31,32 @@ public static class ComfygCoreExtensions
             return options;
         }
 
-        IStorageContext StorageContextProvider()
+        TableServiceClient TableServiceClientProvider()
         {
             var options = OptionsProvider();
             if (options.AzureTableStorageConnectionString == null)
                 throw new InvalidOperationException("Missing AzureTableStorageConnectionString option.");
-            return new StorageContext(options.AzureTableStorageConnectionString);
+            return new TableServiceClient(options.AzureTableStorageConnectionString);
         }
 
         serviceCollection.AddScoped<IChangeService, ChangeService>(provider => new ChangeService(
             //TODO make systemId configurable
             nameof(Comfyg),
-            StorageContextProvider(),
+            TableServiceClientProvider(),
             provider.GetRequiredService<IPermissionService>()));
 
         serviceCollection.AddScoped<IPermissionService, PermissionService>(_ =>
             new PermissionService(
                 //TODO make systemId configurable
                 nameof(Comfyg),
-                StorageContextProvider()));
+                TableServiceClientProvider()));
 
         serviceCollection
             .AddScoped<IValueService<IConfigurationValue>, ValueService<IConfigurationValue, ConfigurationValueEntity>>(
                 provider => new ValueService<IConfigurationValue, ConfigurationValueEntity>(
                     //TODO make systemId configurable
                     nameof(Comfyg),
-                    StorageContextProvider(),
+                    TableServiceClientProvider(),
                     provider.GetRequiredService<IPermissionService>(),
                     provider.GetRequiredService<IChangeService>()));
 
@@ -64,7 +64,7 @@ public static class ComfygCoreExtensions
             provider => new ValueService<ISettingValue, SettingValueEntity>(
                 //TODO make systemId configurable
                 nameof(Comfyg),
-                StorageContextProvider(),
+                TableServiceClientProvider(),
                 provider.GetRequiredService<IPermissionService>(),
                 provider.GetRequiredService<IChangeService>()));
 
@@ -72,7 +72,7 @@ public static class ComfygCoreExtensions
             provider => new ValueService<ISecretValue, SecretValueEntity>(
                 //TODO make systemId configurable
                 nameof(Comfyg),
-                StorageContextProvider(),
+                TableServiceClientProvider(),
                 provider.GetRequiredService<IPermissionService>(),
                 provider.GetRequiredService<IChangeService>()));
 

@@ -46,7 +46,6 @@ internal class PermissionService : IPermissionService
 
         var filter = $"PartitionKey eq '{owner}-{typeof(T).FullName}'";
         var permissions = _permissions.QueryAsync(filter, cancellationToken: cancellationToken);
-
         await foreach (var permission in permissions.ConfigureAwait(false)) yield return permission;
     }
 

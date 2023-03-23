@@ -11,7 +11,7 @@ public class SecretValueModel : ISecretValue
 
     public string Version { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
     public SecretValueModel(IComfygValue value)
     {

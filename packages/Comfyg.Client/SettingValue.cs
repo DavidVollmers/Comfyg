@@ -16,5 +16,5 @@ public sealed class SettingValue : ISettingValue
 
     public string Version => null!;
     
-    public DateTime CreatedAt => DateTime.UtcNow;
+    public DateTime CreatedAt => DateTimeOffset.UtcNow;
 }

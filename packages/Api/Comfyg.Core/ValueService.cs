@@ -1,9 +1,11 @@
-﻿using Comfyg.Contracts;
+﻿using System.Runtime.CompilerServices;
+using Azure.Data.Tables;
+using Azure.Data.Tables.Poco;
+using Comfyg.Contracts;
 using Comfyg.Contracts.Changes;
 using Comfyg.Core.Abstractions;
 using Comfyg.Core.Abstractions.Changes;
 using Comfyg.Core.Abstractions.Permissions;
-using CoreHelpers.WindowsAzure.Storage.Table;
 
 namespace Comfyg.Core;
 
@@ -11,79 +13,77 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
     where TValue : IComfygValue
     where TEntity : class, TValue, ISerializableComfygValue, new()
 {
-    private readonly IStorageContext _storageContext;
+    private readonly TypedTableClient<TEntity> _values;
     private readonly IPermissionService _permissionService;
     private readonly IChangeService _changeService;
 
-    public ValueService(string systemId, IStorageContext storageContext, IPermissionService permissionService,
+    public ValueService(string systemId, TableServiceClient tableServiceClient, IPermissionService permissionService,
         IChangeService changeService)
     {
         if (systemId == null) throw new ArgumentNullException(nameof(systemId));
+        if (tableServiceClient == null) throw new ArgumentNullException(nameof(tableServiceClient));
 
-        _storageContext = storageContext ?? throw new ArgumentNullException(nameof(storageContext));
         _permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
         _changeService = changeService ?? throw new ArgumentNullException(nameof(changeService));
 
-        _storageContext.AddAttributeMapper<TEntity>($"{systemId}{typeof(TEntity).Name}");
+        _values = tableServiceClient.GetTableClient<TEntity>().OverrideTableName($"{systemId}{typeof(TEntity).Name}");
     }
 
-    public async Task AddValueAsync(string owner, string key, string value)
+    public async Task AddValueAsync(string owner, string key, string value,
+        CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (value == null) throw new ArgumentNullException(nameof(value));
 
-        using var context = _storageContext.CreateChildContext();
-        context.EnableAutoCreateTable();
+        await _values.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
 
         foreach (var version in new[]
-                     { CoreConstants.LatestVersion, (long.MaxValue - DateTime.UtcNow.Ticks).ToString() })
+                     { CoreConstants.LatestVersion, (long.MaxValue - DateTimeOffset.UtcNow.Ticks).ToString() })
         {
-            await context.InsertOrReplaceAsync(new TEntity
+            await _values.AddAsync(new TEntity
             {
                 Key = key,
                 Value = value,
                 Version = version
-            }).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
 
-            await _changeService.LogChangeAsync<TValue>(key, ChangeType.Add, owner).ConfigureAwait(false);
+            await _changeService.LogChangeAsync<TValue>(key, ChangeType.Add, owner, cancellationToken)
+                .ConfigureAwait(false);
         }
 
-        await _permissionService.SetPermissionAsync<TValue>(owner, key).ConfigureAwait(false);
+        await _permissionService.SetPermissionAsync<TValue>(owner, key, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<TValue>> GetValuesAsync(string owner)
+    public async IAsyncEnumerable<TValue> GetValuesAsync(string owner,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
 
-        using var context = _storageContext.CreateChildContext();
-        context.EnableAutoCreateTable();
+        await _values.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
 
-        var values = new List<TValue>();
-
-        var permissions = await _permissionService.GetPermissionsAsync<TValue>(owner).ConfigureAwait(false);
-        foreach (var permission in permissions)
+        var permissions = _permissionService.GetPermissionsAsync<TValue>(owner, cancellationToken);
+        await foreach (var permission in permissions.ConfigureAwait(false))
         {
-            var latest = await context
-                .QueryAsync<TEntity>(permission.TargetId, CoreConstants.LatestVersion, 1)
+            var latest = await _values
+                .GetIfExistsAsync(permission.TargetId, CoreConstants.LatestVersion,
+                    cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
 
             if (latest == null) continue;
 
-            values.Add(latest);
+            yield return latest;
         }
-
-        return values;
     }
 
-    public async Task<TValue?> GetValueAsync(string key, string version = CoreConstants.LatestVersion)
+    public async Task<TValue?> GetValueAsync(string key, string version = CoreConstants.LatestVersion,
+        CancellationToken cancellationToken = default)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (version == null) throw new ArgumentNullException(nameof(version));
 
-        using var context = _storageContext.CreateChildContext();
+        await _values.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
 
-        return await context.EnableAutoCreateTable().QueryAsync<TEntity>(key, version, 1)
-            .ConfigureAwait(false);
+        return await _values.GetIfExistsAsync(key, version, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 }

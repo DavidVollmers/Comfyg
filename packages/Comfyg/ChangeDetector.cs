@@ -34,7 +34,7 @@ internal class ChangeDetector<T> : IDisposable where T : IComfygValue
     {
         try
         {
-            LastDetectionAt = DateTime.UtcNow.Add(-_timer.Interval);
+            LastDetectionAt = DateTimeOffset.UtcNow.Add(-_timer.Interval);
             var result = _operations.GetDiffAsync(LastDetectionAt).GetAwaiter().GetResult();
             if (result.ChangeLog.Any())
             {

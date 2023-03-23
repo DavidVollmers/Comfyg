@@ -39,13 +39,15 @@ public class DiffController : ControllerBase
         return await CalculateDiffAsync<ISecretValue>(since);
     }
 
-    private async Task<ActionResult<GetDiffResponse>> CalculateDiffAsync<T>(DateTime since)
+    private async Task<ActionResult<GetDiffResponse>> CalculateDiffAsync<T>(DateTime since,
+        CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
+        //TODO support streaming
         var changes =
-            await _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since)
-                .ConfigureAwait(false);
+            await _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since, cancellationToken)
+                .ToArrayAsync(cancellationToken).ConfigureAwait(false);
 
         return Ok(new GetDiffResponse(changes));
     }

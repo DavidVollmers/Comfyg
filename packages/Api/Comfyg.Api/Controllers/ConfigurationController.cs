@@ -27,7 +27,9 @@ public class ConfigurationController : ValueControllerBase<IConfigurationValue>
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var values = await GetValuesAsync(clientIdentity, cancellationToken).ConfigureAwait(false);
+        //TODO support streaming
+        var values = await GetValuesAsync(clientIdentity, cancellationToken).ToArrayAsync(cancellationToken)
+            .ConfigureAwait(false);
 
         return Ok(new GetConfigurationValuesResponse(values));
     }
@@ -38,7 +40,9 @@ public class ConfigurationController : ValueControllerBase<IConfigurationValue>
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var values = await GetValuesFromDiffAsync(clientIdentity, since, cancellationToken).ConfigureAwait(false);
+        //TODO support streaming
+        var values = await GetValuesFromDiffAsync(clientIdentity, since, cancellationToken)
+            .ToArrayAsync(cancellationToken).ConfigureAwait(false);
 
         return Ok(new GetConfigurationValuesResponse(values));
     }

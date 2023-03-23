@@ -6,5 +6,7 @@ public sealed class Permission<T> : IPermission
 
     public string TargetId { get; set; } = null!;
 
-    public string TargetType => typeof(T).FullName!;
+    public Type TargetType => typeof(T);
+
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
