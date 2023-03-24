@@ -46,7 +46,8 @@ internal class PermissionService : IPermissionService
 
         var filter = $"PartitionKey eq '{owner}-{typeof(T).FullName}'";
         var permissions = _permissions.QueryAsync(filter, cancellationToken: cancellationToken);
-        await foreach (var permission in permissions.ConfigureAwait(false)) yield return permission;
+        await foreach (var permission in permissions.WithCancellation(cancellationToken).ConfigureAwait(false))
+            yield return permission;
     }
 
     public async Task SetPermissionAsync<T>(string owner, string targetId,
@@ -56,19 +57,13 @@ internal class PermissionService : IPermissionService
         if (targetId == null) throw new ArgumentNullException(nameof(targetId));
 
         await _permissions.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
-        await _permissions.UpsertAsync(new PermissionEntity
-        {
-            Owner = owner,
-            TargetId = targetId,
-            TargetType = typeof(T)
-        }, cancellationToken: cancellationToken).ConfigureAwait(false);
+        await _permissions
+            .UpsertAsync(new PermissionEntity { Owner = owner, TargetId = targetId, TargetType = typeof(T) },
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
         await _permissionsMirrored.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
-        await _permissionsMirrored.UpsertAsync(new PermissionEntityMirrored
-        {
-            Owner = owner,
-            TargetId = targetId,
-            TargetType = typeof(T)
-        }, cancellationToken: cancellationToken).ConfigureAwait(false);
+        await _permissionsMirrored
+            .UpsertAsync(new PermissionEntityMirrored { Owner = owner, TargetId = targetId, TargetType = typeof(T) },
+                cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 }

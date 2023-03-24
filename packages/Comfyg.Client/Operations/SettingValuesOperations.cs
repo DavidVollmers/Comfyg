@@ -35,7 +35,8 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
             JsonSerializer.DeserializeAsyncEnumerable<SettingValue>(stream,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
 
-        await foreach (var value in values.ConfigureAwait(false)) yield return value!;
+        await foreach (var value in values.WithCancellation(cancellationToken).ConfigureAwait(false))
+            yield return value!;
     }
 
     public async Task AddValuesAsync(AddValuesRequest<ISettingValue> request,

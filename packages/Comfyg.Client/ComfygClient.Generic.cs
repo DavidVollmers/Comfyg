@@ -23,7 +23,8 @@ public partial class ComfygClient
     {
         var values = Operations<T>().GetValuesAsync(since, cancellationToken);
 
-        await foreach (var value in values.ConfigureAwait(false)) yield return value;
+        await foreach (var value in values.WithCancellation(cancellationToken).ConfigureAwait(false))
+            yield return value;
     }
 
     public async Task AddValuesAsync<T>(AddValuesRequest<T> request, CancellationToken cancellationToken = default)

@@ -27,7 +27,7 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
     {
         var values = _valueService.GetValuesAsync(clientIdentity.Client.ClientId, cancellationToken);
 
-        await foreach (var value in values.ConfigureAwait(false))
+        await foreach (var value in values.WithCancellation(cancellationToken).ConfigureAwait(false))
         {
             var convertedValue = await ConvertValueFromAsync(value, cancellationToken).ConfigureAwait(false);
 
@@ -43,7 +43,8 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         var changes =
             _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since, cancellationToken);
 
-        await foreach (var change in changes.GroupBy(c => c.TargetId).ConfigureAwait(false))
+        await foreach (var change in changes.GroupBy(c => c.TargetId).WithCancellation(cancellationToken)
+                           .ConfigureAwait(false))
         {
             var value = await _valueService.GetLatestValueAsync(change.Key, cancellationToken)
                 .ConfigureAwait(false);

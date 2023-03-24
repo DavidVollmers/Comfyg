@@ -39,14 +39,12 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         await _values.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
 
         foreach (var version in new[]
-                     { CoreConstants.LatestVersion, (long.MaxValue - DateTimeOffset.UtcNow.Ticks).ToString() })
+                 {
+                     CoreConstants.LatestVersion, (long.MaxValue - DateTimeOffset.UtcNow.Ticks).ToString()
+                 })
         {
-            await _values.UpsertAsync(new TEntity
-            {
-                Key = key,
-                Value = value,
-                Version = version
-            }, cancellationToken: cancellationToken).ConfigureAwait(false);
+            await _values.UpsertAsync(new TEntity { Key = key, Value = value, Version = version },
+                cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
         await _changeService.LogChangeAsync<TValue>(key, ChangeType.Add, owner, cancellationToken)
@@ -63,7 +61,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         await _values.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
 
         var permissions = _permissionService.GetPermissionsAsync<TValue>(owner, cancellationToken);
-        await foreach (var permission in permissions.ConfigureAwait(false))
+        await foreach (var permission in permissions.WithCancellation(cancellationToken).ConfigureAwait(false))
         {
             var latest = await _values
                 .GetIfExistsAsync(permission.TargetId, CoreConstants.LatestVersion,
