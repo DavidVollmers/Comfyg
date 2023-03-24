@@ -159,7 +159,6 @@ You can read more about all options [here](docs/TODO.md).
 
 These are things which still need to be done.
 
-- Add validation of name collision between comfyg values
 - Add option to use Azure KeyVault instead of system encryption
 - Make systemId configurable
 - Add option for wildcard permissions

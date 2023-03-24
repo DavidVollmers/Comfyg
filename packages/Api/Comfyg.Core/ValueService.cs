@@ -47,8 +47,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
                 cancellationToken: cancellationToken);
         }
 
-        await _changeService.LogChangeAsync<TValue>(key, ChangeType.Add, owner, cancellationToken)
-            ;
+        await _changeService.LogChangeAsync<TValue>(key, ChangeType.Add, owner, cancellationToken);
 
         await _permissionService.SetPermissionAsync<TValue>(owner, key, cancellationToken);
     }
@@ -64,9 +63,8 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         await foreach (var permission in permissions.WithCancellation(cancellationToken))
         {
             var latest = await _values
-                .GetIfExistsAsync(permission.TargetId, CoreConstants.LatestVersion,
-                    cancellationToken: cancellationToken)
-                ;
+                    .GetIfExistsAsync(permission.TargetId, CoreConstants.LatestVersion,
+                        cancellationToken: cancellationToken);
 
             if (latest == null) continue;
 
