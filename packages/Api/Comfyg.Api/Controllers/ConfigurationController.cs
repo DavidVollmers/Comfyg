@@ -22,29 +22,23 @@ public class ConfigurationController : ValueControllerBase<IConfigurationValue>
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetConfigurationValuesResponse>> GetConfigurationValuesAsync(
-        CancellationToken cancellationToken = default)
+    public IActionResult GetConfigurationValuesAsync(CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        //TODO support streaming
-        var values = await GetValuesAsync(clientIdentity, cancellationToken).ToArrayAsync(cancellationToken)
-            .ConfigureAwait(false);
+        var values = GetValuesAsync(clientIdentity, cancellationToken);
 
-        return Ok(new GetConfigurationValuesResponse(values));
+        return Ok(values);
     }
 
     [HttpGet("fromDiff")]
-    public async Task<ActionResult<GetConfigurationValuesResponse>> GetConfigurationValuesFromDiffAsync(
-        [FromQuery] DateTime since, CancellationToken cancellationToken = default)
+    public IActionResult GetConfigurationValuesFromDiffAsync([FromQuery] DateTime since, CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        //TODO support streaming
-        var values = await GetValuesFromDiffAsync(clientIdentity, since, cancellationToken)
-            .ToArrayAsync(cancellationToken).ConfigureAwait(false);
+        var values = GetValuesFromDiffAsync(clientIdentity, since, cancellationToken);
 
-        return Ok(new GetConfigurationValuesResponse(values));
+        return Ok(values);
     }
 
     [HttpPost]
