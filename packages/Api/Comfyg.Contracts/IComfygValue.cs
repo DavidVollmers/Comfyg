@@ -11,11 +11,11 @@ public interface IComfygValue
     [TechnicalIdentifier]
     string Key { get; }
 
-    [Required] [MaxLength(1024)] string Value { get; }
+    [Required][MaxLength(1024)] string Value { get; }
 
     [ValidateNever] string Version { get; }
 
     [ValidateNever] DateTimeOffset CreatedAt { get; }
 
-    [JsonIgnore] [ValidateNever] string Hash { get; }
+    [JsonIgnore][ValidateNever] string Hash { get; }
 }

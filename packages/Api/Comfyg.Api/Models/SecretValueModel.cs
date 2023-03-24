@@ -12,7 +12,7 @@ public class SecretValueModel : ISecretValue
     public string Version { get; init; }
 
     public DateTimeOffset CreatedAt { get; init; }
-    
+
     public string Hash { get; init; }
 
     public SecretValueModel(IComfygValue value)
