@@ -31,7 +31,8 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         var systemClientSecret = CreateClientSecret();
         var client = new Contracts.Authentication.Client
         {
-            ClientId = Guid.NewGuid().ToString(), FriendlyName = "New Client"
+            ClientId = Guid.NewGuid().ToString(),
+            FriendlyName = "New Client"
         };
         var clientSecret = CreateClientSecret();
 
@@ -93,7 +94,9 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         var friendlyName = "Test Client";
         var client = new Contracts.Authentication.Client
         {
-            ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName
+            ClientId = clientId,
+            ClientSecret = clientSecret,
+            FriendlyName = friendlyName
         };
 
         using var httpClient = _factory.CreateClient();
@@ -134,7 +137,9 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         var friendlyName = "Test Client";
         var client = new Contracts.Authentication.Client
         {
-            ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName
+            ClientId = clientId,
+            ClientSecret = clientSecret,
+            FriendlyName = friendlyName
         };
         var configurationValues = new[]
         {
