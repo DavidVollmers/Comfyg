@@ -26,22 +26,14 @@ public class SecretsController : ValueControllerBase<ISecretValue>
     }
 
     [HttpGet]
-    public IActionResult GetSecretValuesAsync(CancellationToken cancellationToken = default)
-    {
-        if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
-
-        var values = GetValuesAsync(clientIdentity, cancellationToken);
-
-        return Ok(values);
-    }
-
-    [HttpGet("fromDiff")]
-    public IActionResult GetSecretValuesFromDiffAsync([FromQuery] DateTime since,
+    public IActionResult GetSecretValuesAsync([FromQuery] DateTimeOffset? since = null,
         CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var values = GetValuesFromDiffAsync(clientIdentity, since, cancellationToken);
+        var values = since.HasValue
+            ? GetValuesSinceAsync(clientIdentity, since.Value, cancellationToken)
+            : GetValuesAsync(clientIdentity, cancellationToken);
 
         return Ok(values);
     }

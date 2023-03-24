@@ -18,18 +18,10 @@ public partial class ComfygClient
         throw new NotSupportedException();
     }
 
-    public async IAsyncEnumerable<T> GetValuesAsync<T>(
+    public async IAsyncEnumerable<T> GetValuesAsync<T>(DateTimeOffset? since = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default) where T : IComfygValue
     {
-        var values = Operations<T>().GetValuesAsync(cancellationToken);
-
-        await foreach (var value in values.ConfigureAwait(false)) yield return value;
-    }
-
-    public async IAsyncEnumerable<T> GetValuesFromDiffAsync<T>(DateTime since,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default) where T : IComfygValue
-    {
-        var values = Operations<T>().GetValuesAsync(cancellationToken);
+        var values = Operations<T>().GetValuesAsync(since, cancellationToken);
 
         await foreach (var value in values.ConfigureAwait(false)) yield return value;
     }

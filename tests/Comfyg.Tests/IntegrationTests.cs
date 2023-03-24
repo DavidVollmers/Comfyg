@@ -174,8 +174,9 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
             mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).Returns(configurationValues1.ToAsyncEnumerable);
-            mock.SetupSequence(cs => cs.GetLatestValueAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(configurationValue2Change)
+            mock.Setup(cs => cs.GetLatestValueAsync(It.Is<string>(s => s == "key2"), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(configurationValue2Change);
+            mock.Setup(cs => cs.GetLatestValueAsync(It.Is<string>(s => s == "key3"), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(configurationValue3Change);
         });
 
@@ -196,6 +197,12 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
             mock.Setup(cs =>
                     cs.GetChangesForOwnerAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
                 .Returns(changes.ToAsyncEnumerable);
+            mock.Setup(cs =>
+                    cs.GetChangesForOwnerAsync<ISettingValue>(It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+                .Returns(Array.Empty<IChangeLog>().ToAsyncEnumerable);
+            mock.Setup(cs =>
+                    cs.GetChangesForOwnerAsync<ISecretValue>(It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+                .Returns(Array.Empty<IChangeLog>().ToAsyncEnumerable);
         });
 
         var configurationBuilder = new ConfigurationBuilder();
@@ -246,9 +253,9 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         {
             mock.Verify(cs => cs.GetValuesAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(cs => cs.GetLatestValueAsync(It.Is<string>(s => s == "key2"), It.IsAny<CancellationToken>()),
-                Times.Once);
+                Times.Exactly(2));
             mock.Verify(cs => cs.GetLatestValueAsync(It.Is<string>(s => s == "key3"), It.IsAny<CancellationToken>()),
-                Times.Once);
+                Times.Exactly(2));
         });
 
         _factory.Mock<IChangeService>(mock =>

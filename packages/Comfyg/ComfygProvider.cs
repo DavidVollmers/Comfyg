@@ -17,42 +17,28 @@ internal class ComfygProvider<T> : ConfigurationProvider, IDisposable where T : 
 
         if (timer == null) return;
         _changeDetector = new ChangeDetector<T>(_operations, timer);
-        ChangeToken.OnChange(_changeDetector.GetChangeToken, () => { LoadDiff(_changeDetector.LastDetectionAt); });
+        ChangeToken.OnChange(_changeDetector.GetChangeToken,
+            () => LoadAsync(_changeDetector.LastDetectionAt).GetAwaiter().GetResult());
     }
 
-    public override void Load()
+    public override void Load() => LoadAsync().GetAwaiter().GetResult();
+
+    private async Task LoadAsync(DateTimeOffset? since = null)
     {
         try
         {
-            var result = _operations.GetValuesAsync();
-            SetDataAsync(result).GetAwaiter().GetResult();
+            var values = _operations.GetValuesAsync(since);
+
+            if (!since.HasValue) Data.Clear();
+
+            await foreach (var value in values)
+            {
+                Set(value.Key, value.Value);
+            }
         }
         catch
         {
             //TODO log exception
-        }
-    }
-
-    private void LoadDiff(DateTimeOffset since)
-    {
-        try
-        {
-            var result = _operations.GetValuesFromDiffAsync(since);
-            SetDataAsync(result, false).GetAwaiter().GetResult();
-        }
-        catch
-        {
-            //TODO log exception
-        }
-    }
-
-    private async Task SetDataAsync(IAsyncEnumerable<T> values, bool reset = true)
-    {
-        if (reset) Data.Clear();
-
-        await foreach (var value in values)
-        {
-            Set(value.Key, value.Value);
         }
     }
 

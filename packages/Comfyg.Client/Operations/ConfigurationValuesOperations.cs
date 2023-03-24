@@ -1,10 +1,8 @@
 ﻿using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using Comfyg.Contracts.Changes;
 using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Requests;
-using Comfyg.Contracts.Responses;
 
 namespace Comfyg.Client.Operations;
 
@@ -17,39 +15,19 @@ internal class ConfigurationValuesOperations : IComfygValuesOperations<IConfigur
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public async IAsyncEnumerable<IConfigurationValue> GetValuesAsync(
+    public async IAsyncEnumerable<IConfigurationValue> GetValuesAsync(DateTimeOffset? since = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        var uri = "configuration";
+        if (since.HasValue) uri += $"?since={since.Value.ToUniversalTime():s}Z";
+
         var response = await _client
-            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "configuration"),
-                cancellationToken: cancellationToken)
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to get configuration values.", null,
                 response.StatusCode);
-
-        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-
-        var values =
-            JsonSerializer.DeserializeAsyncEnumerable<ConfigurationValue>(stream,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
-
-        await foreach (var value in values.ConfigureAwait(false)) yield return value!;
-    }
-
-    public async IAsyncEnumerable<IConfigurationValue> GetValuesFromDiffAsync(DateTimeOffset since,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var response = await _client
-            .SendRequestAsync(
-                () => new HttpRequestMessage(HttpMethod.Get,
-                    $"configuration/fromDiff?since={since.ToUniversalTime():s}Z"),
-                cancellationToken: cancellationToken).ConfigureAwait(false);
-
-        if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException("Invalid status code when trying to get configuration values from diff.",
-                null, response.StatusCode);
 
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
@@ -75,27 +53,6 @@ internal class ConfigurationValuesOperations : IComfygValuesOperations<IConfigur
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to add configuration values.", null,
                 response.StatusCode);
-    }
-
-    public async IAsyncEnumerable<IChangeLog> GetDiffAsync(DateTimeOffset since,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var response = await _client
-            .SendRequestAsync(
-                () => new HttpRequestMessage(HttpMethod.Get, $"diff/configuration?since={since.ToUniversalTime():s}Z"),
-                cancellationToken: cancellationToken).ConfigureAwait(false);
-
-        if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException("Invalid status code when trying to get configuration diff.", null,
-                response.StatusCode);
-
-        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-
-        var values =
-            JsonSerializer.DeserializeAsyncEnumerable<ChangeLog>(stream,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
-
-        await foreach (var value in values.ConfigureAwait(false)) yield return value!;
     }
 
     public void Dispose()

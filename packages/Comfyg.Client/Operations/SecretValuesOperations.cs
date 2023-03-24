@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using Comfyg.Contracts.Changes;
 using Comfyg.Contracts.Requests;
 using Comfyg.Contracts.Secrets;
 
@@ -16,38 +15,19 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public async IAsyncEnumerable<ISecretValue> GetValuesAsync(
+    public async IAsyncEnumerable<ISecretValue> GetValuesAsync(DateTimeOffset? since = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        var uri = "secrets";
+        if (since.HasValue) uri += $"?since={since.Value.ToUniversalTime():s}Z";
+
         var response = await _client
-            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "secrets"),
-                cancellationToken: cancellationToken)
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to get secret values.", null,
                 response.StatusCode);
-
-        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-
-        var values =
-            JsonSerializer.DeserializeAsyncEnumerable<SecretValue>(stream,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
-
-        await foreach (var value in values.ConfigureAwait(false)) yield return value!;
-    }
-
-    public async IAsyncEnumerable<ISecretValue> GetValuesFromDiffAsync(DateTimeOffset since,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var response = await _client
-            .SendRequestAsync(
-                () => new HttpRequestMessage(HttpMethod.Get, $"secrets/fromDiff?since={since.ToUniversalTime():s}Z"),
-                cancellationToken: cancellationToken).ConfigureAwait(false);
-
-        if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException("Invalid status code when trying to get secret values from diff.",
-                null, response.StatusCode);
 
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
@@ -73,27 +53,6 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to add secret values.", null,
                 response.StatusCode);
-    }
-
-    public async IAsyncEnumerable<IChangeLog> GetDiffAsync(DateTimeOffset since,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var response = await _client
-            .SendRequestAsync(
-                () => new HttpRequestMessage(HttpMethod.Get, $"diff/secrets?since={since.ToUniversalTime():s}Z"),
-                cancellationToken: cancellationToken).ConfigureAwait(false);
-
-        if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException("Invalid status code when trying to get secrets diff.", null,
-                response.StatusCode);
-
-        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-
-        var values =
-            JsonSerializer.DeserializeAsyncEnumerable<ChangeLog>(stream,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
-
-        await foreach (var value in values.ConfigureAwait(false)) yield return value!;
     }
 
     public void Dispose()

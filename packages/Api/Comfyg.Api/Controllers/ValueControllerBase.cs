@@ -37,7 +37,7 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         }
     }
 
-    protected async IAsyncEnumerable<IComfygValue> GetValuesFromDiffAsync(IClientIdentity clientIdentity,
+    protected async IAsyncEnumerable<IComfygValue> GetValuesSinceAsync(IClientIdentity clientIdentity,
         DateTimeOffset since, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var changes =

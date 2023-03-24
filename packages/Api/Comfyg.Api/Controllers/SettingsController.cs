@@ -1,6 +1,5 @@
 ﻿using Comfyg.Authentication.Abstractions;
 using Comfyg.Contracts.Requests;
-using Comfyg.Contracts.Responses;
 using Comfyg.Contracts.Settings;
 using Comfyg.Core.Abstractions;
 using Comfyg.Core.Abstractions.Changes;
@@ -22,21 +21,14 @@ public class SettingsController : ValueControllerBase<ISettingValue>
     }
 
     [HttpGet]
-    public IActionResult GetSettingValuesAsync(CancellationToken cancellationToken = default)
+    public IActionResult GetSettingValuesAsync([FromQuery] DateTimeOffset? since = null,
+        CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var values = GetValuesAsync(clientIdentity, cancellationToken);
-
-        return Ok(values);
-    }
-
-    [HttpGet("fromDiff")]
-    public IActionResult GetSettingValuesFromDiffAsync([FromQuery] DateTime since, CancellationToken cancellationToken = default)
-    {
-        if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
-
-        var values = GetValuesFromDiffAsync(clientIdentity, since, cancellationToken);
+        var values = since.HasValue
+            ? GetValuesSinceAsync(clientIdentity, since.Value, cancellationToken)
+            : GetValuesAsync(clientIdentity, cancellationToken);
 
         return Ok(values);
     }
