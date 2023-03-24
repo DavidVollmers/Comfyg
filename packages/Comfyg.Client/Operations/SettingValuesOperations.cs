@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Comfyg.Contracts.Changes;
 using Comfyg.Contracts.Requests;
-using Comfyg.Contracts.Responses;
 using Comfyg.Contracts.Settings;
 
 namespace Comfyg.Client.Operations;
@@ -75,7 +75,8 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
                 response.StatusCode);
     }
 
-    public async Task<GetDiffResponse> GetDiffAsync(DateTimeOffset since, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<IChangeLog> GetDiffAsync(DateTimeOffset since,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var response = await _client
             .SendRequestAsync(
@@ -86,8 +87,13 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
             throw new HttpRequestException("Invalid status code when trying to get settings diff.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<GetDiffResponse>(cancellationToken: cancellationToken)
-            .ConfigureAwait(false))!;
+        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+
+        var values =
+            JsonSerializer.DeserializeAsyncEnumerable<ChangeLog>(stream,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
+
+        await foreach (var value in values.ConfigureAwait(false)) yield return value!;
     }
 
     public void Dispose()

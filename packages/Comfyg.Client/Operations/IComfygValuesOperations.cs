@@ -1,6 +1,6 @@
 ﻿using Comfyg.Contracts;
+using Comfyg.Contracts.Changes;
 using Comfyg.Contracts.Requests;
-using Comfyg.Contracts.Responses;
 
 namespace Comfyg.Client.Operations;
 
@@ -12,5 +12,5 @@ public interface IComfygValuesOperations<T> : IDisposable where T : IComfygValue
 
     Task AddValuesAsync(AddValuesRequest<T> request, CancellationToken cancellationToken = default);
 
-    Task<GetDiffResponse> GetDiffAsync(DateTimeOffset since, CancellationToken cancellationToken = default);
+    IAsyncEnumerable<IChangeLog> GetDiffAsync(DateTimeOffset since, CancellationToken cancellationToken = default);
 }

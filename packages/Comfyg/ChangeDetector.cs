@@ -19,7 +19,7 @@ internal class ChangeDetector<T> : IDisposable where T : IComfygValue
         _operations = operations ?? throw new ArgumentNullException(nameof(operations));
         _timer = timer ?? throw new ArgumentNullException(nameof(timer));
 
-        _timer.RegisterCallback(DetectChanges);
+        _timer.RegisterCallback(() => DetectChangesAsync().GetAwaiter().GetResult());
     }
 
     public IChangeToken GetChangeToken()
@@ -30,15 +30,16 @@ internal class ChangeDetector<T> : IDisposable where T : IComfygValue
         return new CancellationChangeToken(_cancellationTokenSource.Token);
     }
 
-    private void DetectChanges()
+    private async Task DetectChangesAsync()
     {
         try
         {
             LastDetectionAt = DateTimeOffset.UtcNow.Add(-_timer.Interval);
-            var result = _operations.GetDiffAsync(LastDetectionAt).GetAwaiter().GetResult();
-            if (result.ChangeLog.Any())
+            var changes = _operations.GetDiffAsync(LastDetectionAt);
+            await foreach (var _ in changes)
             {
                 _cancellationTokenSource?.Cancel();
+                break;
             }
         }
         catch
