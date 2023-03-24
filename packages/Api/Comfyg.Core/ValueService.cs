@@ -37,6 +37,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         if (owner == null) throw new ArgumentNullException(nameof(owner));
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (value == null) throw new ArgumentNullException(nameof(value));
+        if (hash == null) throw new ArgumentNullException(nameof(hash));
 
         await _values.CreateTableIfNotExistsAsync(cancellationToken);
 
