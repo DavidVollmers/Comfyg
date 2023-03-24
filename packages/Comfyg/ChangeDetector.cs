@@ -35,7 +35,7 @@ internal class ChangeDetector<T> : IDisposable where T : IComfygValue
         try
         {
             LastDetectionAt = DateTimeOffset.UtcNow.Add(-_timer.Interval);
-            
+
             var cancellationToken = _cancellationTokenSource!.Token;
             var changes = _operations.GetValuesAsync(LastDetectionAt, cancellationToken);
             await foreach (var _ in changes.WithCancellation(cancellationToken))
