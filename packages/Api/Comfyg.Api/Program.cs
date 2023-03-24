@@ -1,4 +1,4 @@
-using Comfyg.Api;
+﻿using Comfyg.Api;
 using Comfyg.Authentication;
 using Comfyg.Core;
 

@@ -166,3 +166,4 @@ These are things which still need to be done.
 - Add client side exception handling
 - Add Import/Export capabilities
 - Support other authentication options for Azure Table Storage
+- Documentation

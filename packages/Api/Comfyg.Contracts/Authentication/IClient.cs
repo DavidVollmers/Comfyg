@@ -17,5 +17,5 @@ public interface IClient
     [IgnoreDataMember]
     string ClientSecret { get; }
 
-    [Required] [MaxLength(256)] string FriendlyName { get; }
+    [Required][MaxLength(256)] string FriendlyName { get; }
 }

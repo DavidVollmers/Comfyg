@@ -133,13 +133,13 @@ internal static class DockerClientExtensions
         };
 
         await dockerClient.Images.BuildImageFromDockerfileAsync(new ImageBuildParameters
-            {
-                Dockerfile = dockerFile.Name,
-                Tags = new List<string>
+        {
+            Dockerfile = dockerFile.Name,
+            Tags = new List<string>
                 {
                     tag
                 }
-            }, stream, Array.Empty<AuthConfig>(), new Dictionary<string, string>(), progress, cancellationToken)
+        }, stream, Array.Empty<AuthConfig>(), new Dictionary<string, string>(), progress, cancellationToken)
             .ConfigureAwait(false);
     }
 

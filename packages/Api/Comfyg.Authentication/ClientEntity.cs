@@ -5,7 +5,7 @@ namespace Comfyg.Authentication;
 
 internal class ClientEntity : IClient
 {
-    [PartitionKey] [RowKey] public string ClientId { get; set; } = null!;
+    [PartitionKey][RowKey] public string ClientId { get; set; } = null!;
 
     public string ClientSecret { get; set; } = null!;
 

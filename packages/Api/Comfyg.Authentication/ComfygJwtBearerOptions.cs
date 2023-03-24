@@ -11,7 +11,7 @@ internal class ComfygJwtBearerOptions : IPostConfigureOptions<JwtBearerOptions>
     {
         _tokenHandler = tokenHandler ?? throw new ArgumentNullException(nameof(tokenHandler));
     }
-    
+
     public void PostConfigure(string name, JwtBearerOptions options)
     {
         options.SecurityTokenValidators.Clear();

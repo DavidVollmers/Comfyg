@@ -12,7 +12,7 @@ internal class ClientIdentity : ClaimsIdentity, IClientIdentity
     public ClientIdentity(IClient client, IIdentity identity) : base(identity)
     {
         if (identity == null) throw new ArgumentNullException(nameof(identity));
-        
+
         Client = client ?? throw new ArgumentNullException(nameof(client));
     }
 }

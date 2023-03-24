@@ -7,7 +7,7 @@ internal static class StateExtensions
     public static async Task<ComfygClient> RequireClientAsync(this State state, CancellationToken cancellationToken)
     {
         if (state == null) throw new ArgumentNullException(nameof(state));
-        
+
         var connectionString = await state.ReadAsync<string>(nameof(Comfyg), nameof(ComfygClient), cancellationToken)
             .ConfigureAwait(false);
 

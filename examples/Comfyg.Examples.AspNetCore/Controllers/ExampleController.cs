@@ -11,7 +11,7 @@ public class ExampleController : ControllerBase
     {
         _configuration = configuration;
     }
-    
+
     [HttpGet("example")]
     public IActionResult GetComfygValues()
     {

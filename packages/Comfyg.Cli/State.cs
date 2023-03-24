@@ -12,7 +12,7 @@ internal class State
     private State(string path)
     {
         if (path == null) throw new ArgumentNullException(nameof(path));
-        
+
         _directory = new DirectoryInfo(Path.Join(path, ".comfyg"));
     }
 
@@ -30,7 +30,7 @@ internal class State
     {
         if (scope == null) throw new ArgumentNullException(nameof(scope));
         if (key == null) throw new ArgumentNullException(nameof(key));
-        
+
         var serializedData = await ReadAsync(scope, key, cancellationToken).ConfigureAwait(false);
         if (serializedData == null) return default;
         return await DeserializeAsync<T>(serializedData, cancellationToken).ConfigureAwait(false);
@@ -86,7 +86,7 @@ internal class State
         }
 
         var serializedContent = await SerializeAsync(content, cancellationToken).ConfigureAwait(false);
-        
+
         await using var writer = file.OpenWrite();
         await writer.WriteAsync(serializedContent, cancellationToken).ConfigureAwait(false);
     }

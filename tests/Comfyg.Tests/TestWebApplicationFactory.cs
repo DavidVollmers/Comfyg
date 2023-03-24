@@ -22,11 +22,11 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
             mock.Value.Reset();
         }
     }
-    
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureAppConfiguration(configuration => { configuration.AddJsonFile("appsettings.Test.json"); });
-        
+
         builder.ConfigureTestServices(services =>
         {
             services.AddSingleton<IClientService>(_ => GetMock<IClientService>().Object);
@@ -48,7 +48,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
     private Mock<T> GetMock<T>() where T : class
     {
         var key = typeof(T).FullName!;
-        if (_mocks.TryGetValue(key, out var value)) return (Mock<T>) value;
+        if (_mocks.TryGetValue(key, out var value)) return (Mock<T>)value;
 
         var mock = new Mock<T>();
         _mocks.Add(key, mock);
