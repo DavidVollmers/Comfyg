@@ -4,7 +4,8 @@ namespace Comfyg.Core.Abstractions;
 
 public interface IValueService<T> where T : IComfygValue
 {
-    Task AddValueAsync(string owner, string key, string value, CancellationToken cancellationToken = default);
+    Task AddValueAsync(string owner, string key, string value, string hash,
+        CancellationToken cancellationToken = default);
 
     IAsyncEnumerable<T> GetValuesAsync(string owner, CancellationToken cancellationToken = default);
 

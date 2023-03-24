@@ -31,14 +31,12 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         _values = tableServiceClient.GetTableClient<TEntity>().OverrideTableName($"{systemId}{typeof(TEntity).Name}");
     }
 
-    public async Task AddValueAsync(string owner, string key, string value,
+    public async Task AddValueAsync(string owner, string key, string value, string hash,
         CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (value == null) throw new ArgumentNullException(nameof(value));
-
-        var hash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
 
         await _values.CreateTableIfNotExistsAsync(cancellationToken);
 

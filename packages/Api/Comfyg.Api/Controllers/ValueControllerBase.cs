@@ -1,4 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
 using Comfyg.Authentication.Abstractions;
 using Comfyg.Contracts;
 using Comfyg.Core.Abstractions;
@@ -44,7 +46,7 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
             _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since, cancellationToken);
 
         await foreach (var change in changes.GroupBy(c => c.TargetId).WithCancellation(cancellationToken)
-                           )
+                      )
         {
             var value = await _valueService.GetLatestValueAsync(change.Key, cancellationToken)
                 ;
@@ -67,7 +69,7 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         foreach (var value in comfygValues)
         {
             var isPermitted = await _permissionService
-                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, cancellationToken)
+                    .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, cancellationToken)
                 ;
             if (!isPermitted) return false;
         }
@@ -78,9 +80,11 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
 
             if (convertedValue == null) continue;
 
+            var hash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(value.Value)));
+
             await _valueService
-                .AddValueAsync(clientIdentity.Client.ClientId, convertedValue.Key, convertedValue.Value,
-                    cancellationToken)
+                    .AddValueAsync(clientIdentity.Client.ClientId, convertedValue.Key, convertedValue.Value,
+                        hash, cancellationToken)
                 ;
         }
 
