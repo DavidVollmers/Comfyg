@@ -31,12 +31,14 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
         var values =
-            JsonSerializer.DeserializeAsyncEnumerable<SecretValue>(stream, cancellationToken: cancellationToken);
+            JsonSerializer.DeserializeAsyncEnumerable<SecretValue>(stream,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
 
         await foreach (var value in values.ConfigureAwait(false)) yield return value!;
     }
 
-    public async IAsyncEnumerable<ISecretValue> GetValuesFromDiffAsync(DateTimeOffset since, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<ISecretValue> GetValuesFromDiffAsync(DateTimeOffset since,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var response = await _client
             .SendRequestAsync(
@@ -50,7 +52,8 @@ internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
         var values =
-            JsonSerializer.DeserializeAsyncEnumerable<SecretValue>(stream, cancellationToken: cancellationToken);
+            JsonSerializer.DeserializeAsyncEnumerable<SecretValue>(stream,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
 
         await foreach (var value in values.ConfigureAwait(false)) yield return value!;
     }

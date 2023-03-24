@@ -22,7 +22,7 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         _changeService = changeService;
     }
 
-    protected async IAsyncEnumerable<T> GetValuesAsync(IClientIdentity clientIdentity,
+    protected async IAsyncEnumerable<IComfygValue> GetValuesAsync(IClientIdentity clientIdentity,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var values = _valueService.GetValuesAsync(clientIdentity.Client.ClientId, cancellationToken);
@@ -37,8 +37,8 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         }
     }
 
-    protected async IAsyncEnumerable<T> GetValuesFromDiffAsync(IClientIdentity clientIdentity, DateTimeOffset since,
-        [EnumeratorCancellation] CancellationToken cancellationToken)
+    protected async IAsyncEnumerable<IComfygValue> GetValuesFromDiffAsync(IClientIdentity clientIdentity,
+        DateTimeOffset since, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var changes =
             _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since, cancellationToken);

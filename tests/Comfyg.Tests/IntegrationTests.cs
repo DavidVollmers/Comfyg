@@ -2,6 +2,8 @@
 using Comfyg.Contracts.Authentication;
 using Comfyg.Contracts.Changes;
 using Comfyg.Contracts.Configuration;
+using Comfyg.Contracts.Secrets;
+using Comfyg.Contracts.Settings;
 using Comfyg.Core.Abstractions;
 using Comfyg.Core.Abstractions.Changes;
 using Moq;
@@ -65,6 +67,18 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         {
             mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(configurationValues.ToAsyncEnumerable);
+        });
+
+        _factory.Mock<IValueService<ISettingValue>>(mock =>
+        {
+            mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(Array.Empty<ISettingValue>().ToAsyncEnumerable);
+        });
+
+        _factory.Mock<IValueService<ISecretValue>>(mock =>
+        {
+            mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(Array.Empty<ISecretValue>().ToAsyncEnumerable);
         });
 
         var configurationBuilder = new ConfigurationBuilder();
@@ -160,9 +174,21 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
             mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).Returns(configurationValues1.ToAsyncEnumerable);
-            mock.SetupSequence(cs => cs.GetValueAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            mock.SetupSequence(cs => cs.GetLatestValueAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(configurationValue2Change)
                 .ReturnsAsync(configurationValue3Change);
+        });
+
+        _factory.Mock<IValueService<ISettingValue>>(mock =>
+        {
+            mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(Array.Empty<ISettingValue>().ToAsyncEnumerable);
+        });
+
+        _factory.Mock<IValueService<ISecretValue>>(mock =>
+        {
+            mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(Array.Empty<ISecretValue>().ToAsyncEnumerable);
         });
 
         _factory.Mock<IChangeService>(mock =>
@@ -219,9 +245,9 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
             mock.Verify(cs => cs.GetValuesAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()), Times.Once);
-            mock.Verify(cs => cs.GetValueAsync(It.Is<string>(s => s == "key2"), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            mock.Verify(cs => cs.GetLatestValueAsync(It.Is<string>(s => s == "key2"), It.IsAny<CancellationToken>()),
                 Times.Once);
-            mock.Verify(cs => cs.GetValueAsync(It.Is<string>(s => s == "key3"), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            mock.Verify(cs => cs.GetLatestValueAsync(It.Is<string>(s => s == "key3"), It.IsAny<CancellationToken>()),
                 Times.Once);
         });
 

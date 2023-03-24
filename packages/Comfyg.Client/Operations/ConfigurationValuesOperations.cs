@@ -31,7 +31,8 @@ internal class ConfigurationValuesOperations : IComfygValuesOperations<IConfigur
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
         var values =
-            JsonSerializer.DeserializeAsyncEnumerable<ConfigurationValue>(stream, cancellationToken: cancellationToken);
+            JsonSerializer.DeserializeAsyncEnumerable<ConfigurationValue>(stream,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
 
         await foreach (var value in values.ConfigureAwait(false)) yield return value!;
     }
@@ -52,7 +53,8 @@ internal class ConfigurationValuesOperations : IComfygValuesOperations<IConfigur
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
         var values =
-            JsonSerializer.DeserializeAsyncEnumerable<ConfigurationValue>(stream, cancellationToken: cancellationToken);
+            JsonSerializer.DeserializeAsyncEnumerable<ConfigurationValue>(stream,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
 
         await foreach (var value in values.ConfigureAwait(false)) yield return value!;
     }

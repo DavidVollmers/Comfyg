@@ -3,12 +3,12 @@ using System.Text.Json.Serialization;
 
 namespace Comfyg.Contracts;
 
-internal class ContractConverter<TContract, TImplementation> : ContractConverter<TContract, TImplementation, TContract>
+public class ContractConverter<TContract, TImplementation> : ContractConverter<TContract, TImplementation, TContract>
     where TImplementation : class, TContract
 {
 }
 
-internal class ContractConverter<TContract, TImplementation, TSerialization> : JsonConverter<TContract>
+public class ContractConverter<TContract, TImplementation, TSerialization> : JsonConverter<TContract>
     where TImplementation : class, TContract
     where TContract : TSerialization
 {

@@ -16,7 +16,8 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public async IAsyncEnumerable<ISettingValue> GetValuesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<ISettingValue> GetValuesAsync(
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var response = await _client
             .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "settings"),
@@ -30,12 +31,14 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
         var values =
-            JsonSerializer.DeserializeAsyncEnumerable<SettingValue>(stream, cancellationToken: cancellationToken);
+            JsonSerializer.DeserializeAsyncEnumerable<SettingValue>(stream,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
 
         await foreach (var value in values.ConfigureAwait(false)) yield return value!;
     }
 
-    public async IAsyncEnumerable<ISettingValue> GetValuesFromDiffAsync(DateTimeOffset since, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<ISettingValue> GetValuesFromDiffAsync(DateTimeOffset since,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var response = await _client
             .SendRequestAsync(
@@ -49,7 +52,8 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
         var values =
-            JsonSerializer.DeserializeAsyncEnumerable<SettingValue>(stream, cancellationToken: cancellationToken);
+            JsonSerializer.DeserializeAsyncEnumerable<SettingValue>(stream,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
 
         await foreach (var value in values.ConfigureAwait(false)) yield return value!;
     }
