@@ -38,6 +38,11 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
 
         await _values.CreateTableIfNotExistsAsync(cancellationToken);
 
+        var latest = await _values.GetIfExistsAsync(key.ToLower(), CoreConstants.LatestVersion,
+            cancellationToken: cancellationToken);
+
+        if (latest?.Value == value) return;
+
         foreach (var version in new[]
                  {
                      CoreConstants.LatestVersion, (long.MaxValue - DateTimeOffset.UtcNow.Ticks).ToString()
@@ -63,8 +68,8 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         await foreach (var permission in permissions.WithCancellation(cancellationToken))
         {
             var latest = await _values
-                    .GetIfExistsAsync(permission.TargetId, CoreConstants.LatestVersion,
-                        cancellationToken: cancellationToken);
+                .GetIfExistsAsync(permission.TargetId, CoreConstants.LatestVersion,
+                    cancellationToken: cancellationToken);
 
             if (latest == null) continue;
 
@@ -79,7 +84,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
 
         await _values.CreateTableIfNotExistsAsync(cancellationToken);
 
-        return await _values.GetIfExistsAsync(key, version, cancellationToken: cancellationToken);
+        return await _values.GetIfExistsAsync(key.ToLower(), version, cancellationToken: cancellationToken);
     }
 
     public async Task<TValue?> GetLatestValueAsync(string key, CancellationToken cancellationToken = default)

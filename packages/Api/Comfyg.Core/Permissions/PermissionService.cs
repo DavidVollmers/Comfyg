@@ -29,7 +29,7 @@ internal class PermissionService : IPermissionService
 
         await _permissionsMirrored.CreateTableIfNotExistsAsync(cancellationToken);
 
-        var filter = $"PartitionKey eq '{typeof(T).FullName}-{targetId}'";
+        var filter = $"PartitionKey eq '{typeof(T).FullName}-{targetId.ToLower()}'";
         var ownedValues = await _permissionsMirrored.QueryAsync(filter, cancellationToken: cancellationToken)
             .ToArrayAsync(cancellationToken);
 
