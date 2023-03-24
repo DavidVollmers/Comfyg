@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization;
-using Azure.Data.Tables.Poco;
+﻿using Azure.Data.Tables.Poco;
 using Comfyg.Core.Abstractions.Permissions;
 
 namespace Comfyg.Core.Permissions;
@@ -17,14 +16,14 @@ internal abstract class PermissionEntityBase : IPermission
 
 internal class PermissionEntity : PermissionEntityBase
 {
-    [PartitionKey] [IgnoreDataMember] public string Partition => $"{Owner}-{TargetType.FullName}";
+    [PartitionKey] public string PartitionKey => $"{Owner}-{TargetType.FullName}";
 
-    [RowKey] [IgnoreDataMember] public string Row => $"{TargetId}";
+    [RowKey] public string RowKey => $"{TargetId}";
 }
 
 internal class PermissionEntityMirrored : PermissionEntityBase
 {
-    [PartitionKey] [IgnoreDataMember] public string Partition => $"{TargetType.FullName}-{TargetId}";
+    [PartitionKey] public string PartitionKey => $"{TargetType.FullName}-{TargetId}";
 
-    [RowKey] [IgnoreDataMember] public string Row => $"{Owner}";
+    [RowKey] public string RowKey => $"{Owner}";
 }

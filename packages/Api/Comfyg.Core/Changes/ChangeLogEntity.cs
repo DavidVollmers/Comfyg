@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization;
-using Azure.Data.Tables.Poco;
+﻿using Azure.Data.Tables.Poco;
 using Comfyg.Contracts.Changes;
 
 namespace Comfyg.Core.Changes;
@@ -19,14 +18,14 @@ internal abstract class ChangeLogEntityBase : IChangeLog
 
 internal class ChangeLogEntity : ChangeLogEntityBase
 {
-    [PartitionKey] [IgnoreDataMember] public string Partition => $"{TargetType.FullName}-{TargetId}";
+    [PartitionKey] public string PartitionKey => $"{TargetType.FullName}-{TargetId}";
 
-    [RowKey] [IgnoreDataMember] public string Row => $"{ChangedAt.Ticks}";
+    [RowKey] public string RowKey => $"{ChangedAt.Ticks}";
 }
 
 internal class ChangeLogEntityMirrored : ChangeLogEntityBase
 {
-    [PartitionKey] [IgnoreDataMember] public string Partition => $"{TargetType.FullName}";
+    [PartitionKey] public string PartitionKey => $"{TargetType.FullName}";
 
-    [RowKey] [IgnoreDataMember] public string Row => $"{TargetId}-{ChangedAt.Ticks}";
+    [RowKey] public string RowKey => $"{TargetId}-{ChangedAt.Ticks}";
 }
