@@ -1,8 +1,8 @@
-﻿using Comfyg.Client.Operations;
+﻿using System.Runtime.CompilerServices;
+using Comfyg.Client.Operations;
 using Comfyg.Contracts;
 using Comfyg.Contracts.Configuration;
 using Comfyg.Contracts.Requests;
-using Comfyg.Contracts.Responses;
 using Comfyg.Contracts.Secrets;
 using Comfyg.Contracts.Settings;
 
@@ -18,16 +18,20 @@ public partial class ComfygClient
         throw new NotSupportedException();
     }
 
-    public async Task<GetValuesResponse<T>> GetValuesAsync<T>(CancellationToken cancellationToken = default)
-        where T : IComfygValue
+    public async IAsyncEnumerable<T> GetValuesAsync<T>(
+        [EnumeratorCancellation] CancellationToken cancellationToken = default) where T : IComfygValue
     {
-        return await Operations<T>().GetValuesAsync(cancellationToken).ConfigureAwait(false);
+        var values = Operations<T>().GetValuesAsync(cancellationToken);
+
+        await foreach (var value in values.ConfigureAwait(false)) yield return value;
     }
 
-    public async Task<GetValuesResponse<T>> GetValuesFromDiffAsync<T>(DateTime since,
-        CancellationToken cancellationToken = default) where T : IComfygValue
+    public async IAsyncEnumerable<T> GetValuesFromDiffAsync<T>(DateTime since,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default) where T : IComfygValue
     {
-        return await Operations<T>().GetValuesFromDiffAsync(since, cancellationToken).ConfigureAwait(false);
+        var values = Operations<T>().GetValuesAsync(cancellationToken);
+
+        await foreach (var value in values.ConfigureAwait(false)) yield return value;
     }
 
     public async Task AddValuesAsync<T>(AddValuesRequest<T> request, CancellationToken cancellationToken = default)

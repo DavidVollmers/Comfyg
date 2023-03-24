@@ -24,8 +24,8 @@ internal class ComfygProvider<T> : ConfigurationProvider, IDisposable where T : 
     {
         try
         {
-            var result = _operations.GetValuesAsync().GetAwaiter().GetResult();
-            SetData(result.Values);
+            var result = _operations.GetValuesAsync();
+            SetDataAsync(result).GetAwaiter().GetResult();
         }
         catch
         {
@@ -37,8 +37,8 @@ internal class ComfygProvider<T> : ConfigurationProvider, IDisposable where T : 
     {
         try
         {
-            var result = _operations.GetValuesFromDiffAsync(since).GetAwaiter().GetResult();
-            SetData(result.Values, false);
+            var result = _operations.GetValuesFromDiffAsync(since);
+            SetDataAsync(result, false).GetAwaiter().GetResult();
         }
         catch
         {
@@ -46,18 +46,13 @@ internal class ComfygProvider<T> : ConfigurationProvider, IDisposable where T : 
         }
     }
 
-    private void SetData(IEnumerable<T> values, bool reset = true)
+    private async Task SetDataAsync(IAsyncEnumerable<T> values, bool reset = true)
     {
-        if (reset)
+        if (reset) Data.Clear();
+
+        await foreach (var value in values)
         {
-            Data = values.ToDictionary(c => c.Key, c => c.Value)!;
-        }
-        else
-        {
-            foreach (var value in values)
-            {
-                Set(value.Key, value.Value);
-            }
+            Set(value.Key, value.Value);
         }
     }
 

@@ -1,4 +1,6 @@
 ﻿using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 using Comfyg.Contracts.Requests;
 using Comfyg.Contracts.Responses;
 using Comfyg.Contracts.Settings;
@@ -14,7 +16,7 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public async Task<GetValuesResponse<ISettingValue>> GetValuesAsync(CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<ISettingValue> GetValuesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var response = await _client
             .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "settings"),
@@ -25,13 +27,15 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
             throw new HttpRequestException("Invalid status code when trying to get setting values.", null,
                 response.StatusCode);
 
-        return (await response.Content
-            .ReadFromJsonAsync<GetSettingValuesResponse>(cancellationToken: cancellationToken)
-            .ConfigureAwait(false))!;
+        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+
+        var values =
+            JsonSerializer.DeserializeAsyncEnumerable<SettingValue>(stream, cancellationToken: cancellationToken);
+
+        await foreach (var value in values.ConfigureAwait(false)) yield return value!;
     }
 
-    public async Task<GetValuesResponse<ISettingValue>> GetValuesFromDiffAsync(DateTimeOffset since,
-        CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<ISettingValue> GetValuesFromDiffAsync(DateTimeOffset since, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var response = await _client
             .SendRequestAsync(
@@ -42,9 +46,12 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
             throw new HttpRequestException("Invalid status code when trying to get setting values from diff.",
                 null, response.StatusCode);
 
-        return (await response.Content
-            .ReadFromJsonAsync<GetSettingValuesResponse>(cancellationToken: cancellationToken)
-            .ConfigureAwait(false))!;
+        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+
+        var values =
+            JsonSerializer.DeserializeAsyncEnumerable<SettingValue>(stream, cancellationToken: cancellationToken);
+
+        await foreach (var value in values.ConfigureAwait(false)) yield return value!;
     }
 
     public async Task AddValuesAsync(AddValuesRequest<ISettingValue> request,
@@ -52,10 +59,12 @@ internal class SettingValuesOperations : IComfygValuesOperations<ISettingValue>
     {
         if (request == null) throw new ArgumentNullException(nameof(request));
 
-        var response = await _client.SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Post, "settings")
-        {
-            Content = JsonContent.Create((AddSettingValuesRequest)request)
-        }, cancellationToken: cancellationToken).ConfigureAwait(false);
+        var response = await _client
+            .SendRequestAsync(
+                () => new HttpRequestMessage(HttpMethod.Post, "settings")
+                {
+                    Content = JsonContent.Create((AddSettingValuesRequest)request)
+                }, cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to add setting values.", null,

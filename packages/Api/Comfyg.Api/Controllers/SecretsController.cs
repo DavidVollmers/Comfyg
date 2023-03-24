@@ -1,7 +1,6 @@
 ﻿using Comfyg.Api.Models;
 using Comfyg.Authentication.Abstractions;
 using Comfyg.Contracts.Requests;
-using Comfyg.Contracts.Responses;
 using Comfyg.Contracts.Secrets;
 using Comfyg.Core.Abstractions;
 using Comfyg.Core.Abstractions.Changes;
@@ -27,29 +26,24 @@ public class SecretsController : ValueControllerBase<ISecretValue>
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetSecretValuesResponse>> GetSecretValuesAsync(
-        CancellationToken cancellationToken = default)
+    public IActionResult GetSecretValuesAsync(CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        //TODO support streaming
-        var values = await GetValuesAsync(clientIdentity, cancellationToken).ToArrayAsync(cancellationToken)
-            .ConfigureAwait(false);
+        var values = GetValuesAsync(clientIdentity, cancellationToken);
 
-        return Ok(new GetSecretValuesResponse(values));
+        return Ok(values);
     }
 
     [HttpGet("fromDiff")]
-    public async Task<ActionResult<GetSecretValuesResponse>> GetSecretValuesFromDiffAsync([FromQuery] DateTime since,
+    public IActionResult GetSecretValuesFromDiffAsync([FromQuery] DateTime since,
         CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        //TODO support streaming
-        var values = await GetValuesFromDiffAsync(clientIdentity, since, cancellationToken)
-            .ToArrayAsync(cancellationToken).ConfigureAwait(false);
+        var values = GetValuesFromDiffAsync(clientIdentity, since, cancellationToken);
 
-        return Ok(new GetSecretValuesResponse(values));
+        return Ok(values);
     }
 
     [HttpPost]
@@ -71,10 +65,7 @@ public class SecretsController : ValueControllerBase<ISecretValue>
         var protectedValue = await _secretService.ProtectSecretValueAsync(value.Value, cancellationToken)
             .ConfigureAwait(false);
 
-        return new SecretValueModel(value)
-        {
-            Value = protectedValue
-        };
+        return new SecretValueModel(value) { Value = protectedValue };
     }
 
     protected override async Task<ISecretValue?> ConvertValueFromAsync(ISecretValue value,
@@ -83,9 +74,6 @@ public class SecretsController : ValueControllerBase<ISecretValue>
         var unprotectedValue = await _secretService.UnprotectSecretValueAsync(value.Value, cancellationToken)
             .ConfigureAwait(false);
 
-        return new SecretValueModel(value)
-        {
-            Value = unprotectedValue
-        };
+        return new SecretValueModel(value) { Value = unprotectedValue };
     }
 }
