@@ -28,13 +28,13 @@ public sealed class KeyVaultSecretService : ISecretService
             name = $"{_systemId}{SecretNameDelimiter}{Guid.NewGuid()}";
 
             var existing = await _client.GetSecretAsync(name, cancellationToken: cancellationToken)
-                .ConfigureAwait(false);
+                ;
             if (existing.HasValue) name = null;
         } while (name == null && ++tries > MaxSecretNameGenerationTries);
 
         if (name == null) throw new Exception("Could not generate unique key vault secret name.");
 
-        var result = await _client.SetSecretAsync(name, value, cancellationToken).ConfigureAwait(false);
+        var result = await _client.SetSecretAsync(name, value, cancellationToken);
 
         if (!result.HasValue) throw new Exception("Could not set key vault secret.");
 
@@ -52,7 +52,7 @@ public sealed class KeyVaultSecretService : ISecretService
         var name = $"{_systemId}{SecretNameDelimiter}{guid}";
 
         var result = await _client.GetSecretAsync(name, parts[2], cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
+            ;
 
         if (!result.HasValue) throw new Exception("Could not get key vault secret.");
 

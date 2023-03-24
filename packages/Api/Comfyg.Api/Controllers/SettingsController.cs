@@ -39,7 +39,7 @@ public class SettingsController : ValueControllerBase<ISettingValue>
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var result = await AddValuesAsync(clientIdentity, request.Values, cancellationToken).ConfigureAwait(false);
+        var result = await AddValuesAsync(clientIdentity, request.Values, cancellationToken);
 
         if (!result) return Forbid();
 

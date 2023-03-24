@@ -32,7 +32,7 @@ internal class ChangeService : IChangeService
         if (targetId == null) throw new ArgumentNullException(nameof(targetId));
         if (changedBy == null) throw new ArgumentNullException(nameof(changedBy));
 
-        await _changeLog.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
+        await _changeLog.CreateTableIfNotExistsAsync(cancellationToken);
         await _changeLog
             .AddAsync(
                 new ChangeLogEntity
@@ -41,9 +41,9 @@ internal class ChangeService : IChangeService
                     ChangeType = changeType,
                     TargetType = typeof(T),
                     ChangedBy = changedBy
-                }, cancellationToken).ConfigureAwait(false);
+                }, cancellationToken);
 
-        await _changeLogMirrored.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
+        await _changeLogMirrored.CreateTableIfNotExistsAsync(cancellationToken);
         await _changeLogMirrored
             .AddAsync(
                 new ChangeLogEntityMirrored
@@ -52,20 +52,20 @@ internal class ChangeService : IChangeService
                     ChangeType = changeType,
                     TargetType = typeof(T),
                     ChangedBy = changedBy
-                }, cancellationToken).ConfigureAwait(false);
+                }, cancellationToken);
     }
 
     public async IAsyncEnumerable<IChangeLog> GetChangesSinceAsync<T>(DateTimeOffset since,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        await _changeLogMirrored.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
+        await _changeLogMirrored.CreateTableIfNotExistsAsync(cancellationToken);
 
         var changedAtFilter =
             TypedTableClient<ChangeLogEntityMirrored>.CreateQueryFilter(c => c.ChangedAt >= since.ToUniversalTime());
         var filter = $"PartitionKey eq '{typeof(T).FullName}' and {changedAtFilter}";
 
         var changes = _changeLogMirrored.QueryAsync(filter, cancellationToken: cancellationToken);
-        await foreach (var change in changes.WithCancellation(cancellationToken).ConfigureAwait(false))
+        await foreach (var change in changes.WithCancellation(cancellationToken))
             yield return change;
     }
 
@@ -75,11 +75,11 @@ internal class ChangeService : IChangeService
         if (owner == null) throw new ArgumentNullException(nameof(owner));
 
         var permissions = await _permissionService.GetPermissionsAsync<T>(owner, cancellationToken)
-            .ToArrayAsync(cancellationToken).ConfigureAwait(false);
+            .ToArrayAsync(cancellationToken);
 
         var changes = GetChangesSinceAsync<T>(since, cancellationToken)
             .Where(c => permissions.Any(p => p.TargetId == c.TargetId));
-        await foreach (var change in changes.WithCancellation(cancellationToken).ConfigureAwait(false))
+        await foreach (var change in changes.WithCancellation(cancellationToken))
             yield return change;
     }
 }

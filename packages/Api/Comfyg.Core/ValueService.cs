@@ -36,7 +36,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (value == null) throw new ArgumentNullException(nameof(value));
 
-        await _values.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
+        await _values.CreateTableIfNotExistsAsync(cancellationToken);
 
         foreach (var version in new[]
                  {
@@ -44,13 +44,13 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
                  })
         {
             await _values.UpsertAsync(new TEntity { Key = key, Value = value, Version = version },
-                cancellationToken: cancellationToken).ConfigureAwait(false);
+                cancellationToken: cancellationToken);
         }
 
         await _changeService.LogChangeAsync<TValue>(key, ChangeType.Add, owner, cancellationToken)
-            .ConfigureAwait(false);
+            ;
 
-        await _permissionService.SetPermissionAsync<TValue>(owner, key, cancellationToken).ConfigureAwait(false);
+        await _permissionService.SetPermissionAsync<TValue>(owner, key, cancellationToken);
     }
 
     public async IAsyncEnumerable<TValue> GetValuesAsync(string owner,
@@ -58,15 +58,15 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
 
-        await _values.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
+        await _values.CreateTableIfNotExistsAsync(cancellationToken);
 
         var permissions = _permissionService.GetPermissionsAsync<TValue>(owner, cancellationToken);
-        await foreach (var permission in permissions.WithCancellation(cancellationToken).ConfigureAwait(false))
+        await foreach (var permission in permissions.WithCancellation(cancellationToken))
         {
             var latest = await _values
                 .GetIfExistsAsync(permission.TargetId, CoreConstants.LatestVersion,
                     cancellationToken: cancellationToken)
-                .ConfigureAwait(false);
+                ;
 
             if (latest == null) continue;
 
@@ -79,11 +79,11 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (version == null) throw new ArgumentNullException(nameof(version));
 
-        await _values.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
+        await _values.CreateTableIfNotExistsAsync(cancellationToken);
 
-        return await _values.GetIfExistsAsync(key, version, cancellationToken: cancellationToken).ConfigureAwait(false);
+        return await _values.GetIfExistsAsync(key, version, cancellationToken: cancellationToken);
     }
 
     public async Task<TValue?> GetLatestValueAsync(string key, CancellationToken cancellationToken = default)
-        => await GetValueAsync(key, CoreConstants.LatestVersion, cancellationToken).ConfigureAwait(false);
+        => await GetValueAsync(key, CoreConstants.LatestVersion, cancellationToken);
 }

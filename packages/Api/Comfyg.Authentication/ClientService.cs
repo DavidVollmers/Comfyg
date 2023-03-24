@@ -23,16 +23,16 @@ internal class ClientService : IClientService
 
     public async Task<IClient?> GetClientAsync(string clientId, CancellationToken cancellationToken = default)
     {
-        await _clients.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
+        await _clients.CreateTableIfNotExistsAsync(cancellationToken);
 
         return await _clients.GetIfExistsAsync(clientId, clientId, cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
+            ;
     }
 
     public async Task<string> ReceiveClientSecretAsync(IClient client, CancellationToken cancellationToken = default)
     {
         return await _secretService.UnprotectSecretValueAsync(client.ClientSecret, cancellationToken)
-            .ConfigureAwait(false);
+            ;
     }
 
     public async Task<IClient> CreateClientAsync(IClient client, CancellationToken cancellationToken = default)
@@ -40,7 +40,7 @@ internal class ClientService : IClientService
         var clientSecret = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 
         var protectedSecret = await _secretService.ProtectSecretValueAsync(clientSecret, cancellationToken)
-            .ConfigureAwait(false);
+            ;
 
         var clientEntity = new ClientEntity
         {
@@ -49,9 +49,9 @@ internal class ClientService : IClientService
             ClientSecret = protectedSecret
         };
 
-        await _clients.CreateTableIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
+        await _clients.CreateTableIfNotExistsAsync(cancellationToken);
 
-        await _clients.AddAsync(clientEntity, cancellationToken).ConfigureAwait(false);
+        await _clients.AddAsync(clientEntity, cancellationToken);
 
         return clientEntity;
     }

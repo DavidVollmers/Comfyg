@@ -27,9 +27,9 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
     {
         var values = _valueService.GetValuesAsync(clientIdentity.Client.ClientId, cancellationToken);
 
-        await foreach (var value in values.WithCancellation(cancellationToken).ConfigureAwait(false))
+        await foreach (var value in values.WithCancellation(cancellationToken))
         {
-            var convertedValue = await ConvertValueFromAsync(value, cancellationToken).ConfigureAwait(false);
+            var convertedValue = await ConvertValueFromAsync(value, cancellationToken);
 
             if (convertedValue == null) continue;
 
@@ -44,14 +44,14 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
             _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since, cancellationToken);
 
         await foreach (var change in changes.GroupBy(c => c.TargetId).WithCancellation(cancellationToken)
-                           .ConfigureAwait(false))
+                           )
         {
             var value = await _valueService.GetLatestValueAsync(change.Key, cancellationToken)
-                .ConfigureAwait(false);
+                ;
 
             if (value == null) continue;
 
-            var convertedValue = await ConvertValueFromAsync(value, cancellationToken).ConfigureAwait(false);
+            var convertedValue = await ConvertValueFromAsync(value, cancellationToken);
 
             if (convertedValue == null) continue;
 
@@ -68,20 +68,20 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         {
             var isPermitted = await _permissionService
                 .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, cancellationToken)
-                .ConfigureAwait(false);
+                ;
             if (!isPermitted) return false;
         }
 
         foreach (var value in comfygValues)
         {
-            var convertedValue = await ConvertValueToAsync(value, cancellationToken).ConfigureAwait(false);
+            var convertedValue = await ConvertValueToAsync(value, cancellationToken);
 
             if (convertedValue == null) continue;
 
             await _valueService
                 .AddValueAsync(clientIdentity.Client.ClientId, convertedValue.Key, convertedValue.Value,
                     cancellationToken)
-                .ConfigureAwait(false);
+                ;
         }
 
         return true;

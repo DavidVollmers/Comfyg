@@ -38,14 +38,14 @@ app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
 
-await app.StartAsync().ConfigureAwait(false);
+await app.StartAsync();
 
 if (app.Environment.IsDevelopment())
 {
     app.LogConnectionHint();
 }
 
-await app.WaitForShutdownAsync().ConfigureAwait(false);
+await app.WaitForShutdownAsync();
 
 // Required for integration tests
 // https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-8.0#basic-tests-with-the-default-webapplicationfactory

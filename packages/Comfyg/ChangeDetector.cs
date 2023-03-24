@@ -38,7 +38,7 @@ internal class ChangeDetector<T> : IDisposable where T : IComfygValue
 
             var cancellationToken = _cancellationTokenSource!.Token;
             var changes = _operations.GetValuesAsync(LastDetectionAt, cancellationToken);
-            await foreach (var _ in changes.WithCancellation(cancellationToken))
+            await foreach (var _ in changes.WithCancellation(cancellationToken).ConfigureAwait(false))
             {
                 _cancellationTokenSource?.Cancel();
                 break;

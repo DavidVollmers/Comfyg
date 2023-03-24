@@ -31,7 +31,7 @@ internal class ComfygProvider<T> : ConfigurationProvider, IDisposable where T : 
 
             if (!since.HasValue) Data.Clear();
 
-            await foreach (var value in values)
+            await foreach (var value in values.ConfigureAwait(false))
             {
                 Set(value.Key, value.Value);
             }

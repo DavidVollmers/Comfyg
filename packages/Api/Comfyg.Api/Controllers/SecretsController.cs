@@ -44,7 +44,7 @@ public class SecretsController : ValueControllerBase<ISecretValue>
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
-        var result = await AddValuesAsync(clientIdentity, request.Values, cancellationToken).ConfigureAwait(false);
+        var result = await AddValuesAsync(clientIdentity, request.Values, cancellationToken);
 
         if (!result) return Forbid();
 
@@ -55,7 +55,7 @@ public class SecretsController : ValueControllerBase<ISecretValue>
         CancellationToken cancellationToken)
     {
         var protectedValue = await _secretService.ProtectSecretValueAsync(value.Value, cancellationToken)
-            .ConfigureAwait(false);
+            ;
 
         return new SecretValueModel(value) { Value = protectedValue };
     }
@@ -64,7 +64,7 @@ public class SecretsController : ValueControllerBase<ISecretValue>
         CancellationToken cancellationToken)
     {
         var unprotectedValue = await _secretService.UnprotectSecretValueAsync(value.Value, cancellationToken)
-            .ConfigureAwait(false);
+            ;
 
         return new SecretValueModel(value) { Value = unprotectedValue };
     }
