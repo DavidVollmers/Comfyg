@@ -8,7 +8,7 @@ internal abstract class PermissionEntityBase : IPermission
     public string Owner { get; init; } = null!;
 
     private readonly string _targetId = null!;
-    
+
     public string TargetId { get => _targetId; init => _targetId = value.ToLower(); }
 
     [StoreAsTypeInfo] public Type TargetType { get; init; } = null!;

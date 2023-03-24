@@ -8,7 +8,7 @@ internal abstract class ChangeLogEntityBase : IChangeLog
     [StoreAsTypeInfo] public Type TargetType { get; init; } = null!;
 
     private readonly string _targetId = null!;
-    
+
     public string TargetId { get => _targetId; init => _targetId = value.ToLower(); }
 
     public DateTimeOffset ChangedAt { get; init; } = DateTimeOffset.UtcNow;
