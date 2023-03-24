@@ -17,4 +17,6 @@ public sealed class SecretValue : ISecretValue
     public string Version => null!;
 
     public DateTimeOffset CreatedAt => DateTimeOffset.UtcNow;
+
+    public string Hash => null!;
 }

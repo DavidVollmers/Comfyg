@@ -12,6 +12,8 @@ public class SecretValueModel : ISecretValue
     public string Version { get; init; }
 
     public DateTimeOffset CreatedAt { get; init; }
+    
+    public string Hash { get; init; }
 
     public SecretValueModel(IComfygValue value)
     {
@@ -19,5 +21,6 @@ public class SecretValueModel : ISecretValue
         Value = value.Value;
         Version = value.Version;
         CreatedAt = value.CreatedAt;
+        Hash = value.Hash;
     }
 }

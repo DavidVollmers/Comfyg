@@ -11,4 +11,6 @@ internal interface IComfygValueInitializer : IComfygValue
     new string Version { get; init; }
 
     new DateTimeOffset CreatedAt { get; init; }
+
+    new string Hash { get; init; }
 }

@@ -9,4 +9,6 @@ internal class SettingValue : ISettingValue
     public string Version { get; init; } = null!;
 
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
+
+    public string Hash { get; } = null!;
 }

@@ -1,4 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Poco;
 using Comfyg.Contracts;
@@ -36,19 +38,21 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (value == null) throw new ArgumentNullException(nameof(value));
 
+        var hash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
+
         await _values.CreateTableIfNotExistsAsync(cancellationToken);
 
         var latest = await _values.GetIfExistsAsync(key.ToLower(), CoreConstants.LatestVersion,
             cancellationToken: cancellationToken);
 
-        if (latest?.Value == value) return;
+        if (latest?.Hash == hash) return;
 
         foreach (var version in new[]
                  {
                      CoreConstants.LatestVersion, (long.MaxValue - DateTimeOffset.UtcNow.Ticks).ToString()
                  })
         {
-            await _values.UpsertAsync(new TEntity { Key = key, Value = value, Version = version },
+            await _values.UpsertAsync(new TEntity { Key = key, Value = value, Version = version, Hash = hash },
                 cancellationToken: cancellationToken);
         }
 
