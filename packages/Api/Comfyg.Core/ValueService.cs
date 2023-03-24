@@ -11,7 +11,7 @@ namespace Comfyg.Core;
 
 internal class ValueService<TValue, TEntity> : IValueService<TValue>
     where TValue : IComfygValue
-    where TEntity : class, TValue, ISerializableComfygValue, new()
+    where TEntity : class, TValue, IComfygValueInitializer, new()
 {
     private readonly TypedTableClient<TEntity> _values;
     private readonly IPermissionService _permissionService;

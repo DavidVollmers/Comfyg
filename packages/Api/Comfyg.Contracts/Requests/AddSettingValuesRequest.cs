@@ -9,5 +9,5 @@ public class AddSettingValuesRequest : AddValuesRequest<ISettingValue>
     [Required]
     [JsonConverter(
         typeof(ContractConverter<IEnumerable<ISettingValue>, IEnumerable<SettingValue>, IEnumerable<IComfygValue>>))]
-    public override IEnumerable<ISettingValue> Values { get; set; } = null!;
+    public override IEnumerable<ISettingValue> Values { get; init; } = null!;
 }

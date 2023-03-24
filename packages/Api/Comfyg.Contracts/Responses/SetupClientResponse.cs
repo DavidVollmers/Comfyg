@@ -8,7 +8,7 @@ public sealed class SetupClientResponse
     [JsonConverter(typeof(ContractConverter<IClient, Client>))]
     public IClient Client { get; }
 
-    public string ClientSecret { get; set; }
+    public string ClientSecret { get; }
 
     public SetupClientResponse(IClient client, string clientSecret)
     {

@@ -9,5 +9,5 @@ public class AddSecretValuesRequest : AddValuesRequest<ISecretValue>
     [Required]
     [JsonConverter(
         typeof(ContractConverter<IEnumerable<ISecretValue>, IEnumerable<SecretValue>, IEnumerable<IComfygValue>>))]
-    public override IEnumerable<ISecretValue> Values { get; set; } = null!;
+    public override IEnumerable<ISecretValue> Values { get; init; } = null!;
 }

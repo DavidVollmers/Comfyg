@@ -5,13 +5,13 @@ namespace Comfyg.Api.Models;
 
 public class SecretValueModel : ISecretValue
 {
-    public string Key { get; set; }
+    public string Key { get; init; }
 
-    public string Value { get; set; }
+    public string Value { get; init; }
 
-    public string Version { get; set; }
+    public string Version { get; init; }
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; init; }
 
     public SecretValueModel(IComfygValue value)
     {

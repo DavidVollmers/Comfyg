@@ -2,13 +2,13 @@
 
 internal class ChangeLog : IChangeLog
 {
-    public Type TargetType { get; set; } = null!;
+    public Type TargetType { get; init; } = null!;
 
-    public string TargetId { get; set; } = null!;
+    public string TargetId { get; init; } = null!;
 
-    public DateTimeOffset ChangedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset ChangedAt { get; init; } = DateTimeOffset.UtcNow;
 
-    public ChangeType ChangeType { get; set; } = ChangeType.Unknown;
+    public ChangeType ChangeType { get; init; } = ChangeType.Unknown;
 
-    public string ChangedBy { get; set; } = null!;
+    public string ChangedBy { get; init; } = null!;
 }

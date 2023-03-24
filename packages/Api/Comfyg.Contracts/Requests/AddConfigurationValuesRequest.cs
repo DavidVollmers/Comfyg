@@ -10,5 +10,5 @@ public sealed class AddConfigurationValuesRequest : AddValuesRequest<IConfigurat
     [JsonConverter(
         typeof(ContractConverter<IEnumerable<IConfigurationValue>, IEnumerable<ConfigurationValue>,
             IEnumerable<IComfygValue>>))]
-    public override IEnumerable<IConfigurationValue> Values { get; set; } = null!;
+    public override IEnumerable<IConfigurationValue> Values { get; init; } = null!;
 }

@@ -2,7 +2,7 @@
 
 public abstract class AddValuesRequest<T> where T : IComfygValue
 {
-    public abstract IEnumerable<T> Values { get; set; }
+    public abstract IEnumerable<T> Values { get; init; }
 
     internal AddValuesRequest() { }
 }

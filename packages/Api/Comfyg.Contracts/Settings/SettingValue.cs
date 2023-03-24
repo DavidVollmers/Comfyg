@@ -2,11 +2,11 @@
 
 internal class SettingValue : ISettingValue
 {
-    public string Key { get; set; } = null!;
+    public string Key { get; init; } = null!;
 
-    public string Value { get; set; } = null!;
+    public string Value { get; init; } = null!;
 
-    public string Version { get; set; } = null!;
+    public string Version { get; init; } = null!;
 
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
 }

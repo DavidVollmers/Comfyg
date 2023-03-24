@@ -1,15 +1,7 @@
-﻿using Azure.Data.Tables.Poco;
-using Comfyg.Contracts.Configuration;
+﻿using Comfyg.Contracts.Configuration;
 
 namespace Comfyg.Core.Configuration;
 
-internal class ConfigurationValueEntity : IConfigurationValue, ISerializableComfygValue
+internal class ConfigurationValueEntity : ComfygValueEntity, IConfigurationValue
 {
-    [PartitionKey] public string Key { get; set; } = null!;
-
-    public string Value { get; set; } = null!;
-
-    [RowKey] public string Version { get; set; } = null!;
-
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }

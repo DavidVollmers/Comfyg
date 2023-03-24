@@ -5,15 +5,17 @@ namespace Comfyg.Core.Changes;
 
 internal abstract class ChangeLogEntityBase : IChangeLog
 {
-    [StoreAsTypeInfo] public Type TargetType { get; set; } = null!;
+    [StoreAsTypeInfo] public Type TargetType { get; init; } = null!;
 
-    public string TargetId { get; set; } = null!;
+    private readonly string _targetId = null!;
+    
+    public string TargetId { get => _targetId; init => _targetId = value.ToLower(); }
 
-    public DateTimeOffset ChangedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset ChangedAt { get; init; } = DateTimeOffset.UtcNow;
 
-    public ChangeType ChangeType { get; set; }
+    public ChangeType ChangeType { get; init; }
 
-    public string ChangedBy { get; set; } = null!;
+    public string ChangedBy { get; init; } = null!;
 }
 
 internal class ChangeLogEntity : ChangeLogEntityBase
