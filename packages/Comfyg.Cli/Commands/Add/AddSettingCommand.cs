@@ -4,6 +4,7 @@ using Comfyg.Cli.Extensions;
 using Comfyg.Client;
 using Comfyg.Contracts.Requests;
 using Comfyg.Contracts.Settings;
+using Spectre.Console;
 
 namespace Comfyg.Cli.Commands.Add;
 
@@ -39,5 +40,7 @@ internal class AddSettingCommand : Command
                 new SettingValue(keyArgument, valueArgument)
             }
         }, cancellationToken).ConfigureAwait(false);
+
+        AnsiConsole.MarkupLine($"[bold green]Successfully added the setting value for \"{keyArgument}\"[/]");
     }
 }

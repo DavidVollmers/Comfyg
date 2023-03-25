@@ -4,6 +4,7 @@ using Comfyg.Cli.Extensions;
 using Comfyg.Client;
 using Comfyg.Contracts.Requests;
 using Comfyg.Contracts.Secrets;
+using Spectre.Console;
 
 namespace Comfyg.Cli.Commands.Add;
 
@@ -39,5 +40,7 @@ internal class AddSecretCommand : Command
                 new SecretValue(keyArgument, valueArgument)
             }
         }, cancellationToken).ConfigureAwait(false);
+
+        AnsiConsole.MarkupLine($"[bold green]Successfully added the secret value for \"{keyArgument}\"[/]");
     }
 }

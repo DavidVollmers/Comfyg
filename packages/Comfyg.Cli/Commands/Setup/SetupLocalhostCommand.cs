@@ -208,7 +208,7 @@ internal class SetupLocalhostCommand : Command
                 await State.User.StoreAsync(nameof(Docker), "Containers", containers, cancellationToken)
                     .ConfigureAwait(false);
 
-                ctx.UpdateTarget(new Markup("[bold green]Successfully started Comfyg API![/]"));
+                ctx.UpdateTarget(new Markup("[bold green]Successfully started local Comfyg API[/]"));
             }).ConfigureAwait(false);
 
         AnsiConsole.WriteLine("You can connect to your local Comfyg API using the following connection string:");

@@ -51,7 +51,7 @@ comfyg setup localhost
 Once you have setup your local Comfyg API you will receive a connection string from the CLI:
 
 ```shell
-Successfully started Comfyg API!
+Successfully started local Comfyg API
 
 You can connect to your local Comfyg API using the following connection string:
 Endpoint=http://localhost:32771;ClientId=system;ClientSecret=cbO+N4fgq7mOB813KuOfow0nfKFW+VyS3k4boosUzozn9vmOqvk32QCpxO1eQfxMxKcItHkYX7YUT9uSbP/84g==;
