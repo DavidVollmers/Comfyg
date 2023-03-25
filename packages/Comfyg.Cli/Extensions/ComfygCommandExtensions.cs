@@ -31,6 +31,8 @@ internal static class ComfygCommandExtensions
         serviceCollection.AddScoped<Command, ImportCommand>();
 
         serviceCollection.AddScoped<ExportConfigurationCommand>();
+        serviceCollection.AddScoped<ExportSettingsCommand>();
+        serviceCollection.AddScoped<ExportSecretsCommand>();
         serviceCollection.AddScoped<Command, ExportCommand>();
 
         return serviceCollection;
