@@ -1,4 +1,8 @@
-# Comfyg
+<div align="center">
+    <img src="assets/logo.png" />
+    <h1>Comfyg</h1>
+    <br/>
+</div>
 
 [![](https://img.shields.io/docker/v/dvol/comfyg/latest?style=flat-square)](https://hub.docker.com/r/dvol/comfyg)
 [![](https://img.shields.io/nuget/vpre/Comfyg?style=flat-square)](https://www.nuget.org/packages/Comfyg)
@@ -153,6 +157,22 @@ builder.Configuration.AddComfyg(options => {
 ```
 
 You can read more about all options [here](docs/TODO.md).
+
+## What's next?
+
+After you played around with your local Comfyg API it will be time to move to production, won't it?
+
+First thing you want to do is to setup your Comfyg API in your own Azure Tenant. You can read more about this [here](docs/TODO.md).
+
+You also will probably want to import existing configuration, settings and secrets you have into your API. You can do this using the Comfyg CLI:
+
+```shell
+comfyg import config "path/to/appsettings.json"
+```
+
+You can read more about all Comfyg CLI capabilities [here](packages/Comfyg.Cli/README.md).
+
+Last but not least you should also think about security and data separation concerns. You can read more about connections & security [here](docs/Connections.md).
 
 ## TODOs
 
