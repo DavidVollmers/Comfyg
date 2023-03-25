@@ -174,15 +174,3 @@ comfyg import config "path/to/appsettings.json"
 You can read more about all Comfyg CLI capabilities [here](packages/Comfyg.Cli/README.md).
 
 Last but not least you should also think about security and data separation concerns. You can read more about connections & security [here](docs/Connections.md).
-
-## TODOs
-
-These are things which still need to be done.
-
-- Add option to use Azure KeyVault instead of system encryption
-- Make systemId configurable
-- Add option for wildcard permissions
-- Add client side exception handling
-- Add Import/Export capabilities
-- Support other authentication options for Azure Table Storage
-- Documentation
