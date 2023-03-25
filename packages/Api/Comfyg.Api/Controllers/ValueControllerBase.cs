@@ -68,6 +68,8 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
 
         foreach (var value in comfygValues)
         {
+            if (string.IsNullOrWhiteSpace(value.Key)) throw new InvalidOperationException("Key cannot be empty.");
+
             var isPermitted = await _permissionService
                     .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, cancellationToken)
                 ;

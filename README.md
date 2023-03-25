@@ -1,6 +1,6 @@
 <div align="center">
     <br/>
-    <img src="assets/logo.png" />
+    <img alt="" src="assets/logo.png" />
     <h1>Comfyg</h1>
     <br/>
 </div>

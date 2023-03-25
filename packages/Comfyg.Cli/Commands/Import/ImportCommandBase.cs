@@ -54,18 +54,26 @@ public abstract class ImportCommandBase<T> : Command where T : IComfygValue
 
         foreach (var kvp in json)
         {
-            var currentImportPath = importPath == null ? kvp.Key : importPath + ":" + kvp.Key;
-
-            if (kvp.Value == null)
+            var currentImportPath = kvp.Key;
+            if (importPath != null)
             {
-                AnsiConsole.MarkupLine($"[bold yellow]Skipping \"{currentImportPath}\" because value is null[/]");
+                if (string.IsNullOrWhiteSpace(currentImportPath)) currentImportPath = importPath;
+                else currentImportPath = importPath + ":" + currentImportPath;
+            }
+            else if (string.IsNullOrWhiteSpace(currentImportPath))
+            {
+                AnsiConsole.MarkupLine($"[bold yellow]Skipping \"{currentImportPath}\" because key is empty[/]");
                 continue;
             }
 
-            if (kvp.Value is IDictionary<string, object?> subJson)
+            switch (kvp.Value)
             {
-                await ImportJsonAsync(client, subJson, currentImportPath, batch, cancellationToken);
-                continue;
+                case null:
+                    AnsiConsole.MarkupLine($"[bold yellow]Skipping \"{currentImportPath}\" because value is null[/]");
+                    continue;
+                case IDictionary<string, object?> subJson:
+                    await ImportJsonAsync(client, subJson, currentImportPath, batch, cancellationToken);
+                    continue;
             }
 
             batch.Add(new KeyValuePair<string, string>(kvp.Key, kvp.Value.ToString()!));

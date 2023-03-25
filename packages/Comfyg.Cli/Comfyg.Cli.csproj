@@ -36,8 +36,4 @@
         <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Commands\Export" />
-    </ItemGroup>
-
 </Project>
