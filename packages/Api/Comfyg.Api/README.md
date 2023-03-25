@@ -1,6 +1,7 @@
 # Comfyg.Api
 
 [![](https://img.shields.io/docker/v/dvol/comfyg/latest?style=flat-square)](https://hub.docker.com/r/dvol/comfyg)
+[![](https://img.shields.io/github/license/DavidVollmers/Comfyg?style=flat-square)](https://github.com/DavidVollmers/Comfyg/blob/main/LICENSE.txt)
 
 ## Local Development
 
