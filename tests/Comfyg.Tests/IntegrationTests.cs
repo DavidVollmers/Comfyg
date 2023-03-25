@@ -31,7 +31,7 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
     {
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
-        var friendlyName = "Test Client";
+        const string friendlyName = "Test Client";
         var client = new Contracts.Authentication.Client
         {
             ClientId = clientId,
@@ -49,6 +49,11 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
             {
                 Key = "key2",
                 Value = "value2"
+            },
+            new ConfigurationValue
+            {
+                Key = "section1:key1",
+                Value = "value3"
             }
         };
 
@@ -99,6 +104,13 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         Assert.NotNull(configuration2);
         Assert.Equal("value2", configuration2);
 
+        var section1 = configuration.GetSection("section1");
+        Assert.NotNull(section1);
+
+        var section1Configuration1 = section1["key1"];
+        Assert.NotNull(section1Configuration1);
+        Assert.Equal("value3", section1Configuration1);
+
         _factory.Mock<IClientService>(mock =>
         {
             mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()), Times.Exactly(3));
@@ -117,7 +129,7 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
     {
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
-        var friendlyName = "Test Client";
+        const string friendlyName = "Test Client";
         var client = new Contracts.Authentication.Client
         {
             ClientId = clientId,
