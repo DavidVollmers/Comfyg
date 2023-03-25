@@ -1,5 +1,7 @@
 # Comfyg.Api
 
+[![](https://img.shields.io/docker/v/dvol/comfyg/latest?style=flat-square)](https://hub.docker.com/r/dvol/comfyg)
+
 ## Local Development
 
 ### Azure Storage Emulator
