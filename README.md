@@ -24,15 +24,15 @@ the [latest docker image](https://hub.docker.com/r/dvol/comfyg/tags).
 You also will need to setup at least
 one [Azure Table Storage account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal) which will be used to store all Comfyg values.
 
-There are also options to distribute the storage on multiple accounts or connecting to [Azure Key Vault](https://learn.microsoft.com/en-us/azure/key-vault) for secret management.
+Optionally you can also distribute the storage on multiple accounts or connect to [Azure Key Vault](https://learn.microsoft.com/en-us/azure/key-vault) to store your secrets.
 
 ## Getting Started
 
-To try out Comfyg as fast and quick as possible follow this guide to set everything up on your local machine.
+To try out Comfyg as fast and quick as possible you can follow this guide to set everything up on your local machine.
 
 ### Installation
 
-First we want to install the Comfyg Command-Line Inteface (CLI). We can do this using the .NET CLI:
+First we want to install the Comfyg Command-Line Inteface (CLI). We can do this using the [.NET CLI](https://learn.microsoft.com/de-de/dotnet/core/tools/):
 
 ```shell
 dotnet tool install --global Comfyg.Cli
@@ -73,7 +73,7 @@ After this you can start adding your Comfyg values using the `comfyg add` comman
 
 #### Configuration Values
 
-Configuration values are the most basic things for your program to work. Things which in most cases only need to be retrieved on startup. For example the lifespan of issued tokens:
+Configuration values are the most basic things for your program to work. Values which in most cases only need to be retrieved on startup. For example the lifespan of issued tokens:
 
 ```shell
 comfyg add config "TokenLifespanInHours" "24"
@@ -89,7 +89,7 @@ comfyg add setting "MaintenanceMode" "true"
 
 #### Secret Values
 
-Last but not least of course the most important part: Secrets. These values as they imply are usually security sensitive values which should be handled carefully. For example the connection string to your SQL database:
+Last but not least of course the most important part: Secrets. These values, as they imply, are usually security sensitive values which should be handled carefully. For example the connection string to your SQL database:
 
 ```shell
 comfyg add secret "SQLConnectionString" "Server=MySQLServer;Database=MyDatabase;User Id=sa;Password=Password!;"
@@ -121,7 +121,7 @@ using Comfyg;
 builder.Configuration.AddComfyg(options => { options.Connect("YOUR_CONNECTION_STRING"); });
 ```
 
-> The connection string should be stored as user secret or environment variable and never be committed.
+> The connection string should be stored as a user secret or environment variable and never be committed.
 
 You can also have a look at our example projects [here](examples/).
 
