@@ -16,7 +16,7 @@ Comfyg is the answer to the question "Where do I store my configuration? Where m
 want to change at runtime?".
 
 It is similar to [Azure App Configuration](https://learn.microsoft.com/en-us/azure/azure-app-configuration/overview), but also
-supports secrets and change detection.
+supports secrets, settings and change detection.
 
 ## Requirements
 
