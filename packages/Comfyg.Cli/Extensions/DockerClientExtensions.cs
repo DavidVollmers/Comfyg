@@ -45,7 +45,7 @@ internal static class DockerClientExtensions
             {
                 PublishAllPorts = true
             }
-        }, cancellationToken).ConfigureAwait(false);
+        }, cancellationToken);
 
         messageHandler("Successfully created Docker Container: " + response.ID);
 
@@ -55,14 +55,14 @@ internal static class DockerClientExtensions
 
             var result = await dockerClient.Containers
                 .StartContainerAsync(response.ID, new ContainerStartParameters(), cancellationToken)
-                .ConfigureAwait(false);
+                ;
 
             if (!result) throw new Exception("Could not start Docker Container!");
 
             messageHandler("Inspecting Docker Container...");
 
             var inspectionResult = await dockerClient.Containers.InspectContainerAsync(response.ID, cancellationToken)
-                .ConfigureAwait(false);
+                ;
 
             if (inspectionResult == null) throw new Exception("Could not inspect Docker Container!");
 
@@ -75,7 +75,7 @@ internal static class DockerClientExtensions
 
             using var client = new ComfygClient(connectionString);
 
-            await client.EstablishConnectionAsync(cancellationToken).ConfigureAwait(false);
+            await client.EstablishConnectionAsync(cancellationToken);
 
             return new RunComfygApiFromDockerImageResult(response.ID, port80Binding);
         }
@@ -87,7 +87,7 @@ internal static class DockerClientExtensions
                 "Could not successfully start Comfyg API. Trying to stop and remove the Docker Container...");
 
             await dockerClient.TryKillAndRemoveDockerContainerAsync(response.ID, cancellationToken)
-                .ConfigureAwait(false);
+                ;
 
             throw;
         }
@@ -111,7 +111,7 @@ internal static class DockerClientExtensions
         {
             FromImage = image,
             Tag = tag
-        }, null, progress, cancellationToken).ConfigureAwait(false);
+        }, null, progress, cancellationToken);
     }
 
     public static async Task BuildImageFromDockerfileAsync(this IDockerClient dockerClient, FileInfo dockerFile,
@@ -124,7 +124,7 @@ internal static class DockerClientExtensions
 
         await using var stream =
             await CreateStreamFromDockerfileDirectoryAsync(dockerFile.Directory!, messageHandler, cancellationToken)
-                .ConfigureAwait(false);
+                ;
 
         var progress = new Progress<JSONMessage>();
         progress.ProgressChanged += (_, message) =>
@@ -140,7 +140,7 @@ internal static class DockerClientExtensions
                     tag
                 }
         }, stream, Array.Empty<AuthConfig>(), new Dictionary<string, string>(), progress, cancellationToken)
-            .ConfigureAwait(false);
+            ;
     }
 
     public static async Task TryKillAndRemoveDockerContainerAsync(this IDockerClient dockerClient, string containerId,
@@ -153,7 +153,7 @@ internal static class DockerClientExtensions
         {
             await dockerClient.Containers
                 .KillContainerAsync(containerId, new ContainerKillParameters(), cancellationToken)
-                .ConfigureAwait(false);
+                ;
         }
         catch
         {
@@ -164,7 +164,7 @@ internal static class DockerClientExtensions
             new ContainerRemoveParameters
             {
                 Force = true
-            }, cancellationToken).ConfigureAwait(false);
+            }, cancellationToken);
     }
 
     private static async Task<Stream> CreateStreamFromDockerfileDirectoryAsync(FileSystemInfo directoryInfo,

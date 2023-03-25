@@ -29,12 +29,12 @@ internal class SetupClientCommand : Command
 
         var cancellationToken = context.GetCancellationToken();
 
-        using var client = await State.User.RequireClientAsync(cancellationToken).ConfigureAwait(false);
+        using var client = await State.User.RequireClientAsync(cancellationToken);
 
         var result = await client.SetupClientAsync(new SetupClientRequest
         {
             Client = new Client.Client(clientIdArgument, friendlyNameArgument)
-        }, cancellationToken).ConfigureAwait(false);
+        }, cancellationToken);
 
         AnsiConsole.MarkupLine($"[bold green]Successfully created a client for {client.EndpointUrl}[/]");
 

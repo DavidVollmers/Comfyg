@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using Comfyg.Cli.Commands;
 using Comfyg.Cli.Commands.Add;
+using Comfyg.Cli.Commands.Import;
 using Comfyg.Cli.Commands.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,6 +23,9 @@ internal static class ComfygCommandExtensions
         serviceCollection.AddScoped<AddSettingCommand>();
         serviceCollection.AddScoped<AddSecretCommand>();
         serviceCollection.AddScoped<Command, AddCommand>();
+
+        serviceCollection.AddScoped<ImportConfigurationCommand>();
+        serviceCollection.AddScoped<Command, ImportCommand>();
 
         return serviceCollection;
     }

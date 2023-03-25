@@ -31,7 +31,7 @@ internal class AddSecretCommand : Command
 
         var cancellationToken = context.GetCancellationToken();
 
-        using var client = await State.User.RequireClientAsync(cancellationToken).ConfigureAwait(false);
+        using var client = await State.User.RequireClientAsync(cancellationToken);
 
         await client.Secrets.AddValuesAsync(new AddSecretValuesRequest
         {
@@ -39,7 +39,7 @@ internal class AddSecretCommand : Command
             {
                 new SecretValue(keyArgument, valueArgument)
             }
-        }, cancellationToken).ConfigureAwait(false);
+        }, cancellationToken);
 
         AnsiConsole.MarkupLine($"[bold green]Successfully added the secret value for \"{keyArgument}\"[/]");
     }

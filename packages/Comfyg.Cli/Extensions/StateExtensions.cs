@@ -9,7 +9,7 @@ internal static class StateExtensions
         if (state == null) throw new ArgumentNullException(nameof(state));
 
         var connectionString = await state.ReadAsync<string>(nameof(Comfyg), nameof(ComfygClient), cancellationToken)
-            .ConfigureAwait(false);
+            ;
 
         if (connectionString == null)
             throw new InvalidOperationException("No connection established. Please use the connect command.");

@@ -131,7 +131,7 @@ internal class SetupLocalhostCommand : Command
             LeaveContainerOnError = leaveContainerOnErrorOption
         };
 
-        await PromptMissingParametersAsync(parameters, cancellationToken).ConfigureAwait(false);
+        await PromptMissingParametersAsync(parameters, cancellationToken);
 
         RunComfygApiFromDockerImageResult result = null!;
 
@@ -154,7 +154,7 @@ internal class SetupLocalhostCommand : Command
 
                 var existingContainers = await State.User
                     .ReadAsync<List<string>>(nameof(Docker), "Containers", cancellationToken)
-                    .ConfigureAwait(false);
+                    ;
                 if (existingContainers != null && existingContainers.Any())
                 {
                     ctx.UpdateTarget(new Markup("[bold yellow]Removing existing Comfyg API Containers...[/]"));
@@ -165,7 +165,7 @@ internal class SetupLocalhostCommand : Command
                             $"[bold yellow]Removing existing Comfyg API Container: {existingContainerId}[/]"));
 
                         await dockerClient.TryKillAndRemoveDockerContainerAsync(existingContainerId, cancellationToken)
-                            .ConfigureAwait(false);
+                            ;
 
                         ctx.UpdateTarget(
                             new Markup($"Removed existing Comfyg API Container: [bold]{existingContainerId}[/]"));
@@ -173,7 +173,7 @@ internal class SetupLocalhostCommand : Command
                 }
 
                 await State.User.StoreAsync(nameof(Docker), "Containers", Array.Empty<string>(), cancellationToken)
-                    .ConfigureAwait(false);
+                    ;
 
                 if (dockerFileOption != null)
                 {
@@ -183,7 +183,7 @@ internal class SetupLocalhostCommand : Command
                     await dockerClient
                         .BuildImageFromDockerfileAsync(dockerFileOption, DockerImageLocalBuildTag, MessageHandler,
                             cancellationToken)
-                        .ConfigureAwait(false);
+                        ;
 
                     parameters.Image = DockerImageLocalBuildTag;
                 }
@@ -191,25 +191,25 @@ internal class SetupLocalhostCommand : Command
                 {
                     await dockerClient
                         .PullImageFromDockerHubAsync(DockerImagePublic, versionOption!, MessageHandler,
-                            cancellationToken).ConfigureAwait(false);
+                            cancellationToken);
 
                     parameters.Image = DockerImagePublic + ":" + versionOption;
                 }
 
                 result = await dockerClient
                     .RunComfygApiFromDockerImageAsync(parameters, MessageHandler, cancellationToken)
-                    .ConfigureAwait(false);
+                    ;
 
                 var containers = await State.User
                     .ReadAsync<List<string>>(nameof(Docker), "Containers", cancellationToken)
-                    .ConfigureAwait(false) ?? new List<string>();
+                     ?? new List<string>();
                 containers.Add(result.ContainerId);
 
                 await State.User.StoreAsync(nameof(Docker), "Containers", containers, cancellationToken)
-                    .ConfigureAwait(false);
+                    ;
 
                 ctx.UpdateTarget(new Markup("[bold green]Successfully started local Comfyg API[/]"));
-            }).ConfigureAwait(false);
+            });
 
         AnsiConsole.WriteLine("You can connect to your local Comfyg API using the following connection string:");
         AnsiConsole.MarkupLine(
@@ -249,7 +249,7 @@ internal class SetupLocalhostCommand : Command
         }
 
         while (!await ValidateAzureTableStorageConnectionStringAsync(
-                   parameters.SystemAzureTableStorageConnectionString, cancellationToken).ConfigureAwait(false))
+                   parameters.SystemAzureTableStorageConnectionString, cancellationToken))
         {
             parameters.SystemAzureTableStorageConnectionString =
                 AnsiConsole.Ask<string>("[bold]System Azure Table Storage[/]:");
@@ -267,7 +267,7 @@ internal class SetupLocalhostCommand : Command
         }
 
         while (!await ValidateAzureTableStorageConnectionStringAsync(
-                   parameters.AuthenticationAzureTableStorageConnectionString, cancellationToken).ConfigureAwait(false))
+                   parameters.AuthenticationAzureTableStorageConnectionString, cancellationToken))
         {
             parameters.AuthenticationAzureTableStorageConnectionString =
                 AnsiConsole.Ask<string>("[bold]Authentication Azure Table Storage[/]:");
@@ -306,7 +306,7 @@ internal class SetupLocalhostCommand : Command
         {
             var serviceClient = new TableServiceClient(connectionString);
 
-            await serviceClient.GetPropertiesAsync(cancellationToken).ConfigureAwait(false);
+            await serviceClient.GetPropertiesAsync(cancellationToken);
 
             return true;
         }

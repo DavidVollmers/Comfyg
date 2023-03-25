@@ -31,7 +31,7 @@ internal class AddConfigurationCommand : Command
 
         var cancellationToken = context.GetCancellationToken();
 
-        using var client = await State.User.RequireClientAsync(cancellationToken).ConfigureAwait(false);
+        using var client = await State.User.RequireClientAsync(cancellationToken);
 
         await client.Configuration.AddValuesAsync(new AddConfigurationValuesRequest
         {
@@ -39,7 +39,7 @@ internal class AddConfigurationCommand : Command
             {
                 new ConfigurationValue(keyArgument, valueArgument)
             }
-        }, cancellationToken).ConfigureAwait(false);
+        }, cancellationToken);
 
         AnsiConsole.MarkupLine($"[bold green]Successfully added the configuration value for \"{keyArgument}\"[/]");
     }

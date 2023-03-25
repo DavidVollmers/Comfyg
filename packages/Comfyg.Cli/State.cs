@@ -22,8 +22,8 @@ internal class State
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (data == null) throw new ArgumentNullException(nameof(data));
 
-        var serializedData = await SerializeAsync(data, cancellationToken).ConfigureAwait(false);
-        await StoreAsync(scope, key, serializedData, cancellationToken).ConfigureAwait(false);
+        var serializedData = await SerializeAsync(data, cancellationToken);
+        await StoreAsync(scope, key, serializedData, cancellationToken);
     }
 
     public async Task<T?> ReadAsync<T>(string scope, string key, CancellationToken cancellationToken = default)
@@ -31,9 +31,9 @@ internal class State
         if (scope == null) throw new ArgumentNullException(nameof(scope));
         if (key == null) throw new ArgumentNullException(nameof(key));
 
-        var serializedData = await ReadAsync(scope, key, cancellationToken).ConfigureAwait(false);
+        var serializedData = await ReadAsync(scope, key, cancellationToken);
         if (serializedData == null) return default;
-        return await DeserializeAsync<T>(serializedData, cancellationToken).ConfigureAwait(false);
+        return await DeserializeAsync<T>(serializedData, cancellationToken);
     }
 
     private async Task<byte[]?> ReadAsync(string scope, string key, CancellationToken cancellationToken)
@@ -43,7 +43,7 @@ internal class State
         var file = new FileInfo(Path.Join(_directory.FullName, scope));
         if (!file.Exists) return null;
 
-        var content = await ReadAsync(file, cancellationToken).ConfigureAwait(false);
+        var content = await ReadAsync(file, cancellationToken);
         if (content == null || !content.ContainsKey(key)) return null;
 
         var dataValue = content[key];
@@ -64,7 +64,7 @@ internal class State
         }
         else
         {
-            var result = await ReadAsync(file, cancellationToken).ConfigureAwait(false);
+            var result = await ReadAsync(file, cancellationToken);
             if (result != null)
             {
                 content = result;
@@ -85,10 +85,10 @@ internal class State
             file.Delete();
         }
 
-        var serializedContent = await SerializeAsync(content, cancellationToken).ConfigureAwait(false);
+        var serializedContent = await SerializeAsync(content, cancellationToken);
 
         await using var writer = file.OpenWrite();
-        await writer.WriteAsync(serializedContent, cancellationToken).ConfigureAwait(false);
+        await writer.WriteAsync(serializedContent, cancellationToken);
     }
 
     private static async Task<Dictionary<string, string>?> ReadAsync(FileInfo file,
@@ -97,13 +97,13 @@ internal class State
         await using var stream = file.OpenRead();
         return await JsonSerializer
             .DeserializeAsync<Dictionary<string, string>>(stream, cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
+            ;
     }
 
     private static async Task<byte[]> SerializeAsync<T>(T data, CancellationToken cancellationToken)
     {
         using var stream = new MemoryStream();
-        await JsonSerializer.SerializeAsync(stream, data, cancellationToken: cancellationToken).ConfigureAwait(false);
+        await JsonSerializer.SerializeAsync(stream, data, cancellationToken: cancellationToken);
         return stream.ToArray();
     }
 
@@ -111,6 +111,6 @@ internal class State
     {
         using var stream = new MemoryStream(data);
         return await JsonSerializer.DeserializeAsync<T>(stream, cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
+            ;
     }
 }

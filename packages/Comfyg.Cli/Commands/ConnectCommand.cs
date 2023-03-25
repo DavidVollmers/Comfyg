@@ -27,13 +27,13 @@ internal class ConnectCommand : Command
 
         var cancellationToken = context.GetCancellationToken();
 
-        var result = await client.EstablishConnectionAsync(cancellationToken).ConfigureAwait(false);
+        var result = await client.EstablishConnectionAsync(cancellationToken);
 
         AnsiConsole.MarkupLine($"[bold green]Successfully connected to {client.EndpointUrl}[/]");
 
         AnsiConsole.Write(result.Client.ToTable());
 
         await State.User.StoreAsync(nameof(Comfyg), nameof(ComfygClient), connectionString, cancellationToken)
-            .ConfigureAwait(false);
+            ;
     }
 }

@@ -33,4 +33,4 @@ var parser = new CommandLineBuilder(rootCommand)
         errorExitCode: 1)
     .Build();
 
-return await parser.InvokeAsync(args).ConfigureAwait(false);
+return await parser.InvokeAsync(args);
