@@ -13,7 +13,7 @@ which will be used to store all Comfyg values.
 
 ## Installation
 
-First we want to install the Comfyg Command-Line Inteface (CLI). We can do this using the [.NET CLI](https://learn.microsoft.com/de-de/dotnet/core/tools/):
+First we want to install the Comfyg Command-Line Interface (CLI). We can do this using the [.NET CLI](https://learn.microsoft.com/de-de/dotnet/core/tools/):
 
 ```shell
 dotnet tool install --global Comfyg.Cli
