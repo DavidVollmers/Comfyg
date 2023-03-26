@@ -7,7 +7,7 @@ on:
       - 'docs/**'
 
 jobs:
-  Publish:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,7 +16,19 @@ jobs:
           dotnet-version: 7.x
       - run: dotnet tool update -g docfx
       - run: docfx docs/docfx.json
-      - uses: peaceiris/actions-gh-pages@v3
+      - uses: actions/upload-artifact@v3
         with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: docs/_site
+          name: github-pages
+          path: ./docs/_site
+  Publish:
+    needs: Build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/deploy-pages@v1
+        id: deployment
