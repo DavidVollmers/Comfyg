@@ -1,6 +1,6 @@
 <div align="center">
     <br/>
-    <img alt="" src="assets/logo.png" />
+    <img alt="" src="docfx_project/images/logo.png" />
     <h1>Comfyg</h1>
     <br/>
 </div>
@@ -10,8 +10,8 @@
 
 > Comfy configuration, settings and secrets management/distribution platform
 
-Comfyg is the answer to the question "Where do I store my configuration? Where my secrets? And what about settings I
-want to change at runtime?".
+Comfyg is the answer to the question *"Where do I store my configuration? Where my secrets? And what about settings I
+want to change at runtime?"*.
 
 It is similar to [Azure App Configuration](https://learn.microsoft.com/en-us/azure/azure-app-configuration/overview), but also
 supports secrets, settings and change detection.
