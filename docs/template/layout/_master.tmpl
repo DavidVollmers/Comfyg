@@ -1,7 +1,6 @@
 {{!Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE file in the project root for full license information.}}
 {{!include(/^styles/.*/)}}
 {{!include(/^fonts/.*/)}}
-{{!include(favicon.ico)}}
 {{!include(search-stopwords.json)}}
 <!DOCTYPE html>
 <html>
@@ -15,7 +14,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="{{#title}}{{title}}{{/title}}{{^title}}{{>partials/title}}{{/title}} {{#_appTitle}}| {{_appTitle}} {{/_appTitle}}">
       {{#_description}}<meta name="description" content="{{_description}}">{{/_description}}
-      <link rel="icon" href="{{_rel}}{{{_appFaviconPath}}}{{^_appFaviconPath}}favicon.ico{{/_appFaviconPath}}">
+      <link rel="icon" href="{{_rel}}images/favicon.ico">
       <link rel="stylesheet" href="{{_rel}}styles/docfx.min.css">
       <link rel="stylesheet" href="{{_rel}}styles/main.css">
       <meta name="docfx:navrel" content="{{_navRel}}">

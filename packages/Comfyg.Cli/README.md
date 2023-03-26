@@ -13,7 +13,7 @@ dotnet tool install --global Comfyg.Cli
 
 ## Documentation
 
-You can find the official Comfyg documentation [here](https://docs.comfyg.com).
+You can find the official Comfyg CLI documentation [here](https://docs.comfyg.com/docs/cli).
 
 ## License
 

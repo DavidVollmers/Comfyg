@@ -19,7 +19,8 @@ First we want to install the Comfyg Command-Line Interface (CLI). We can do this
 dotnet tool install --global Comfyg.Cli
 ```
 
-> After installation you can access the Comfyg CLI using the `comfyg` driver in any terminal.
+> [!TIP]
+> After installation you can invoke the Comfyg CLI using the `comfyg` command in your terminal.
 
 ## Setup & Configure your Comfyg Store
 
@@ -76,7 +77,8 @@ Last but not least of course the most important part: Secrets. These values, as 
 comfyg add secret "SQLConnectionString" "Server=MySQLServer;Database=MyDatabase;User Id=sa;Password=Password!;"
 ```
 
-Secrets are handled separately because they need to be encrypted. Currently you can either choose to use the Comfyg store internal encryption or Azure Key Vault. For long-term security we recommend the latter one.
+> [!NOTE]
+> Secrets are handled separately because they need to be encrypted. Currently you can either choose to use the Comfyg store internal encryption or Azure Key Vault. For long-term security we recommend the latter one.
 
 You can read more about this [here](TODO.md).
 
@@ -102,7 +104,8 @@ using Comfyg;
 builder.Configuration.AddComfyg(options => { options.Connect("YOUR_CONNECTION_STRING"); });
 ```
 
-> The connection string should be stored as a user secret or environment variable and never be committed.
+> [!IMPORTANT]
+> The connection string should be stored as a [user secret](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) or environment variable and never be committed to your repository.
 
 You can also have a look at our example projects [here](https://github.com/DavidVollmers/Comfyg/tree/main/examples).
 
@@ -147,6 +150,6 @@ You also will probably want to import existing configuration, settings and secre
 comfyg import config "path/to/appsettings.json"
 ```
 
-You can read more about all Comfyg CLI capabilities [here](TODO.md).
+You can read more about all Comfyg CLI capabilities [here](cli/index.md#usage).
 
 Last but not least you should also think about security and data separation concerns. You can read more about connections & security [here](TODO.md).
