@@ -4,12 +4,12 @@ on:
   push:
     branches-ignore: 'main'
     paths:
-      - 'packages/Api/**'
-      - 'tests/Api/**'
+      - 'packages/Store/**'
+      - 'tests/Store/**'
   pull_request:
     paths:
-      - 'packages/Api/**'
-      - 'tests/Api/**'
+      - 'packages/Store/**'
+      - 'tests/Store/**'
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -24,4 +24,4 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - run: |
-          dotnet test tests/Api/Comfyg.Store.Core.Tests
+          dotnet test tests/Store/Comfyg.Store.Core.Tests
