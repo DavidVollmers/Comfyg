@@ -26,13 +26,13 @@ internal class SetupLocalhostCommand : Command
     private readonly Option<bool> _leaveContainerOnErrorOption;
     private readonly Option<string> _versionOption;
 
-    public SetupLocalhostCommand() : base("localhost", "Setup a new Comfyg API running on your localhost")
+    public SetupLocalhostCommand() : base("localhost", "Setup a new Comfyg store running on your localhost")
     {
         _dockerFileOption = new Option<FileInfo?>(new[]
         {
             "-df",
             "--docker-file"
-        }, "The Dockerfile to use for building the Comfyg API");
+        }, "The Dockerfile to use for building the Comfyg store");
         AddOption(_dockerFileOption);
 
         _dockerSocketOption = new Option<Uri?>(new[]
@@ -95,7 +95,7 @@ internal class SetupLocalhostCommand : Command
         {
             "-v",
             "--version"
-        }, "The version of the Comfyg API to use");
+        }, "The version of the Comfyg store to use");
         _versionOption.SetDefaultValue("latest");
         AddOption(_versionOption);
 
@@ -157,18 +157,18 @@ internal class SetupLocalhostCommand : Command
                     ;
                 if (existingContainers != null && existingContainers.Any())
                 {
-                    ctx.UpdateTarget(new Markup("[bold yellow]Removing existing Comfyg API Containers...[/]"));
+                    ctx.UpdateTarget(new Markup("[bold yellow]Removing existing Comfyg store Containers...[/]"));
 
                     foreach (var existingContainerId in existingContainers)
                     {
                         ctx.UpdateTarget(new Markup(
-                            $"[bold yellow]Removing existing Comfyg API Container: {existingContainerId}[/]"));
+                            $"[bold yellow]Removing existing Comfyg store Container: {existingContainerId}[/]"));
 
                         await dockerClient.TryKillAndRemoveDockerContainerAsync(existingContainerId, cancellationToken)
                             ;
 
                         ctx.UpdateTarget(
-                            new Markup($"Removed existing Comfyg API Container: [bold]{existingContainerId}[/]"));
+                            new Markup($"Removed existing Comfyg store Container: [bold]{existingContainerId}[/]"));
                     }
                 }
 
@@ -208,10 +208,10 @@ internal class SetupLocalhostCommand : Command
                 await State.User.StoreAsync(nameof(Docker), "Containers", containers, cancellationToken)
                     ;
 
-                ctx.UpdateTarget(new Markup("[bold green]Successfully started local Comfyg API[/]"));
+                ctx.UpdateTarget(new Markup("[bold green]Successfully started local Comfyg store[/]"));
             });
 
-        AnsiConsole.WriteLine("You can connect to your local Comfyg API using the following connection string:");
+        AnsiConsole.WriteLine("You can connect to your local Comfyg store using the following connection string:");
         AnsiConsole.MarkupLine(
             $"[bold]Endpoint=http://localhost:{result.Port};ClientId={parameters.SystemClientId};ClientSecret={parameters.SystemClientSecret};[/]");
     }
@@ -219,7 +219,7 @@ internal class SetupLocalhostCommand : Command
     private static async Task PromptMissingParametersAsync(RunComfygApiFromDockerImageParameters parameters,
         CancellationToken cancellationToken)
     {
-        AnsiConsole.WriteLine("Before the setup please provide all necessary values to run your Comfyg API...");
+        AnsiConsole.WriteLine("Before the setup please provide all necessary values to run your Comfyg store...");
 
         while (string.IsNullOrWhiteSpace(parameters.SystemClientId))
         {

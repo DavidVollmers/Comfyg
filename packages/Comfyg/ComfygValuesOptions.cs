@@ -2,6 +2,9 @@
 
 namespace Comfyg;
 
+/// <summary>
+/// Options used to configure the behavior of a specific Comfyg value type.
+/// </summary>
 public sealed class ComfygValuesOptions
 {
     internal TimeSpan? ChangeDetectionInterval { get; private set; }
@@ -21,6 +24,11 @@ public sealed class ComfygValuesOptions
     {
     }
 
+    /// <summary>
+    /// Set the interval in which change detection is performed.
+    /// </summary>
+    /// <param name="interval">The interval in which change detection is performed.</param>
+    /// <returns>The provided <see cref="ComfygValuesOptions"/>.</returns>
     public ComfygValuesOptions DetectChanges(TimeSpan interval)
     {
         ChangeDetectionInterval = interval;

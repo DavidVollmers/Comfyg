@@ -1,5 +1,5 @@
-﻿using Comfyg.Contracts;
-using Comfyg.Contracts.Requests;
+﻿using Comfyg.Store.Contracts;
+using Comfyg.Store.Contracts.Requests;
 
 namespace Comfyg.Client.Operations;
 

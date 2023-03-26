@@ -68,7 +68,7 @@ internal static class DockerClientExtensions
 
             var port80Binding = int.Parse(inspectionResult.NetworkSettings.Ports["80/tcp"].First().HostPort);
 
-            messageHandler("Establishing connection to Comfyg API...");
+            messageHandler("Establishing connection to Comfyg store...");
 
             var connectionString =
                 $"Endpoint=http://localhost:{port80Binding};ClientId={parameters.SystemClientId};ClientSecret={parameters.SystemClientSecret};";
@@ -84,7 +84,7 @@ internal static class DockerClientExtensions
             if (parameters.LeaveContainerOnError) throw;
 
             messageHandler(
-                "Could not successfully start Comfyg API. Trying to stop and remove the Docker Container...");
+                "Could not successfully start Comfyg store. Trying to stop and remove the Docker Container...");
 
             await dockerClient.TryKillAndRemoveDockerContainerAsync(response.ID, cancellationToken)
                 ;

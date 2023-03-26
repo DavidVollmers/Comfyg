@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{7C0FF3E3-8DF7-4CE1-A44D-F5F77FD206B9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Store", "Store", "{7C0FF3E3-8DF7-4CE1-A44D-F5F77FD206B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Api", "packages\Api\Comfyg.Api\Comfyg.Api.csproj", "{26CF8A96-1AA3-4BDC-A17C-75BE19CC3560}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Store.Api", "packages\Store\Comfyg.Store.Api\Comfyg.Store.Api.csproj", "{26CF8A96-1AA3-4BDC-A17C-75BE19CC3560}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F0EA5A08-4880-4634-B81F-747DA907F69C}"
 EndProject
@@ -12,15 +12,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg", "packages\Comfyg\C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Client", "packages\Comfyg.Client\Comfyg.Client.csproj", "{53857E0E-24DC-4DA7-9616-380130D217BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Core", "packages\Api\Comfyg.Core\Comfyg.Core.csproj", "{73822547-5EF2-4361-A25B-BAE323CADB8D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Store.Core", "packages\Store\Comfyg.Store.Core\Comfyg.Store.Core.csproj", "{73822547-5EF2-4361-A25B-BAE323CADB8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Core.Abstractions", "packages\Api\Comfyg.Core.Abstractions\Comfyg.Core.Abstractions.csproj", "{476EC29C-230B-4E31-9DCD-624F58EE8881}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Store.Core.Abstractions", "packages\Store\Comfyg.Store.Core.Abstractions\Comfyg.Store.Core.Abstractions.csproj", "{476EC29C-230B-4E31-9DCD-624F58EE8881}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Contracts", "packages\Api\Comfyg.Contracts\Comfyg.Contracts.csproj", "{B10C9658-EBAA-4B04-AC0F-A48418916938}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Store.Contracts", "packages\Store\Comfyg.Store.Contracts\Comfyg.Store.Contracts.csproj", "{B10C9658-EBAA-4B04-AC0F-A48418916938}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Authentication", "packages\Api\Comfyg.Authentication\Comfyg.Authentication.csproj", "{FC514504-2A6B-459C-92BF-9DCF0F505CD1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Store.Authentication", "packages\Store\Comfyg.Store.Authentication\Comfyg.Store.Authentication.csproj", "{FC514504-2A6B-459C-92BF-9DCF0F505CD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Authentication.Abstractions", "packages\Api\Comfyg.Authentication.Abstractions\Comfyg.Authentication.Abstractions.csproj", "{6E24A6DA-EF7B-4C9E-8A21-7B45DC512FB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Store.Authentication.Abstractions", "packages\Store\Comfyg.Store.Authentication.Abstractions\Comfyg.Store.Authentication.Abstractions.csproj", "{6E24A6DA-EF7B-4C9E-8A21-7B45DC512FB8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Cli", "packages\Comfyg.Cli\Comfyg.Cli.csproj", "{D17E7168-49E6-4E55-B77C-7FA03766F03A}"
 EndProject
@@ -28,9 +28,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CC2ABB50
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Client.Tests", "tests\Comfyg.Client.Tests\Comfyg.Client.Tests.csproj", "{87631A3F-DADC-4690-BEC5-D04B69772532}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{1F928028-8E63-4C32-96E5-AB2852EEADF6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Store", "Store", "{1F928028-8E63-4C32-96E5-AB2852EEADF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Core.Tests", "tests\Api\Comfyg.Core.Tests\Comfyg.Core.Tests.csproj", "{A23FEA90-CD5E-4FED-B576-19D1F6F7A8BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Store.Core.Tests", "tests\Store\Comfyg.Store.Core.Tests\Comfyg.Store.Core.Tests.csproj", "{A23FEA90-CD5E-4FED-B576-19D1F6F7A8BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comfyg.Tests", "tests\Comfyg.Tests\Comfyg.Tests.csproj", "{866E4103-CAED-430B-A546-1538434B83D6}"
 EndProject

@@ -21,30 +21,30 @@ dotnet tool install --global Comfyg.Cli
 
 > After installation you can access the Comfyg CLI using the `comfyg` driver in any terminal.
 
-## Setup & Configure your Comfyg API
+## Setup & Configure your Comfyg Store
 
-For local setup of the Comfyg API you can use the CLI. Just execute the below command and it will guide you through the setup process.
+For local setup of the Comfyg store you can use the CLI. Just execute the below command and it will guide you through the setup process.
 
 ```shell
 comfyg setup localhost
 ```
 
-Once you have setup your local Comfyg API you will receive a connection string from the CLI:
+Once you have setup your local Comfyg store you will receive a connection string from the CLI:
 
 ```shell
-Successfully started local Comfyg API
+Successfully started local Comfyg store
 
-You can connect to your local Comfyg API using the following connection string:
+You can connect to your local Comfyg store using the following connection string:
 Endpoint=http://localhost:32771;ClientId=system;ClientSecret=cbO+N4fgq7mOB813KuOfow0nfKFW+VyS3k4boosUzozn9vmOqvk32QCpxO1eQfxMxKcItHkYX7YUT9uSbP/84g==;
 ```
 
-The last line contains the connection string to your local Comfyg API using the configured system client. Copy this value so you can use it in the next step. If you loose your connection string you can always just setup a new Comfyg API using the CLI.
+The last line contains the connection string to your local Comfyg store using the configured system client. Copy this value so you can use it in the next step. If you loose your connection string you can always just setup a new Comfyg store using the CLI.
 
 You can read more about connections & security [here](TODO.md).
 
 ## Create your Comfyg
 
-Now that you have your own Comfyg API running on your local machine you can connect to it using the CLI:
+Now that you have your own Comfyg store running on your local machine you can connect to it using the CLI:
 
 ```shell
 comfyg connect "YOUR_CONNECTION_STRING"
@@ -76,13 +76,13 @@ Last but not least of course the most important part: Secrets. These values, as 
 comfyg add secret "SQLConnectionString" "Server=MySQLServer;Database=MyDatabase;User Id=sa;Password=Password!;"
 ```
 
-Secrets are handled separately because they need to be encrypted. Currently you can either choose to use the Comfyg API internal encryption or Azure Key Vault. For long-term security we recommend the latter one.
+Secrets are handled separately because they need to be encrypted. Currently you can either choose to use the Comfyg store internal encryption or Azure Key Vault. For long-term security we recommend the latter one.
 
 You can read more about this [here](TODO.md).
 
 ## Use your Comfyg
 
-Now that you have setup your Comfyg API and put in some values you will want to use it in your program.
+Now that you have setup your Comfyg store and put in some values you will want to use it in your program.
 
 You can do this by adding the [Comfyg package](https://nuget.org/packages/Comfyg) to your project:
 
@@ -90,7 +90,7 @@ You can do this by adding the [Comfyg package](https://nuget.org/packages/Comfyg
 dotnet add package Comfyg
 ```
 
-To consume your Comfyg API you will have to setup the Comfyg configuration provider.
+To consume your Comfyg store you will have to setup the Comfyg configuration provider.
 
 Here is an example on how to do this in an ASP.NET project:
 
@@ -137,9 +137,9 @@ You can read more about all options [here](TODO.md).
 
 ## What's next?
 
-After you played around with your local Comfyg API it will be time to move to production, won't it?
+After you played around with your local Comfyg store it will be time to move to production, won't it?
 
-First thing you want to do is to setup your Comfyg API in your own Azure Tenant. You can read more about this [here](TODO.md).
+First thing you want to do is to setup your Comfyg store in your own Azure Tenant. You can read more about this [here](TODO.md).
 
 You also will probably want to import existing configuration, settings and secrets you have into your API. You can do this using the Comfyg CLI:
 

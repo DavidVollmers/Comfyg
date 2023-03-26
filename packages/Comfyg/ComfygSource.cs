@@ -1,5 +1,5 @@
 ﻿using Comfyg.Client;
-using Comfyg.Contracts;
+using Comfyg.Store.Contracts;
 using Microsoft.Extensions.Configuration;
 
 namespace Comfyg;
@@ -19,7 +19,7 @@ internal class ComfygSource<T> : IConfigurationSource where T : IComfygValue
     {
         if (_options.ConnectionString == null)
             throw new InvalidOperationException(
-                "Please call ComfygOptions.Connect to specify how to connect to the Comfyg API.");
+                "Please call ComfygOptions.Connect to specify how to connect to the Comfyg store.");
         var client = _options.HttpClient == null
             ? new ComfygClient(_options.ConnectionString)
             : new ComfygClient(_options.ConnectionString, _options.HttpClient);

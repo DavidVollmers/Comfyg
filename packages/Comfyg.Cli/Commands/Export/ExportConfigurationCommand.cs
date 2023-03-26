@@ -1,4 +1,4 @@
-﻿using Comfyg.Contracts.Configuration;
+﻿using Comfyg.Store.Contracts.Configuration;
 
 namespace Comfyg.Cli.Commands.Export;
 

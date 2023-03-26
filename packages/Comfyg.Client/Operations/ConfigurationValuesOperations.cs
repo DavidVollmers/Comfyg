@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using Comfyg.Contracts.Configuration;
-using Comfyg.Contracts.Requests;
+using Comfyg.Store.Contracts.Configuration;
+using Comfyg.Store.Contracts.Requests;
 
 namespace Comfyg.Client.Operations;
 

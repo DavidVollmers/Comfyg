@@ -3,8 +3,8 @@ using System.CommandLine.Invocation;
 using System.Text.Json;
 using Comfyg.Cli.Extensions;
 using Comfyg.Client;
-using Comfyg.Contracts;
-using Comfyg.Contracts.Requests;
+using Comfyg.Store.Contracts;
+using Comfyg.Store.Contracts.Requests;
 using Spectre.Console;
 
 namespace Comfyg.Cli.Commands.Import;

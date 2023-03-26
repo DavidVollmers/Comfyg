@@ -1,7 +1,7 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using Comfyg.Cli.Extensions;
-using Comfyg.Contracts.Requests;
+using Comfyg.Store.Contracts.Requests;
 using Spectre.Console;
 
 namespace Comfyg.Cli.Commands.Setup;

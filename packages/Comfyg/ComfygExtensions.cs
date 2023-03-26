@@ -1,12 +1,19 @@
-﻿using Comfyg.Contracts.Configuration;
-using Comfyg.Contracts.Secrets;
-using Comfyg.Contracts.Settings;
+﻿using Comfyg.Store.Contracts.Configuration;
+using Comfyg.Store.Contracts.Secrets;
+using Comfyg.Store.Contracts.Settings;
 using Microsoft.Extensions.Configuration;
 
 namespace Comfyg;
 
 public static class ComfygExtensions
 {
+    /// <summary>
+    /// Adds key-value data from a Comfyg store to a configuration builder.
+    /// </summary>
+    /// <param name="configurationBuilder">The configuration builder to add key-values to.</param>
+    /// <param name="optionsConfigurator">A callback used to configure Comfyg options.</param>
+    /// <returns>The provided configuration builder.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="configurationBuilder"/> or <paramref name="optionsConfigurator"/> is null.</exception>
     public static IConfigurationBuilder AddComfyg(this IConfigurationBuilder configurationBuilder,
         Action<ComfygOptions> optionsConfigurator)
     {

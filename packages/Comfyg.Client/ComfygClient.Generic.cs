@@ -1,10 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
 using Comfyg.Client.Operations;
-using Comfyg.Contracts;
-using Comfyg.Contracts.Configuration;
-using Comfyg.Contracts.Requests;
-using Comfyg.Contracts.Secrets;
-using Comfyg.Contracts.Settings;
+using Comfyg.Store.Contracts;
+using Comfyg.Store.Contracts.Configuration;
+using Comfyg.Store.Contracts.Requests;
+using Comfyg.Store.Contracts.Secrets;
+using Comfyg.Store.Contracts.Settings;
 
 namespace Comfyg.Client;
 

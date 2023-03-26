@@ -1,4 +1,4 @@
-﻿using Comfyg.Contracts.Authentication;
+﻿using Comfyg.Store.Contracts.Authentication;
 using Spectre.Console;
 
 namespace Comfyg.Cli.Extensions;

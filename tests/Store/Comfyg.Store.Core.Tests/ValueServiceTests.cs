@@ -1,16 +1,16 @@
 ﻿using Azure.Data.Tables;
-using Comfyg.Contracts.Configuration;
-using Comfyg.Contracts.Secrets;
-using Comfyg.Contracts.Settings;
-using Comfyg.Core.Abstractions;
-using Comfyg.Core.Abstractions.Changes;
-using Comfyg.Core.Abstractions.Permissions;
-using Comfyg.Core.Configuration;
-using Comfyg.Core.Secrets;
-using Comfyg.Core.Settings;
+using Comfyg.Store.Contracts.Configuration;
+using Comfyg.Store.Contracts.Secrets;
+using Comfyg.Store.Contracts.Settings;
+using Comfyg.Store.Core.Abstractions;
+using Comfyg.Store.Core.Abstractions.Changes;
+using Comfyg.Store.Core.Abstractions.Permissions;
+using Comfyg.Store.Core.Configuration;
+using Comfyg.Store.Core.Secrets;
+using Comfyg.Store.Core.Settings;
 using Moq;
 
-namespace Comfyg.Core.Tests;
+namespace Comfyg.Store.Core.Tests;
 
 public class ValueServiceTests
 {

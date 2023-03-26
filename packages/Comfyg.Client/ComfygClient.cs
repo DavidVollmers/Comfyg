@@ -4,10 +4,10 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using Comfyg.Client.Operations;
-using Comfyg.Contracts.Configuration;
-using Comfyg.Contracts.Responses;
-using Comfyg.Contracts.Secrets;
-using Comfyg.Contracts.Settings;
+using Comfyg.Store.Contracts.Configuration;
+using Comfyg.Store.Contracts.Responses;
+using Comfyg.Store.Contracts.Secrets;
+using Comfyg.Store.Contracts.Settings;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Comfyg.Client;

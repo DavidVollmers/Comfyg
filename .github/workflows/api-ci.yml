@@ -24,4 +24,4 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - run: |
-          dotnet test tests/Api/Comfyg.Core.Tests
+          dotnet test tests/Api/Comfyg.Store.Core.Tests

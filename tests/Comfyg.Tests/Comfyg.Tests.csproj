@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\packages\Api\Comfyg.Api\Comfyg.Api.csproj" />
+      <ProjectReference Include="..\..\packages\Store\Comfyg.Store.Api\Comfyg.Store.Api.csproj" />
       <ProjectReference Include="..\..\packages\Comfyg\Comfyg.csproj" />
     </ItemGroup>
 

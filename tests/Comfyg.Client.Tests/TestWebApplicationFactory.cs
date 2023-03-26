@@ -1,10 +1,10 @@
-﻿using Comfyg.Authentication.Abstractions;
-using Comfyg.Contracts.Configuration;
-using Comfyg.Contracts.Secrets;
-using Comfyg.Contracts.Settings;
-using Comfyg.Core.Abstractions;
-using Comfyg.Core.Abstractions.Changes;
-using Comfyg.Core.Abstractions.Permissions;
+﻿using Comfyg.Store.Authentication.Abstractions;
+using Comfyg.Store.Contracts.Configuration;
+using Comfyg.Store.Contracts.Secrets;
+using Comfyg.Store.Contracts.Settings;
+using Comfyg.Store.Core.Abstractions;
+using Comfyg.Store.Core.Abstractions.Changes;
+using Comfyg.Store.Core.Abstractions.Permissions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Moq;

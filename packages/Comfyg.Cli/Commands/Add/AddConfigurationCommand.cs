@@ -2,8 +2,8 @@
 using System.CommandLine.Invocation;
 using Comfyg.Cli.Extensions;
 using Comfyg.Client;
-using Comfyg.Contracts.Configuration;
-using Comfyg.Contracts.Requests;
+using Comfyg.Store.Contracts.Configuration;
+using Comfyg.Store.Contracts.Requests;
 using Spectre.Console;
 
 namespace Comfyg.Cli.Commands.Add;

@@ -1,11 +1,11 @@
-﻿using Comfyg.Authentication.Abstractions;
-using Comfyg.Contracts.Authentication;
-using Comfyg.Contracts.Changes;
-using Comfyg.Contracts.Configuration;
-using Comfyg.Contracts.Secrets;
-using Comfyg.Contracts.Settings;
-using Comfyg.Core.Abstractions;
-using Comfyg.Core.Abstractions.Changes;
+﻿using Comfyg.Store.Authentication.Abstractions;
+using Comfyg.Store.Contracts.Authentication;
+using Comfyg.Store.Contracts.Changes;
+using Comfyg.Store.Contracts.Configuration;
+using Comfyg.Store.Contracts.Secrets;
+using Comfyg.Store.Contracts.Settings;
+using Comfyg.Store.Core.Abstractions;
+using Comfyg.Store.Core.Abstractions.Changes;
 using Moq;
 
 namespace Comfyg.Tests;
@@ -32,7 +32,7 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         const string friendlyName = "Test Client";
-        var client = new Contracts.Authentication.Client
+        var client = new Store.Contracts.Authentication.Client
         {
             ClientId = clientId,
             ClientSecret = clientSecret,
@@ -130,7 +130,7 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         const string friendlyName = "Test Client";
-        var client = new Contracts.Authentication.Client
+        var client = new Store.Contracts.Authentication.Client
         {
             ClientId = clientId,
             ClientSecret = clientSecret,

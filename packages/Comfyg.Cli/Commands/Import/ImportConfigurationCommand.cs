@@ -1,6 +1,6 @@
 ﻿using Comfyg.Client;
-using Comfyg.Contracts.Configuration;
-using Comfyg.Contracts.Requests;
+using Comfyg.Store.Contracts.Configuration;
+using Comfyg.Store.Contracts.Requests;
 
 namespace Comfyg.Cli.Commands.Import;
 

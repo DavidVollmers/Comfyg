@@ -1,5 +1,5 @@
 ﻿using Comfyg.Client.Operations;
-using Comfyg.Contracts;
+using Comfyg.Store.Contracts;
 using Comfyg.Timing;
 using Microsoft.Extensions.Primitives;
 

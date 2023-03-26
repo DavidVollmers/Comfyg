@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Comfyg.Contracts.Requests;
-using Comfyg.Contracts.Responses;
+using Comfyg.Store.Contracts.Requests;
+using Comfyg.Store.Contracts.Responses;
 
 namespace Comfyg.Client;
 

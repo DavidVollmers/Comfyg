@@ -1,8 +1,8 @@
 ﻿using System.Security.Cryptography;
-using Comfyg.Core.Abstractions.Secrets;
-using Comfyg.Core.Secrets;
+using Comfyg.Store.Core.Abstractions.Secrets;
+using Comfyg.Store.Core.Secrets;
 
-namespace Comfyg.Core.Tests.Secrets;
+namespace Comfyg.Store.Core.Tests.Secrets;
 
 public class EncryptionBasedSecretServiceTests
 {

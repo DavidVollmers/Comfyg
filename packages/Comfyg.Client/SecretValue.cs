@@ -1,4 +1,4 @@
-﻿using Comfyg.Contracts.Secrets;
+﻿using Comfyg.Store.Contracts.Secrets;
 
 namespace Comfyg.Client;
 
