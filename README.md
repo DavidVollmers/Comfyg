@@ -1,6 +1,6 @@
 <div align="center">
     <br/>
-    <img alt="" src="docfx_project/images/logo.png" />
+    <img alt="" src="docs/images/logo.png" />
     <h1>Comfyg</h1>
     <br/>
 </div>
