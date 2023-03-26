@@ -16,10 +16,9 @@ jobs:
           dotnet-version: 7.x
       - run: dotnet tool update -g docfx
       - run: docfx docs/docfx.json
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-pages-artifact@v1
         with:
-          name: github-pages
-          path: ./docs/_site
+          path: docs/_site
   Publish:
     needs: Build
     permissions:

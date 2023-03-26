@@ -30,7 +30,7 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet }}
       - run: |
-          dotnet test ./tests/Comfyg.Client.Tests
+          dotnet test tests/Comfyg.Client.Tests
   Build:
     needs: Test
     strategy:
@@ -45,8 +45,8 @@ jobs:
           dotnet-version: |
             7.0.x
             6.0.x
-      - run: dotnet pack -p:PackageOutputPath=./nupkg
+      - run: dotnet pack -p:PackageOutputPath=nuget
       - uses: actions/upload-artifact@v3
         with:
           name: NuGet
-          path: ./nupkg
+          path: nuget

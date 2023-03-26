@@ -32,5 +32,5 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet }}
       - run: |
-          dotnet test ./tests/Comfyg.Tests
-          dotnet test ./tests/Comfyg.Client.Tests
+          dotnet test tests/Comfyg.Tests
+          dotnet test tests/Comfyg.Client.Tests
