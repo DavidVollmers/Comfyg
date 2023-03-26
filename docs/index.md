@@ -1,12 +1,9 @@
-# What is Comfyg?
+# Hi there!
 
-Comfyg is the answer to the question *"Where do I store my configuration? Where my secrets? And what about settings I
-want to change at runtime?"*.
+This is the official documentation of [Comfyg](https://github.com/DavidVollmers/Comfyg).
 
-It is similar to [Azure App Configuration](https://learn.microsoft.com/en-us/azure/azure-app-configuration/overview),
-but also
-supports secrets, settings and change detection.
+It contains the [API documentation](api/index.md) for all Comfyg NuGet packages, the [CLI documentation](docs/cli/index.md) and guides on how to use Comfyg in your project.
 
-## Getting Started
+If you have any questions or concerns feel free to open an issue in the [GitHub repository](https://github.com/DavidVollmers/Comfyg/issues/new).
 
-Please visit the [GitHub repository](https://github.com/DavidVollmers/Comfyg#getting-started) for a detailed guide on how to get started with Comfyg.
+###  If you just want to try out Comfyg you can start [here](docs/getting_started.md).

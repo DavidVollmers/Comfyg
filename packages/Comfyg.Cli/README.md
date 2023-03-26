@@ -11,23 +11,10 @@
 dotnet tool install --global Comfyg.Cli
 ```
 
-Visit [nuget.org](https://www.nuget.org/packages/Comfyg.Cli) for more information.
+## Documentation
 
+You can find the official Comfyg documentation [here](https://docs.comfyg.com).
 
-## Local Development
+## License
 
-### Build & Test
-
-```shell
-dotnet new tool-manifest
-```
-
-```shell
-dotnet tool uninstall Comfyg.Cli
-dotnet pack
-dotnet tool install --add-source ./bin/Debug Comfyg.Cli --prerelease
-```
-
-> You must commit and push your changes before this will update your local dotnet tool.
-
-You can read more about hot to use local .NET tools [here](https://learn.microsoft.com/en-us/dotnet/core/tools/local-tools-how-to-use).
+This project is licensed under the [MIT](https://github.com/DavidVollmers/Comfyg/blob/main/LICENSE.txt) license.

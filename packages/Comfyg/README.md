@@ -11,4 +11,10 @@
 dotnet add package Comfyg
 ```
 
-Visit [nuget.org](https://www.nuget.org/packages/Comfyg) for more information.
+## Documentation
+
+You can find the official API documentation [here](https://docs.comfyg.com/api/Comfyg.html).
+
+## License
+
+This project is licensed under the [MIT](https://github.com/DavidVollmers/Comfyg/blob/main/LICENSE.txt) license.
