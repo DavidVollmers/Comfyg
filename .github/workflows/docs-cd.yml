@@ -3,6 +3,8 @@ name: Documentation CD
 on:
   push:
     branches: 'main'
+    paths:
+      - 'docs/**'
 
 jobs:
   Publish:
