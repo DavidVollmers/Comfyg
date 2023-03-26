@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>e7b922dc-d2e8-41d0-b82c-a8112e8be873</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Comfyg.Store.Contracts\Comfyg.Store.Contracts.csproj" />
+        <ProjectReference Include="..\Comfyg.Store.Authentication\Comfyg.Store.Authentication.csproj" />
+    </ItemGroup>
+
+</Project>

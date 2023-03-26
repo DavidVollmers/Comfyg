@@ -487,7 +487,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # Don't ignore project packages
-!packages/Api
+!packages/Store
 !packages/Comfyg
 !packages/Comfyg.Client
 !packages/Comfyg.Cli
