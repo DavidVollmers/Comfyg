@@ -3,7 +3,7 @@ using Comfyg.Contracts.Requests;
 
 namespace Comfyg.Client.Operations;
 
-public interface IComfygValuesOperations<T> : IDisposable where T : IComfygValue
+public interface IComfygValueOperations<T> : IDisposable where T : IComfygValue
 {
     IAsyncEnumerable<T> GetValuesAsync(DateTimeOffset? since = null, CancellationToken cancellationToken = default);
 

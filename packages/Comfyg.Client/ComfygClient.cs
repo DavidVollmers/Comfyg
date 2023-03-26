@@ -22,11 +22,11 @@ public sealed partial class ComfygClient : IDisposable
 
     public Uri EndpointUrl => _httpClient.BaseAddress!;
 
-    public IComfygValuesOperations<IConfigurationValue> Configuration { get; }
+    public IComfygValueOperations<IConfigurationValue> Configuration { get; }
 
-    public IComfygValuesOperations<ISettingValue> Settings { get; }
+    public IComfygValueOperations<ISettingValue> Settings { get; }
 
-    public IComfygValuesOperations<ISecretValue> Secrets { get; }
+    public IComfygValueOperations<ISecretValue> Secrets { get; }
 
     public ComfygClient(string connectionString) : this(connectionString, new HttpClient())
     {

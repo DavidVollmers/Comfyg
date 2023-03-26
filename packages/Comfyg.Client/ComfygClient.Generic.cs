@@ -10,11 +10,11 @@ namespace Comfyg.Client;
 
 public partial class ComfygClient
 {
-    public IComfygValuesOperations<T> Operations<T>() where T : IComfygValue
+    public IComfygValueOperations<T> Operations<T>() where T : IComfygValue
     {
-        if (typeof(T) == typeof(IConfigurationValue)) return (IComfygValuesOperations<T>)Configuration;
-        if (typeof(T) == typeof(ISettingValue)) return (IComfygValuesOperations<T>)Settings;
-        if (typeof(T) == typeof(ISecretValue)) return (IComfygValuesOperations<T>)Secrets;
+        if (typeof(T) == typeof(IConfigurationValue)) return (IComfygValueOperations<T>)Configuration;
+        if (typeof(T) == typeof(ISettingValue)) return (IComfygValueOperations<T>)Settings;
+        if (typeof(T) == typeof(ISecretValue)) return (IComfygValueOperations<T>)Secrets;
         throw new NotSupportedException();
     }
 

@@ -6,7 +6,7 @@ using Comfyg.Contracts.Secrets;
 
 namespace Comfyg.Client.Operations;
 
-internal class SecretValuesOperations : IComfygValuesOperations<ISecretValue>
+internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
 {
     private readonly ComfygClient _client;
 

@@ -7,14 +7,14 @@ namespace Comfyg;
 
 internal class ChangeDetector<T> : IDisposable where T : IComfygValue
 {
-    private readonly IComfygValuesOperations<T> _operations;
+    private readonly IComfygValueOperations<T> _operations;
     private readonly ITimer _timer;
 
     private CancellationTokenSource? _cancellationTokenSource;
 
     public DateTimeOffset LastDetectionAt { get; private set; }
 
-    public ChangeDetector(IComfygValuesOperations<T> operations, ITimer timer)
+    public ChangeDetector(IComfygValueOperations<T> operations, ITimer timer)
     {
         _operations = operations ?? throw new ArgumentNullException(nameof(operations));
         _timer = timer ?? throw new ArgumentNullException(nameof(timer));

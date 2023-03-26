@@ -8,10 +8,10 @@ namespace Comfyg;
 
 internal class ComfygProvider<T> : ConfigurationProvider, IDisposable where T : IComfygValue
 {
-    private readonly IComfygValuesOperations<T> _operations;
+    private readonly IComfygValueOperations<T> _operations;
     private readonly ChangeDetector<T>? _changeDetector;
 
-    public ComfygProvider(IComfygValuesOperations<T> operations, ITimer? timer = null)
+    public ComfygProvider(IComfygValueOperations<T> operations, ITimer? timer = null)
     {
         _operations = operations ?? throw new ArgumentNullException(nameof(operations));
 

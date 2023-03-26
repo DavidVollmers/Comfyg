@@ -6,7 +6,7 @@ using Comfyg.Contracts.Requests;
 
 namespace Comfyg.Client.Operations;
 
-internal class ConfigurationValuesOperations : IComfygValuesOperations<IConfigurationValue>
+internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigurationValue>
 {
     private readonly ComfygClient _client;
 
