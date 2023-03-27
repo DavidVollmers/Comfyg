@@ -88,7 +88,7 @@ internal abstract class ImportCommandBase<T> : Command where T : IComfygValue
                     batch.Add(new KeyValuePair<string, string>(currentImportPath, kvp.Value.ToString()));
                     break;
             }
-            
+
             if (batch.Count < MaxBatchSize) continue;
 
             await ImportBatchAsync(client, batch, cancellationToken);

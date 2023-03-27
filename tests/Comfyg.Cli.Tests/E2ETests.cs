@@ -47,14 +47,14 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
         });
-        
+
         var client = await ConnectAsync();
 
         var result = await TestCli.ExecuteAsync($"import config \"{importFile}\"");
-        
+
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
-        
+
         _factory.Mock<IPermissionService>(mock =>
         {
             mock.Verify(
