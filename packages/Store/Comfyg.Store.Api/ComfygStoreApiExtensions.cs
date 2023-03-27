@@ -39,7 +39,7 @@ internal static class ComfygStoreApiExtensions
 
         return builder;
     }
-    
+
     public static void LogConnectionHint(this WebApplication app)
     {
         try
