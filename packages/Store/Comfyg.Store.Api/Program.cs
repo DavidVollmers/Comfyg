@@ -2,6 +2,8 @@
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
+
 builder.UseComfygStoreApi();
 
 var app = builder.Build();

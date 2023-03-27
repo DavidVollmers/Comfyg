@@ -1,15 +1,24 @@
 ﻿using Comfyg.Store.Api;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Moq;
 
 namespace Comfyg.Tests.Common;
 
-public sealed class E2ETestWebApplicationFactory : IDisposable
+public sealed class E2ETestWebApplicationFactory<TEntryPoint> : IDisposable where TEntryPoint : class
 {
     private readonly IList<HttpClient> _clients = new List<HttpClient>();
+    private readonly Mocks _mocks = new();
 
     private WebApplication? _webApplication;
+
+    public void ResetMocks() => _mocks.ResetMocks();
+
+    public void Mock<T>(Action<Mock<T>> mockProvider) where T : class => _mocks.Mock(mockProvider);
+
+    private Mock<T> GetMock<T>() where T : class => _mocks.GetMock<T>();
 
     private void EnsureWebApplication()
     {
@@ -20,13 +29,18 @@ public sealed class E2ETestWebApplicationFactory : IDisposable
             EnvironmentName = Environments.Development
         });
 
+        var mvcBuilder = builder.Services.AddControllers();
+        mvcBuilder.PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TEntryPoint).Assembly));
+        
         builder.UseComfygStoreApi();
+
+        builder.WebHost.ConfigureServices(_mocks.ConfigureServices);
 
         _webApplication = builder.Build();
 
         _webApplication.MapControllers();
 
-        _webApplication.StartAsync();
+        _webApplication.StartAsync().GetAwaiter().GetResult();
     }
 
     public HttpClient CreateClient()
@@ -43,7 +57,7 @@ public sealed class E2ETestWebApplicationFactory : IDisposable
 
     public void Dispose()
     {
-        _webApplication?.StopAsync();
+        _webApplication?.StopAsync().GetAwaiter().GetResult();
         _webApplication = null;
 
         foreach (var client in _clients)

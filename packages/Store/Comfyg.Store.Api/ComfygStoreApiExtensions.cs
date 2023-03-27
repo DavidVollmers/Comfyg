@@ -17,8 +17,6 @@ internal static class ComfygStoreApiExtensions
             builder.Configuration.AddUserSecrets<Program>();
         }
 
-        builder.Services.AddControllers();
-
         builder.Services.AddComfygAuthentication(options =>
         {
             options.UseAzureTableStorage(builder.Configuration["AuthenticationAzureTableStorageConnectionString"]);

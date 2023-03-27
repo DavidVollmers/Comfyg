@@ -5,15 +5,15 @@ using Moq;
 
 namespace Comfyg.Cli.Tests;
 
-public class E2ETests : IClassFixture<E2ETestWebApplicationFactory>
+public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
 {
-    private readonly E2ETestWebApplicationFactory _factory;
+    private readonly E2ETestWebApplicationFactory<Program> _factory;
 
-    public E2ETests(E2ETestWebApplicationFactory factory)
+    public E2ETests(E2ETestWebApplicationFactory<Program> factory)
     {
         _factory = factory;
 
-        // _factory.ResetMocks();
+        _factory.ResetMocks();
     }
 
     private static string CreateClientSecret()
@@ -36,26 +36,26 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory>
 
         using var httpClient = _factory.CreateClient();
 
-        // _factory.Mock<IClientService>(mock =>
-        // {
-        //     mock.Setup(cs => cs.GetClientAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(client);
-        //     mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>(), It.IsAny<CancellationToken>()))
-        //         .ReturnsAsync(clientSecret);
-        // });
-
         var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={clientSecret}";
+
+        _factory.Mock<IClientService>(mock =>
+        {
+            mock.Setup(cs => cs.GetClientAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(client);
+            mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(clientSecret);
+        });
 
         var result = await TestCli.ExecuteAsync($"connect \"{connectionString}\"");
 
         Assert.Equal(0, result.ExitCode);
 
-        // _factory.Mock<IClientService>(mock =>
-        // {
-        //     mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()),
-        //         Times.Once);
-        //     mock.Verify(
-        //         cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId),
-        //             It.IsAny<CancellationToken>()), Times.Once);
-        // });
+        _factory.Mock<IClientService>(mock =>
+        {
+            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()),
+                Times.Once);
+            mock.Verify(
+                cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId),
+                    It.IsAny<CancellationToken>()), Times.Once);
+        });
     }
 }
