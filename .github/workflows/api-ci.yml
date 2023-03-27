@@ -3,13 +3,7 @@ name: Application Programming Interface CI
 on:
   push:
     branches-ignore: 'main'
-    paths:
-      - 'packages/Store/**'
-      - 'tests/Store/**'
   pull_request:
-    paths:
-      - 'packages/Store/**'
-      - 'tests/Store/**'
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
