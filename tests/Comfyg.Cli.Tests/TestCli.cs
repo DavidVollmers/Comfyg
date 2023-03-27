@@ -18,10 +18,10 @@ public static class TestCli
     public static async Task<TestCliResult> ExecuteAsync(string arguments)
     {
         var path = Assembly.GetAssembly(typeof(TestCli))!.Location.Replace(".Tests.dll", ".exe");
-        
+
         var stdOutBuffer = new StringBuilder();
         var stdErrorBuffer = new StringBuilder();
-        var result =  await CliWrap.Cli.Wrap(path)
+        var result = await CliWrap.Cli.Wrap(path)
             .WithArguments(arguments)
             .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErrorBuffer))
             .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOutBuffer))
@@ -30,7 +30,9 @@ public static class TestCli
 
         return new TestCliResult
         {
-            Error = stdErrorBuffer.ToString(), ExitCode = result.ExitCode, Output = stdOutBuffer.ToString()
+            Error = stdErrorBuffer.ToString(),
+            ExitCode = result.ExitCode,
+            Output = stdOutBuffer.ToString()
         };
     }
 }

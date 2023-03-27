@@ -1,35 +1,8 @@
 ﻿using Comfyg.Store.Api;
-using Comfyg.Store.Authentication;
-using Comfyg.Store.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddEnvironmentVariables("COMFYG_");
-
-if (builder.Environment.IsDevelopment())
-{
-    builder.Configuration.AddUserSecrets<Program>();
-}
-
-builder.Services.AddControllers();
-
-builder.Services.AddComfygAuthentication(options =>
-{
-    options.UseAzureTableStorage(builder.Configuration["AuthenticationAzureTableStorageConnectionString"]);
-
-    var encryptionKey = builder.Configuration["AuthenticationEncryptionKey"];
-    if (encryptionKey != null) options.UseEncryption(encryptionKey);
-    else options.UseAzureKeyVault();
-});
-
-builder.Services.AddComfyg(options =>
-{
-    options.UseAzureTableStorage(builder.Configuration["SystemAzureTableStorageConnectionString"]);
-
-    var encryptionKey = builder.Configuration["SystemEncryptionKey"];
-    if (encryptionKey != null) options.UseEncryption(encryptionKey);
-    else options.UseAzureKeyVault();
-});
+builder.UseComfygStoreApi();
 
 var app = builder.Build();
 

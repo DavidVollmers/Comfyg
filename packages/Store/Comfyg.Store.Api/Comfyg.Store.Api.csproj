@@ -6,10 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>e7b922dc-d2e8-41d0-b82c-a8112e8be873</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Comfyg.Tests.Common" />
+  </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Comfyg.Store.Contracts\Comfyg.Store.Contracts.csproj"/>
-    <ProjectReference Include="..\Comfyg.Store.Authentication\Comfyg.Store.Authentication.csproj"/>
+    <ProjectReference Include="..\Comfyg.Store.Contracts\Comfyg.Store.Contracts.csproj" />
+    <ProjectReference Include="..\Comfyg.Store.Authentication\Comfyg.Store.Authentication.csproj" />
   </ItemGroup>
 
 </Project>

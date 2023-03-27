@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\packages\Store\Comfyg.Store.Api\Comfyg.Store.Api.csproj" />
     <ProjectReference Include="..\..\packages\Comfyg.Cli\Comfyg.Cli.csproj" />
+    <ProjectReference Include="..\Comfyg.Tests.Common\Comfyg.Tests.Common.csproj" />
   </ItemGroup>
 
 </Project>

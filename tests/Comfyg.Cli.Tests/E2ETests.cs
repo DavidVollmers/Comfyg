@@ -1,11 +1,21 @@
 ﻿using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts.Authentication;
+using Comfyg.Tests.Common;
 using Moq;
 
 namespace Comfyg.Cli.Tests;
 
-public class E2ETests
+public class E2ETests : IClassFixture<E2ETestWebApplicationFactory>
 {
+    private readonly E2ETestWebApplicationFactory _factory;
+
+    public E2ETests(E2ETestWebApplicationFactory factory)
+    {
+        _factory = factory;
+
+        // _factory.ResetMocks();
+    }
+    
     private static string CreateClientSecret()
     {
         return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
@@ -24,21 +34,21 @@ public class E2ETests
             FriendlyName = friendlyName
         };
 
-        // using var httpClient = _factory.CreateClient();
-        //
+        using var httpClient = _factory.CreateClient();
+        
         // _factory.Mock<IClientService>(mock =>
         // {
         //     mock.Setup(cs => cs.GetClientAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(client);
         //     mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>(), It.IsAny<CancellationToken>()))
         //         .ReturnsAsync(clientSecret);
         // });
-        //
-        // var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={clientSecret}";
-        //
-        // var result = await TestCli.ExecuteAsync($"connect \"{connectionString}\"");
-        //
-        // Assert.Equal(0, result.ExitCode);
-        //
+        
+        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={clientSecret}";
+        
+        var result = await TestCli.ExecuteAsync($"connect \"{connectionString}\"");
+        
+        Assert.Equal(0, result.ExitCode);
+        
         // _factory.Mock<IClientService>(mock =>
         // {
         //     mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()),
