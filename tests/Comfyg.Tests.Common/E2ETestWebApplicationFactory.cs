@@ -49,6 +49,9 @@ public sealed class E2ETestWebApplicationFactory<TEntryPoint> : IDisposable wher
 
         _webApplication.MapControllers();
 
+        _webApplication.UseAuthentication();
+        _webApplication.UseAuthorization();
+
         _webApplication.StartAsync().GetAwaiter().GetResult();
     }
 

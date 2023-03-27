@@ -11,17 +11,24 @@ internal class TestLogger : ILogger
     {
         _testOutputHelper = testOutputHelper;
     }
-    
+
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull => default;
 
     public bool IsEnabled(LogLevel logLevel) => true;
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
-        _testOutputHelper.WriteLine($"[{logLevel}]: {formatter(state, exception)}");
-        if (exception != null)
+        try
         {
-            _testOutputHelper.WriteLine(exception.ToString());
+            _testOutputHelper.WriteLine($"[{logLevel}]: {formatter(state, exception)}");
+            if (exception != null)
+            {
+                _testOutputHelper.WriteLine(exception.ToString());
+            }
+        }
+        catch
+        {
+            // ignored
         }
     }
 }

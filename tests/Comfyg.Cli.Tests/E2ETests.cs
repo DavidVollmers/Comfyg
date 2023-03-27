@@ -28,15 +28,14 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
     {
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
-        var friendlyName = "Test Client";
+        const string friendlyName = "Test Client";
         var client = new Store.Contracts.Authentication.Client
         {
-            ClientId = clientId,
-            ClientSecret = clientSecret,
-            FriendlyName = friendlyName
+            ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName
         };
 
         using var httpClient = _factory.CreateClient();
+        var expectedOutput = @"Successfully connected to " + httpClient.BaseAddress;
 
         var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={clientSecret}";
 
@@ -50,6 +49,7 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
         var result = await TestCli.ExecuteAsync($"connect \"{connectionString}\"");
 
         Assert.Equal(0, result.ExitCode);
+        Assert.StartsWith(expectedOutput, result.Output);
 
         _factory.Mock<IClientService>(mock =>
         {

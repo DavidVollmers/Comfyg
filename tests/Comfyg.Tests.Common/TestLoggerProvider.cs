@@ -6,7 +6,7 @@ namespace Comfyg.Tests.Common;
 internal class TestLoggerProvider : ILoggerProvider
 {
     private readonly ITestOutputHelper _testOutputHelper;
-    
+
     public TestLoggerProvider(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
