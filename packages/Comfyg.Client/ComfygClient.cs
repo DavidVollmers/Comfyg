@@ -12,6 +12,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Comfyg.Client;
 
+/// <summary>
+/// The client implementation used to connect and manage a Comfyg store.
+/// </summary>
 public sealed partial class ComfygClient : IDisposable
 {
     private readonly HttpClient _httpClient;
@@ -20,14 +23,32 @@ public sealed partial class ComfygClient : IDisposable
 
     private SecurityToken? _token;
 
+    /// <summary>
+    /// The endpoint URI of the connected Comfyg store.
+    /// </summary>
     public Uri EndpointUrl => _httpClient.BaseAddress!;
 
+    /// <summary>
+    /// Provides methods to manage configuration values in the connected Comfyg store.
+    /// </summary>
     public IComfygValueOperations<IConfigurationValue> Configuration { get; }
 
+    /// <summary>
+    /// Provides methods to manage setting values in the connected Comfyg store.
+    /// </summary>
     public IComfygValueOperations<ISettingValue> Settings { get; }
 
+    /// <summary>
+    /// Provides methods to manage secret values in the connected Comfyg store.
+    /// </summary>
     public IComfygValueOperations<ISecretValue> Secrets { get; }
 
+    /// <summary>
+    /// Creates a new client which can be used to connect to the Comfyg store via the provided connection string.
+    /// </summary>
+    /// <param name="connectionString">The connection string used to connect to the Comfyg store.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="connectionString"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="connectionString"/> is not a valid connection string.</exception>
     public ComfygClient(string connectionString) : this(connectionString, new HttpClient())
     {
     }
@@ -73,6 +94,12 @@ public sealed partial class ComfygClient : IDisposable
         Secrets = new SecretValuesOperations(this);
     }
 
+    /// <summary>
+    /// Establishes a connection to the Comfyg store.
+    /// </summary>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
+    /// <returns><see cref="ConnectionResponse"/></returns>
+    /// <exception cref="HttpRequestException">Invalid status code is returned.</exception>
     public async Task<ConnectionResponse> EstablishConnectionAsync(CancellationToken cancellationToken = default)
     {
         var response = await SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Post, "connections/establish"),
@@ -138,6 +165,9 @@ public sealed partial class ComfygClient : IDisposable
         return tokenHandler.WriteToken(_token);
     }
 
+    /// <summary>
+    /// Disposes the client implementation and all allocated resources.
+    /// </summary>
     public void Dispose()
     {
         _httpClient.Dispose();

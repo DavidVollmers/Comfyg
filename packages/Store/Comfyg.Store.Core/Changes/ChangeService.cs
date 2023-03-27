@@ -1,7 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Poco;
-using Comfyg.Store.Contracts.Changes;
 using Comfyg.Store.Core.Abstractions.Changes;
 using Comfyg.Store.Core.Abstractions.Permissions;
 

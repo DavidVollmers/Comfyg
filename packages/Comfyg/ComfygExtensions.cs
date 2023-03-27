@@ -5,6 +5,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Comfyg;
 
+/// <summary>
+/// This type provides helper methods to make common use cases for Comfyg easy.
+/// </summary>
 public static class ComfygExtensions
 {
     /// <summary>

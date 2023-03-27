@@ -5,7 +5,8 @@
         {
           "files": [
             "Comfyg/Comfyg.csproj",
-            "Comfyg.Client/Comfyg.Client.csproj"
+            "Comfyg.Client/Comfyg.Client.csproj",
+            "Store/Comfyg.Store.Contracts/Comfyg.Store.Contracts.csproj"
           ],
           "src": "../packages"
         }

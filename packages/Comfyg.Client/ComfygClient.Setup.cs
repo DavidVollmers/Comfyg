@@ -7,6 +7,14 @@ namespace Comfyg.Client;
 
 public partial class ComfygClient
 {
+    /// <summary>
+    /// Registers a new client on the connected Comfyg store. 
+    /// </summary>
+    /// <param name="request"><see cref="SetupClientRequest"/></param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
+    /// <returns><see cref="SetupClientResponse"/></returns>
+    /// <exception cref="ArgumentNullException"><paramref name="request"/> is null.</exception>
+    /// <exception cref="HttpRequestException">Invalid status code is returned.</exception>
     public async Task<SetupClientResponse> SetupClientAsync(SetupClientRequest request,
         CancellationToken cancellationToken = default)
     {

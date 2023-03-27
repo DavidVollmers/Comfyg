@@ -4,3 +4,5 @@
   items:
     - name: comfyg add
       href: command_add.md
+    - name: comfyg connect
+      href: command_connect.md

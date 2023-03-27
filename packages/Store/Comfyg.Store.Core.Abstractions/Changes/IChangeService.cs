@@ -1,6 +1,4 @@
-﻿using Comfyg.Store.Contracts.Changes;
-
-namespace Comfyg.Store.Core.Abstractions.Changes;
+﻿namespace Comfyg.Store.Core.Abstractions.Changes;
 
 public interface IChangeService
 {

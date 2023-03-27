@@ -1,4 +1,4 @@
-﻿namespace Comfyg.Store.Contracts.Changes;
+﻿namespace Comfyg.Store.Core.Abstractions.Changes;
 
 internal class ChangeLog : IChangeLog
 {

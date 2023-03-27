@@ -1,5 +1,5 @@
 ﻿using Azure.Data.Tables.Poco;
-using Comfyg.Store.Contracts.Changes;
+using Comfyg.Store.Core.Abstractions.Changes;
 
 namespace Comfyg.Store.Core.Changes;
 

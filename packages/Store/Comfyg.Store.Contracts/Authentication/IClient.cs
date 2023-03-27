@@ -5,17 +5,31 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Comfyg.Store.Contracts.Authentication;
 
+/// <summary>
+/// A Comfyg client used for authentication and authorization.
+/// </summary>
 public interface IClient
 {
+    /// <summary>
+    /// The client ID of the client.
+    /// </summary>
     [Required]
     [MaxLength(64)]
     [TechnicalIdentifier]
     string ClientId { get; }
 
+    /// <summary>
+    /// The client secret of the client.
+    /// </summary>
     [JsonIgnore]
     [ValidateNever]
     [IgnoreDataMember]
     string ClientSecret { get; }
 
-    [Required][MaxLength(256)] string FriendlyName { get; }
+    /// <summary>
+    /// The user friendly display name of the client.
+    /// </summary>
+    [Required]
+    [MaxLength(256)]
+    string FriendlyName { get; }
 }

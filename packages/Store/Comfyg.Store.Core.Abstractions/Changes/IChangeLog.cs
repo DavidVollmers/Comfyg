@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Comfyg.Store.Contracts.Changes;
+namespace Comfyg.Store.Core.Abstractions.Changes;
 
 public interface IChangeLog
 {
