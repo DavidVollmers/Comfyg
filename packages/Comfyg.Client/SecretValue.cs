@@ -28,7 +28,7 @@ public sealed class SecretValue : ISecretValue
     /// The secret value.
     /// </summary>
     public string Value { get; }
-    
+
     /// <summary>
     /// The version of the secret value. Always returns `null`.
     /// </summary>

@@ -1,10 +1,10 @@
 ﻿using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts.Authentication;
-using Comfyg.Store.Core.Abstractions.Changes;
 using Comfyg.Store.Contracts.Configuration;
 using Comfyg.Store.Contracts.Secrets;
 using Comfyg.Store.Contracts.Settings;
 using Comfyg.Store.Core.Abstractions;
+using Comfyg.Store.Core.Abstractions.Changes;
 using Moq;
 
 namespace Comfyg.Tests;

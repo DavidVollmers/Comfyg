@@ -16,18 +16,18 @@ public interface IComfygValue
     [MaxLength(1024)]
     [TechnicalIdentifier]
     string Key { get; }
-    
+
     /// <summary>
     /// The Comfyg value.
     /// </summary>
     //TODO define proper max length
     [Required] string Value { get; }
-    
+
     /// <summary>
     /// The version of the Comfyg value.
     /// </summary>
     [ValidateNever] string Version { get; }
-    
+
     /// <summary>
     /// The time when the Comfyg value was created.
     /// </summary>
