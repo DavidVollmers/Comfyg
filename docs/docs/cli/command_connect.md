@@ -27,19 +27,19 @@ Depending on the client you choose for connection, you will have different privi
 
 You can read more about this [here](../TODO.md).
 
-If the connection succeeds it will print out the information of the client used for the connection.
+If the connection succeeds, the CLI will print out the information of the client used for the connection.
 Also the CLI will store the connection string in your user profile so that the connection can be used for other CLI commands.
 
 ## Arguments
 
 - `CONNECTION_STRING`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The connection string used to connect to the Comfyg store.
+  The connection string used to connect to the Comfyg store.
 
 ## Examples
 
 - Connect to the local Comfyg store from the above example connection string:
 
-```shell
-comfyg connect "Endpoint=http://localhost:32771;ClientId=system;ClientSecret=cbO+N4fgq7mOB813KuOfow0nfKFW+VyS3k4boosUzozn9vmOqvk32QCpxO1eQfxMxKcItHkYX7YUT9uSbP/84g==;"
-```
+  ```shell
+  comfyg connect "Endpoint=http://localhost:32771;ClientId=system;ClientSecret=cbO+N4fgq7mOB813KuOfow0nfKFW+VyS3k4boosUzozn9vmOqvk32QCpxO1eQfxMxKcItHkYX7YUT9uSbP/84g==;"
+  ```

@@ -6,7 +6,7 @@ public class ExportCommand : Command
 {
     // ReSharper disable SuggestBaseTypeForParameterInConstructor
     public ExportCommand(ExportConfigurationCommand exportConfigurationCommand)
-        : base("export", "Export Comfyg values")
+        : base("export", "Exports key-value pairs from the connected Comfyg store.")
     {
         if (exportConfigurationCommand == null) throw new ArgumentNullException(nameof(exportConfigurationCommand));
 

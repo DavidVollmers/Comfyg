@@ -13,12 +13,12 @@ internal class AddSecretCommand : Command
     private readonly Argument<string> _keyArgument;
     private readonly Argument<string> _valueArgument;
 
-    public AddSecretCommand() : base("secret", "Adds a secret value on the connected Comfyg endpoint")
+    public AddSecretCommand() : base("secret", "Adds a key-value pair as a secret value to the connected Comfyg store.")
     {
-        _keyArgument = new Argument<string>("key", "The key of the secret value");
+        _keyArgument = new Argument<string>("KEY", "The key of the key-value pair.");
         AddArgument(_keyArgument);
 
-        _valueArgument = new Argument<string>("value", "The secret value");
+        _valueArgument = new Argument<string>("VALUE", "The value of the key-value pair.");
         AddArgument(_valueArgument);
 
         this.SetHandler(HandleCommandAsync);

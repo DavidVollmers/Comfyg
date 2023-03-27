@@ -13,12 +13,12 @@ internal class AddConfigurationCommand : Command
     private readonly Argument<string> _keyArgument;
     private readonly Argument<string> _valueArgument;
 
-    public AddConfigurationCommand() : base("config", "Adds a configuration value on the connected Comfyg endpoint")
+    public AddConfigurationCommand() : base("config", "Adds a key-value pair as a configuration value to the connected Comfyg store.")
     {
-        _keyArgument = new Argument<string>("key", "The key of the configuration value");
+        _keyArgument = new Argument<string>("KEY", "The key of the key-value pair.");
         AddArgument(_keyArgument);
 
-        _valueArgument = new Argument<string>("value", "The configuration value");
+        _valueArgument = new Argument<string>("VALUE", "The value of the key-value pair.");
         AddArgument(_valueArgument);
 
         this.SetHandler(HandleCommandAsync);

@@ -81,8 +81,6 @@ internal static class DockerClientExtensions
         }
         catch
         {
-            if (parameters.LeaveContainerOnError) throw;
-
             messageHandler(
                 "Could not successfully start Comfyg store. Trying to stop and remove the Docker Container...");
 

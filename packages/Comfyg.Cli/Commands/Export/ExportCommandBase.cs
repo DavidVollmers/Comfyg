@@ -15,8 +15,8 @@ public abstract class ExportCommandBase<T> : Command where T : IComfygValue
 
     protected ExportCommandBase(string name, string? description = null) : base(name, description)
     {
-        _fileArgument = new Argument<FileInfo>("file",
-            "The new or existing JSON file in which the comfyg values will be exported");
+        _fileArgument = new Argument<FileInfo>("OUTPUT_FILE",
+            "The output file which will be used to export key-value pairs into.");
         AddArgument(_fileArgument);
 
         this.SetHandler(HandleCommandAsync);

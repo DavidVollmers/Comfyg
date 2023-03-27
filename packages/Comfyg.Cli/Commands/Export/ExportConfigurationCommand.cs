@@ -5,7 +5,7 @@ namespace Comfyg.Cli.Commands.Export;
 public class ExportConfigurationCommand : ExportCommandBase<IConfigurationValue>
 {
     public ExportConfigurationCommand()
-        : base("config", "Exports configuration values to a JSON file")
+        : base("config", "Exports key-value pairs from the configuration values of the connected Comfyg store.")
     {
     }
 }

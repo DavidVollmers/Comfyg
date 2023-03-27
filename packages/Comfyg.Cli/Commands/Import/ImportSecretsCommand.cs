@@ -7,7 +7,7 @@ namespace Comfyg.Cli.Commands.Import;
 public class ImportSecretsCommand : ImportCommandBase<ISecretValue>
 {
     public ImportSecretsCommand()
-        : base("secrets", "Imports comfyg values as secrets into the connected Comfyg endpoint")
+        : base("secrets", "Imports key-value pairs as secret values into the connected Comfyg store.")
     {
     }
 

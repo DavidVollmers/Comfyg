@@ -10,10 +10,10 @@ internal class ConnectCommand : Command
 {
     private readonly Argument<string> _connectionStringArgument;
 
-    public ConnectCommand() : base("connect", "Connect to a Comfyg endpoint")
+    public ConnectCommand() : base("connect", "Establishes a connection to a Comfyg store.")
     {
         _connectionStringArgument = new Argument<string>("connection-string",
-            "The connection string which contains the information on how to connect to the Comfyg endpoint");
+            "The connection string used to connect to the Comfyg store.");
         AddArgument(_connectionStringArgument);
 
         this.SetHandler(HandleCommandAsync);

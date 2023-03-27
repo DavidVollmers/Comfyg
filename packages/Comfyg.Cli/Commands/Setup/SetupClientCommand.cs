@@ -11,12 +11,12 @@ internal class SetupClientCommand : Command
     private readonly Argument<string> _clientIdArgument;
     private readonly Argument<string> _friendlyNameArgument;
 
-    public SetupClientCommand() : base("client", "Creates a new client on the connected Comfyg endpoint")
+    public SetupClientCommand() : base("client", "Registers a new client on the connected Comfyg store.")
     {
-        _clientIdArgument = new Argument<string>("client-id", "The client ID");
+        _clientIdArgument = new Argument<string>("CLIENT_ID", "The ID of the client to create. This must be unique for the connected Comfyg store.");
         AddArgument(_clientIdArgument);
 
-        _friendlyNameArgument = new Argument<string>("friendly-name", "The user friendly name of the client");
+        _friendlyNameArgument = new Argument<string>("FRIENDLY_NAME", "The user friendly display name which is used for the created client.");
         AddArgument(_friendlyNameArgument);
 
         this.SetHandler(HandleCommandAsync);

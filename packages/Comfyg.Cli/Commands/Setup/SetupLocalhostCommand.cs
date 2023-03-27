@@ -23,79 +23,65 @@ internal class SetupLocalhostCommand : Command
     private readonly Option<string> _systemAzureTableStorageConnectionStringOption;
     private readonly Option<string> _authenticationEncryptionKeyOption;
     private readonly Option<string> _authenticationAzureTableStorageConnectionStringOption;
-    private readonly Option<bool> _leaveContainerOnErrorOption;
     private readonly Option<string> _versionOption;
 
-    public SetupLocalhostCommand() : base("localhost", "Setup a new Comfyg store running on your localhost")
+    public SetupLocalhostCommand() : base("localhost", "Sets up a new Comfyg store on your local machine.")
     {
         _dockerFileOption = new Option<FileInfo?>(new[]
         {
             "-df",
             "--docker-file"
-        }, "The Dockerfile to use for building the Comfyg store");
+        }, "The Dockerfile used to build the container from. This can be used for local development of the Comfyg store API or when testing your own Comfyg store API implementation.");
         AddOption(_dockerFileOption);
 
         _dockerSocketOption = new Option<Uri?>(new[]
         {
             "-ds",
             "--docker-socket"
-        }, "The URI to the docker socket to use");
+        }, "The docker socket to use for creating and running the docker container.");
         AddOption(_dockerSocketOption);
 
         _systemClientIdOption = new Option<string>(new[]
         {
-            "-sci",
             "--system-client-id"
-        }, "The Comfyg system client ID");
+        }, "The client ID of the Comfyg system client.");
         AddOption(_systemClientIdOption);
 
         _systemClientSecretOption = new Option<string>(new[]
         {
-            "-scs",
             "--system-client-secret"
-        }, "The base64 secret of the Comfyg system client");
+        }, "The client secret of the Comfyg system client.");
         AddOption(_systemClientSecretOption);
 
         _systemEncryptionKeyOption = new Option<string>(new[]
         {
-            "-sek",
             "--system-encryption-key"
-        }, "The base64 key used to encrypt all Comfyg system secrets");
+        }, "The base64 encoded key used to encrypt all Comfyg secret values.");
         AddOption(_systemEncryptionKeyOption);
 
         _systemAzureTableStorageConnectionStringOption = new Option<string>(new[]
         {
-            "-satscs",
             "--system-azure-table-storage-connection-string"
-        }, "The connection string for the Azure table storage used to store all Comfyg system values");
+        }, "A connection string to connect to the Azure Storage Account used to store all Comfyg values.");
         AddOption(_systemAzureTableStorageConnectionStringOption);
 
         _authenticationEncryptionKeyOption = new Option<string>(new[]
         {
-            "-aek",
             "--authentication-encryption-key"
-        }, "The base64 key used to encrypt all Comfyg authentication secrets");
+        }, "The base64 encoded key used to encrypt all authentication related secrets.");
         AddOption(_authenticationEncryptionKeyOption);
 
         _authenticationAzureTableStorageConnectionStringOption = new Option<string>(new[]
         {
-            "-aatscs",
             "--authentication-azure-table-storage-connection-string"
-        }, "The connection string for the Azure table storage used to store all Comfyg authentication values");
+        }, "A connection string to connect to the Azure Storage Account used to store all authentication related values.");
         AddOption(_authenticationAzureTableStorageConnectionStringOption);
-
-        _leaveContainerOnErrorOption = new Option<bool>(new[]
-        {
-            "-lcoe",
-            "--leave-container-on-error"
-        }, "Do not stop/remove the Docker Container when there is an error");
-        AddOption(_leaveContainerOnErrorOption);
 
         _versionOption = new Option<string>(new[]
         {
             "-v",
             "--version"
-        }, "The version of the Comfyg store to use");
+        }, "The version of the Docker Image to used. Defaults to `latest`.");
         _versionOption.SetDefaultValue("latest");
         AddOption(_versionOption);
 
@@ -115,7 +101,6 @@ internal class SetupLocalhostCommand : Command
             context.ParseResult.GetValueForOption(_authenticationEncryptionKeyOption);
         var authenticationAzureTableStorageConnectionStringOption =
             context.ParseResult.GetValueForOption(_authenticationAzureTableStorageConnectionStringOption);
-        var leaveContainerOnErrorOption = context.ParseResult.GetValueForOption(_leaveContainerOnErrorOption);
         var versionOption = context.ParseResult.GetValueForOption(_versionOption);
 
         var cancellationToken = context.GetCancellationToken();
@@ -127,8 +112,7 @@ internal class SetupLocalhostCommand : Command
             SystemEncryptionKey = systemEncryptionKeyOption!,
             SystemAzureTableStorageConnectionString = systemAzureTableStorageConnectionStringOption!,
             AuthenticationEncryptionKey = authenticationEncryptionKeyOption!,
-            AuthenticationAzureTableStorageConnectionString = authenticationAzureTableStorageConnectionStringOption!,
-            LeaveContainerOnError = leaveContainerOnErrorOption
+            AuthenticationAzureTableStorageConnectionString = authenticationAzureTableStorageConnectionStringOption!
         };
 
         await PromptMissingParametersAsync(parameters, cancellationToken);

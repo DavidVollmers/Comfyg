@@ -7,7 +7,7 @@ internal class AddCommand : Command
     // ReSharper disable SuggestBaseTypeForParameterInConstructor
     public AddCommand(AddConfigurationCommand addConfigurationCommand, AddSettingCommand addSettingCommand,
         AddSecretCommand addSecretCommand)
-        : base("add", "Adds a Comfyg value")
+        : base("add", "Adds a key-value pair to the connected Comfyg store.")
     {
         if (addConfigurationCommand == null) throw new ArgumentNullException(nameof(addConfigurationCommand));
         if (addSettingCommand == null) throw new ArgumentNullException(nameof(addSettingCommand));

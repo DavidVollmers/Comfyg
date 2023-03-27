@@ -7,7 +7,7 @@ internal class ImportCommand : Command
     // ReSharper disable SuggestBaseTypeForParameterInConstructor
     public ImportCommand(ImportConfigurationCommand importConfigurationCommand,
         ImportSettingsCommand importSettingsCommand, ImportSecretsCommand importSecretsCommand)
-        : base("import", "Import Comfyg values")
+        : base("import", "Imports key-value pairs into the connected Comfyg store.")
     {
         if (importConfigurationCommand == null) throw new ArgumentNullException(nameof(importConfigurationCommand));
         if (importSettingsCommand == null) throw new ArgumentNullException(nameof(importSettingsCommand));

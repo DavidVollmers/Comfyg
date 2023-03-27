@@ -17,7 +17,8 @@ public abstract class ImportCommandBase<T> : Command where T : IComfygValue
 
     protected ImportCommandBase(string name, string? description = null) : base(name, description)
     {
-        _fileArgument = new Argument<FileInfo>("file", "The JSON file containing the comfyg values to import");
+        _fileArgument = new Argument<FileInfo>("INPUT_FILE",
+            "The input file which will be used to import all key-value pairs from.");
         AddArgument(_fileArgument);
 
         this.SetHandler(HandleCommandAsync);

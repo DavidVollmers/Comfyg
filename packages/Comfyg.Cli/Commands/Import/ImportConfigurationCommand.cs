@@ -7,7 +7,7 @@ namespace Comfyg.Cli.Commands.Import;
 public class ImportConfigurationCommand : ImportCommandBase<IConfigurationValue>
 {
     public ImportConfigurationCommand()
-        : base("config", "Imports comfyg values as configuration into the connected Comfyg endpoint")
+        : base("config", "Imports key-value pairs as configuration values into the connected Comfyg store.")
     {
     }
 
