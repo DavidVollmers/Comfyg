@@ -4,7 +4,7 @@ using Comfyg.Store.Contracts.Secrets;
 
 namespace Comfyg.Cli.Commands.Import;
 
-public class ImportSecretsCommand : ImportCommandBase<ISecretValue>
+internal class ImportSecretsCommand : ImportCommandBase<ISecretValue>
 {
     public ImportSecretsCommand()
         : base("secrets", "Imports key-value pairs as secret values into the connected Comfyg store.")

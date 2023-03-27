@@ -5,15 +5,16 @@ using Comfyg.Store.Contracts.Secrets;
 using Comfyg.Store.Contracts.Settings;
 using Comfyg.Store.Core.Abstractions;
 using Comfyg.Store.Core.Abstractions.Changes;
+using Comfyg.Tests.Common;
 using Moq;
 
 namespace Comfyg.Tests;
 
-public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
+public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFactory>
 {
-    private readonly TestWebApplicationFactory _factory;
+    private readonly IntegrationTestWebApplicationFactory _factory;
 
-    public IntegrationTests(TestWebApplicationFactory factory)
+    public IntegrationTests(IntegrationTestWebApplicationFactory factory)
     {
         _factory = factory;
 

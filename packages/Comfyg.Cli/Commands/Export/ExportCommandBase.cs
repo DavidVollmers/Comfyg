@@ -9,7 +9,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Comfyg.Cli.Commands.Export;
 
-public abstract class ExportCommandBase<T> : Command where T : IComfygValue
+internal abstract class ExportCommandBase<T> : Command where T : IComfygValue
 {
     private readonly Argument<FileInfo> _fileArgument;
 

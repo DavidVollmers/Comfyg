@@ -2,7 +2,7 @@
 
 namespace Comfyg.Cli.Commands.Export;
 
-public class ExportCommand : Command
+internal class ExportCommand : Command
 {
     // ReSharper disable SuggestBaseTypeForParameterInConstructor
     public ExportCommand(ExportConfigurationCommand exportConfigurationCommand)

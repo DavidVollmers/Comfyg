@@ -5,13 +5,16 @@ using Comfyg.Store.Contracts.Settings;
 using Comfyg.Store.Core.Abstractions;
 using Comfyg.Store.Core.Abstractions.Changes;
 using Comfyg.Store.Core.Abstractions.Permissions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
-namespace Comfyg.Client.Tests;
+namespace Comfyg.Tests.Common;
 
-public class TestWebApplicationFactory : WebApplicationFactory<Program>
+public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Program>
 {
     private readonly IDictionary<string, Mock> _mocks = new Dictionary<string, Mock>();
 
@@ -29,8 +32,9 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureTestServices(services =>
         {
-            services.AddSingleton<IClientService>(_ => GetMock<IClientService>().Object);
             services.AddSingleton<IConfiguration>(_ => GetMock<IConfiguration>().Object);
+
+            services.AddSingleton<IClientService>(_ => GetMock<IClientService>().Object);
             services.AddSingleton<IChangeService>(_ => GetMock<IChangeService>().Object);
             services.AddSingleton<IPermissionService>(_ => GetMock<IPermissionService>().Object);
             services.AddSingleton<IValueService<IConfigurationValue>>(_ =>

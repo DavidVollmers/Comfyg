@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="Comfyg.Client.Tests" />
+        <InternalsVisibleTo Include="Comfyg.Cli.Tests" />
         <InternalsVisibleTo Include="Comfyg.Tests" />
     </ItemGroup>
 

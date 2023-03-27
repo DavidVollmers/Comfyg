@@ -9,7 +9,7 @@ using Spectre.Console;
 
 namespace Comfyg.Cli.Commands.Import;
 
-public abstract class ImportCommandBase<T> : Command where T : IComfygValue
+internal abstract class ImportCommandBase<T> : Command where T : IComfygValue
 {
     private const int MaxBatchSize = 100;
 
