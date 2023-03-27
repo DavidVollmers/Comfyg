@@ -31,7 +31,7 @@ internal abstract class ExportCommandBase<T> : Command where T : IComfygValue
             var overwrite =
                 AnsiConsole.Prompt(
                     new ConfirmationPrompt(
-                        "[bold yellow]The provided file already exists. Do you want to overwrite it?[/]"));
+                        "[bold yellow]The provided output file already exists. Do you want to overwrite it?[/]"));
             if (!overwrite) return;
         }
 

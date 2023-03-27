@@ -31,7 +31,7 @@ internal abstract class ImportCommandBase<T> : Command where T : IComfygValue
         var fileArgument = context.ParseResult.GetValueForArgument(_fileArgument);
 
         if (!fileArgument.Exists)
-            throw new FileNotFoundException("Could not find JSON file to import.", fileArgument.FullName);
+            throw new FileNotFoundException("Could not find provided input file.", fileArgument.FullName);
 
         var cancellationToken = context.GetCancellationToken();
 
@@ -39,20 +39,22 @@ internal abstract class ImportCommandBase<T> : Command where T : IComfygValue
 
         await using var stream = fileArgument.OpenRead();
 
-        var json = await JsonSerializer.DeserializeAsync<IDictionary<string, object?>>(stream,
+        var json = await JsonSerializer.DeserializeAsync<IDictionary<string, JsonElement>>(stream,
             cancellationToken: cancellationToken);
 
-        if (json == null) throw new InvalidOperationException("Could not deserialize JSON file.");
+        if (json == null) throw new InvalidOperationException("Could not deserialize input file.");
 
-        await ImportJsonAsync(client, json, cancellationToken: cancellationToken);
+        var batch = new List<KeyValuePair<string, string>>();
+
+        await ImportJsonAsync(client, json, batch, cancellationToken: cancellationToken);
+
+        if (batch.Count > 0) await ImportBatchAsync(client, batch, cancellationToken);
     }
 
-    private async Task ImportJsonAsync(ComfygClient client, IDictionary<string, object?> json,
-        string? importPath = null, IList<KeyValuePair<string, string>>? batch = null,
+    private async Task ImportJsonAsync(ComfygClient client, IDictionary<string, JsonElement> json,
+        ICollection<KeyValuePair<string, string>> batch, string? importPath = null,
         CancellationToken cancellationToken = default)
     {
-        batch ??= new List<KeyValuePair<string, string>>();
-
         foreach (var kvp in json)
         {
             var currentImportPath = kvp.Key;
@@ -67,26 +69,32 @@ internal abstract class ImportCommandBase<T> : Command where T : IComfygValue
                 continue;
             }
 
-            switch (kvp.Value)
+            switch (kvp.Value.ValueKind)
             {
-                case null:
+                case JsonValueKind.Null:
                     AnsiConsole.MarkupLine($"[bold yellow]Skipping \"{currentImportPath}\" because value is null[/]");
                     continue;
-                case IDictionary<string, object?> subJson:
-                    await ImportJsonAsync(client, subJson, currentImportPath, batch, cancellationToken);
+                case JsonValueKind.Object:
+                    await ImportJsonAsync(client, kvp.Value.Deserialize<IDictionary<string, JsonElement>>()!,
+                        batch, currentImportPath, cancellationToken);
                     continue;
+                case JsonValueKind.Undefined:
+                case JsonValueKind.Array:
+                case JsonValueKind.String:
+                case JsonValueKind.Number:
+                case JsonValueKind.True:
+                case JsonValueKind.False:
+                default:
+                    batch.Add(new KeyValuePair<string, string>(currentImportPath, kvp.Value.ToString()));
+                    break;
             }
-
-            batch.Add(new KeyValuePair<string, string>(kvp.Key, kvp.Value.ToString()!));
-
+            
             if (batch.Count < MaxBatchSize) continue;
 
             await ImportBatchAsync(client, batch, cancellationToken);
 
             batch.Clear();
         }
-
-        if (batch.Count > 0) await ImportBatchAsync(client, batch, cancellationToken);
     }
 
     private async Task ImportBatchAsync(ComfygClient client, IEnumerable<KeyValuePair<string, string>> batch,
