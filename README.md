@@ -16,7 +16,7 @@ want to change at runtime?"*.
 It is similar to [Azure App Configuration](https://learn.microsoft.com/en-us/azure/azure-app-configuration/overview),
 but also supports secrets and change detection. 
 
-And most it importantly it is open-source and free!
+And most importantly it is open-source and free to use!
 
 ## Documentation
 
