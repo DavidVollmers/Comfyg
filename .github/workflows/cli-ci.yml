@@ -30,6 +30,7 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet }}
       - run: |
+          dotnet test tests/Comfyg.Cli.Tests
           dotnet test tests/Comfyg.Client.Tests
   Build:
     needs: Test
