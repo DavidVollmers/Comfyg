@@ -1,9 +1,12 @@
 ﻿using Comfyg.Store.Api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Moq;
+using Xunit.Abstractions;
 
 namespace Comfyg.Tests.Common;
 
@@ -13,6 +16,8 @@ public sealed class E2ETestWebApplicationFactory<TEntryPoint> : IDisposable wher
     private readonly Mocks _mocks = new();
 
     private WebApplication? _webApplication;
+
+    public ITestOutputHelper? TestOutputHelper { get; set; }
 
     public void ResetMocks() => _mocks.ResetMocks();
 
@@ -31,10 +36,14 @@ public sealed class E2ETestWebApplicationFactory<TEntryPoint> : IDisposable wher
 
         var mvcBuilder = builder.Services.AddControllers();
         mvcBuilder.PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TEntryPoint).Assembly));
-        
+
         builder.UseComfygStoreApi();
 
-        builder.WebHost.ConfigureServices(_mocks.ConfigureServices);
+        if (TestOutputHelper != null) builder.Logging.AddProvider(new TestLoggerProvider(TestOutputHelper));
+
+        builder.Configuration.AddJsonFile("appsettings.Test.json");
+
+        _mocks.ConfigureServices(builder.Services);
 
         _webApplication = builder.Build();
 

@@ -2,6 +2,7 @@
 using Comfyg.Store.Contracts.Authentication;
 using Comfyg.Tests.Common;
 using Moq;
+using Xunit.Abstractions;
 
 namespace Comfyg.Cli.Tests;
 
@@ -9,9 +10,10 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
 {
     private readonly E2ETestWebApplicationFactory<Program> _factory;
 
-    public E2ETests(E2ETestWebApplicationFactory<Program> factory)
+    public E2ETests(E2ETestWebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
     {
         _factory = factory;
+        _factory.TestOutputHelper = testOutputHelper;
 
         _factory.ResetMocks();
     }
