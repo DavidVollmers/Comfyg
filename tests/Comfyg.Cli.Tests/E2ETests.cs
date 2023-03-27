@@ -31,7 +31,9 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
         const string friendlyName = "Test Client";
         var client = new Store.Contracts.Authentication.Client
         {
-            ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName
+            ClientId = clientId,
+            ClientSecret = clientSecret,
+            FriendlyName = friendlyName
         };
 
         using var httpClient = _factory.CreateClient();
