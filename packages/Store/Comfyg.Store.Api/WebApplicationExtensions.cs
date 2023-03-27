@@ -11,7 +11,7 @@ internal static class WebApplicationExtensions
             if (systemClientId == null || systemClientSecret == null)
             {
                 app.Logger.LogWarning(
-                    "No system client configured. To be able to use all features of the Comfyg store you should configure both SystemClientId and SystemClientSecret.");
+                    "No system client configured. To be able to use all Comfyg store features you should configure both SystemClientId and SystemClientSecret.");
                 return;
             }
 

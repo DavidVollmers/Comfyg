@@ -20,7 +20,7 @@ public sealed class SetupClientResponse
     public string ClientSecret { get; }
 
     /// <summary>
-    /// Creates a new instance of the response object.
+    /// Creates a new response object instance.
     /// </summary>
     /// <param name="client">The client which was registered.</param>
     /// <param name="clientSecret">The client secret of the registered Comfyg client.</param>

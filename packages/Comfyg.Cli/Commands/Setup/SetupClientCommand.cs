@@ -13,7 +13,7 @@ internal class SetupClientCommand : Command
 
     public SetupClientCommand() : base("client", "Creates a new client on the connected Comfyg endpoint")
     {
-        _clientIdArgument = new Argument<string>("client-id", "The identifier of the client");
+        _clientIdArgument = new Argument<string>("client-id", "The client ID");
         AddArgument(_clientIdArgument);
 
         _friendlyNameArgument = new Argument<string>("friendly-name", "The user friendly name of the client");

@@ -15,7 +15,7 @@ public sealed class ConnectionResponse
     public IClient Client { get; }
 
     /// <summary>
-    /// Creates a new instance of the response object.
+    /// Creates a new response object instance.
     /// </summary>
     /// <param name="client">The client used to establish the connection.</param>
     /// <exception cref="ArgumentNullException"><paramref name="client"/> is null.</exception>

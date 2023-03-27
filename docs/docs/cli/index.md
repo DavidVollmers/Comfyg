@@ -28,7 +28,7 @@ Here you can find a list of all existing Comfyg CLI commands:
 
 - [add](command_add.md)
 - [connect](command_connect.md)
-- export
-- import
-- setup client
-- setup localhost
+- [export](command_export.md)
+- [import](../TODO.md)
+- [setup client](../TODO.md)
+- [setup localhost](../TODO.md)

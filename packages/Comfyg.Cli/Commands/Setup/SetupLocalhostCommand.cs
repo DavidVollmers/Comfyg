@@ -46,7 +46,7 @@ internal class SetupLocalhostCommand : Command
         {
             "-sci",
             "--system-client-id"
-        }, "The ID of the Comfyg system client");
+        }, "The Comfyg system client ID");
         AddOption(_systemClientIdOption);
 
         _systemClientSecretOption = new Option<string>(new[]

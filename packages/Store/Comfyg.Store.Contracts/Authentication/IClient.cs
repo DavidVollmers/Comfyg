@@ -11,7 +11,7 @@ namespace Comfyg.Store.Contracts.Authentication;
 public interface IClient
 {
     /// <summary>
-    /// The client ID of the client.
+    /// The client ID.
     /// </summary>
     [Required]
     [MaxLength(64)]
@@ -19,7 +19,7 @@ public interface IClient
     string ClientId { get; }
 
     /// <summary>
-    /// The client secret of the client.
+    /// The client secret.
     /// </summary>
     [JsonIgnore]
     [ValidateNever]
