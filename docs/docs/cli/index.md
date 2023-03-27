@@ -4,7 +4,7 @@ The Comfyg CLI requires the [.NET SDK](https://dotnet.microsoft.com/en-us/downlo
 
 ## Installation
 
-You can install the Comfyg CLI as a .NET Tool. We recommend to install it globally on your machine.
+You can install the [Comfyg CLI](https://www.nuget.org/packages/Comfyg.Cli) as a .NET Tool. We recommend to install it globally on your machine.
 
 ```shell
 dotnet tool install --global Comfyg.Cli

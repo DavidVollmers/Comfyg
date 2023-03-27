@@ -22,6 +22,8 @@ dotnet tool install --global Comfyg.Cli
 > [!TIP]
 > After installation you can invoke the Comfyg CLI using the `comfyg` command in your terminal.
 
+You can read more about the Comfyg CLI [here](cli/index.md).
+
 ## Setup & Configure your Comfyg Store
 
 For local setup of the Comfyg store you can use the CLI. Just execute the below command and it will guide you through the setup process.
@@ -34,7 +36,6 @@ Once you have setup your local Comfyg store you will receive a connection string
 
 ```shell
 Successfully started local Comfyg store
-
 You can connect to your local Comfyg store using the following connection string:
 Endpoint=http://localhost:32771;ClientId=system;ClientSecret=cbO+N4fgq7mOB813KuOfow0nfKFW+VyS3k4boosUzozn9vmOqvk32QCpxO1eQfxMxKcItHkYX7YUT9uSbP/84g==;
 ```
@@ -77,10 +78,7 @@ Last but not least of course the most important part: Secrets. These values, as 
 comfyg add secret "SQLConnectionString" "Server=MySQLServer;Database=MyDatabase;User Id=sa;Password=Password!;"
 ```
 
-> [!NOTE]
-> Secrets are handled separately because they need to be encrypted. Currently you can either choose to use the Comfyg store internal encryption or Azure Key Vault. For long-term security we recommend the latter one.
-
-You can read more about this [here](TODO.md).
+You can read more about how secrets are secured in [here](TODO.md).
 
 ## Use your Comfyg
 

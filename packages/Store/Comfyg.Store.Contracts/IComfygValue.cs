@@ -7,11 +7,12 @@ namespace Comfyg.Store.Contracts;
 public interface IComfygValue
 {
     [Required]
-    [MaxLength(256)]
+    [MaxLength(1024)]
     [TechnicalIdentifier]
     string Key { get; }
 
-    [Required][MaxLength(1024)] string Value { get; }
+    //TODO define proper max length
+    [Required] string Value { get; }
 
     [ValidateNever] string Version { get; }
 
