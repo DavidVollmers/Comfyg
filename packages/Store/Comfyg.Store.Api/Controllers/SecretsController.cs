@@ -1,7 +1,7 @@
 ﻿using Comfyg.Store.Api.Models;
-using Comfyg.Store.Api.Requests;
 using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts;
+using Comfyg.Store.Contracts.Requests;
 using Comfyg.Store.Core.Abstractions;
 using Comfyg.Store.Core.Abstractions.Changes;
 using Comfyg.Store.Core.Abstractions.Permissions;
@@ -39,7 +39,7 @@ public class SecretsController : ValueControllerBase<ISecretValue>
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddSecretValuesAsync([FromBody] AddValuesRequest<ISecretValue> request,
+    public async Task<ActionResult> AddSecretValuesAsync([FromBody] IAddValuesRequest<ISecretValue> request,
         CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();

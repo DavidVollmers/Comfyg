@@ -1,6 +1,6 @@
-﻿using Comfyg.Store.Api.Requests;
-using Comfyg.Store.Authentication.Abstractions;
+﻿using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts;
+using Comfyg.Store.Contracts.Requests;
 using Comfyg.Store.Core.Abstractions;
 using Comfyg.Store.Core.Abstractions.Changes;
 using Comfyg.Store.Core.Abstractions.Permissions;
@@ -34,7 +34,7 @@ public class SettingsController : ValueControllerBase<ISettingValue>
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddSettingValuesAsync([FromBody] AddValuesRequest<ISettingValue> request,
+    public async Task<ActionResult> AddSettingValuesAsync([FromBody] IAddValuesRequest<ISettingValue> request,
         CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();

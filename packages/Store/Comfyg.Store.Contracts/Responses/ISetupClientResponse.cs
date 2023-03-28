@@ -1,8 +1,11 @@
-﻿namespace Comfyg.Store.Contracts.Responses;
+﻿using System.Text.Json.Serialization;
+
+namespace Comfyg.Store.Contracts.Responses;
 
 /// <summary>
 /// Response object returned when setting up a new Comfyg client.
 /// </summary>
+[JsonConverter(typeof(ContractConverter<ISetupClientResponse, Implementation>))]
 public interface ISetupClientResponse
 {
     /// <summary>
@@ -14,4 +17,12 @@ public interface ISetupClientResponse
     /// The generated client secret of the registered Comfyg client.
     /// </summary>
     string ClientSecret { get; }
+    
+    // ReSharper disable once ClassNeverInstantiated.Local
+    private class Implementation : ISetupClientResponse
+    {
+        public IClient Client { get; init; } = null!;
+        
+        public string ClientSecret { get; init; } = null!;
+    }
 }

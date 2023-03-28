@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Comfyg.Client.Requests;
-using Comfyg.Client.Responses;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Responses;
 
@@ -36,7 +35,7 @@ public partial class ComfygClient
             throw new HttpRequestException("Invalid status code when trying to setup client.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<SetupClientResponse>(cancellationToken: cancellationToken)
+        return (await response.Content.ReadFromJsonAsync<ISetupClientResponse>(cancellationToken: cancellationToken)
             .ConfigureAwait(false))!;
     }
 }

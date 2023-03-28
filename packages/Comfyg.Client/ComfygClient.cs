@@ -3,7 +3,6 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using Comfyg.Client.Operations;
-using Comfyg.Client.Responses;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Responses;
 using Microsoft.IdentityModel.Tokens;
@@ -107,7 +106,7 @@ public sealed partial class ComfygClient : IDisposable
             throw new HttpRequestException("Invalid status code when trying to establish connection.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<ConnectionResponse>(cancellationToken: cancellationToken)
+        return (await response.Content.ReadFromJsonAsync<IConnectionResponse>(cancellationToken: cancellationToken)
             .ConfigureAwait(false))!;
     }
 
