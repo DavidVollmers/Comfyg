@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using CliWrap;
 
 namespace Comfyg.Cli.Tests;
@@ -28,11 +29,14 @@ public static class TestCli
             .WithValidation(CommandResultValidation.None)
             .ExecuteAsync();
 
+        // https://stackoverflow.com/a/51141872/4382610
+        var regex = new Regex(@"s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g");
+        
         return new TestCliResult
         {
-            Error = stdErrorBuffer.ToString(),
             ExitCode = result.ExitCode,
-            Output = stdOutBuffer.ToString()
+            Error = regex.Replace(stdErrorBuffer.ToString(), string.Empty),
+            Output = regex.Replace(stdOutBuffer.ToString(), string.Empty)
         };
     }
 }
