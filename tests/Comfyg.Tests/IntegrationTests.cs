@@ -1,4 +1,5 @@
-﻿using Comfyg.Store.Authentication.Abstractions;
+﻿using Comfyg.Client;
+using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts.Authentication;
 using Comfyg.Store.Contracts.Configuration;
 using Comfyg.Store.Contracts.Secrets;
@@ -6,6 +7,7 @@ using Comfyg.Store.Contracts.Settings;
 using Comfyg.Store.Core.Abstractions;
 using Comfyg.Store.Core.Abstractions.Changes;
 using Comfyg.Tests.Common;
+using Comfyg.Tests.Common.Contracts;
 using Moq;
 
 namespace Comfyg.Tests;
@@ -32,7 +34,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         const string friendlyName = "Test Client";
-        var client = new Store.Contracts.Authentication.Client
+        var client = new TestClient
         {
             ClientId = clientId,
             ClientSecret = clientSecret,
@@ -40,17 +42,17 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
         };
         var configurationValues = new[]
         {
-            new ConfigurationValue
+            new TestConfigurationValue
             {
                 Key = "key1",
                 Value = "value1"
             },
-            new ConfigurationValue
+            new TestConfigurationValue
             {
                 Key = "key2",
                 Value = "value2"
             },
-            new ConfigurationValue
+            new TestConfigurationValue
             {
                 Key = "section1:key1",
                 Value = "value3"
@@ -130,7 +132,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         const string friendlyName = "Test Client";
-        var client = new Store.Contracts.Authentication.Client
+        var client = new TestClient
         {
             ClientId = clientId,
             ClientSecret = clientSecret,
@@ -138,23 +140,23 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
         };
         var configurationValues1 = new[]
         {
-            new ConfigurationValue
+            new TestConfigurationValue
             {
                 Key = "key1",
                 Value = "value1"
             },
-            new ConfigurationValue
+            new TestConfigurationValue
             {
                 Key = "key2",
                 Value = "value2"
             }
         };
-        var configurationValue2Change = new ConfigurationValue
+        var configurationValue2Change = new TestConfigurationValue
         {
             Key = "key2",
             Value = "newValue2"
         };
-        var configurationValue3Change = new ConfigurationValue
+        var configurationValue3Change = new TestConfigurationValue
         {
             Key = "key3",
             Value = "value3"

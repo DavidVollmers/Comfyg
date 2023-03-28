@@ -34,7 +34,7 @@ public class SettingsController : ValueControllerBase<ISettingValue>
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddSettingValuesAsync([FromBody] AddSettingValuesRequest request,
+    public async Task<ActionResult> AddSettingValuesAsync([FromBody] AddValuesRequest<ISettingValue> request,
         CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();

@@ -20,7 +20,8 @@ public interface IComfygValue
     /// The Comfyg value.
     /// </summary>
     //TODO define proper max length
-    [Required] string Value { get; }
+    [Required]
+    string Value { get; }
 
     /// <summary>
     /// The version of the Comfyg value.
@@ -35,5 +36,6 @@ public interface IComfygValue
     /// <summary>
     /// A hash value to identity the Comfyg value.
     /// </summary>
-    [JsonIgnore] string Hash { get; }
+    [JsonIgnore]
+    string Hash { get; }
 }

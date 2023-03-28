@@ -1,10 +1,11 @@
-﻿using Comfyg.Store.Authentication.Abstractions;
+﻿using Comfyg.Store.Api.Requests;
+using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts.Authentication;
 using Comfyg.Store.Contracts.Configuration;
-using Comfyg.Store.Contracts.Requests;
 using Comfyg.Store.Core.Abstractions;
 using Comfyg.Store.Core.Abstractions.Permissions;
 using Comfyg.Tests.Common;
+using Comfyg.Tests.Common.Contracts;
 using Moq;
 
 namespace Comfyg.Client.Tests;
@@ -30,7 +31,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
     {
         var systemClientId = Guid.NewGuid().ToString();
         var systemClientSecret = CreateClientSecret();
-        var client = new Store.Contracts.Authentication.Client
+        var client = new TestClient
         {
             ClientId = Guid.NewGuid().ToString(),
             FriendlyName = "New Client"
@@ -57,7 +58,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
                 .ReturnsAsync(clientSecret);
         });
 
-        var response = await comfygClient.SetupClientAsync(new SetupClientRequest { Client = client });
+        var response = await comfygClient.SetupClientAsync(client);
 
         Assert.NotNull(response);
         Assert.NotNull(response.Client);
@@ -93,7 +94,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         var friendlyName = "Test Client";
-        var client = new Store.Contracts.Authentication.Client
+        var client = new TestClient
         {
             ClientId = clientId,
             ClientSecret = clientSecret,
@@ -136,7 +137,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         var friendlyName = "Test Client";
-        var client = new Store.Contracts.Authentication.Client
+        var client = new TestClient
         {
             ClientId = clientId,
             ClientSecret = clientSecret,
@@ -167,10 +168,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
                 .ReturnsAsync(true);
         });
 
-        await comfygClient.Configuration.AddValuesAsync(new AddConfigurationValuesRequest
-        {
-            Values = configurationValues
-        });
+        await comfygClient.Configuration.AddValuesAsync(configurationValues);
 
         _factory.Mock<IClientService>(mock =>
         {

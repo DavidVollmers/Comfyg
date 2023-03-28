@@ -1,10 +1,12 @@
 ﻿using System.Text.Json;
+using Comfyg.Client;
 using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts.Authentication;
 using Comfyg.Store.Contracts.Configuration;
 using Comfyg.Store.Core.Abstractions;
 using Comfyg.Store.Core.Abstractions.Permissions;
 using Comfyg.Tests.Common;
+using Comfyg.Tests.Common.Contracts;
 using Moq;
 using Xunit.Abstractions;
 
@@ -84,9 +86,9 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
     {
         var values = new List<IConfigurationValue>
         {
-            new ConfigurationValue { Key = "key1", Value = "value1" },
-            new ConfigurationValue { Key = "key2", Value = "value2" },
-            new ConfigurationValue { Key = "key2:key3", Value = "value3" }
+            new TestConfigurationValue { Key = "key1", Value = "value1" },
+            new TestConfigurationValue { Key = "key2", Value = "value2" },
+            new TestConfigurationValue { Key = "key2:key3", Value = "value3" }
         };
         var exportFile = Path.GetTempPath() + Guid.NewGuid();
         const string expectedOutput = "Successfully exported 3 values";
@@ -142,7 +144,7 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         const string friendlyName = "Test Client";
-        var client = new Store.Contracts.Authentication.Client
+        var client = new TestClient
         {
             ClientId = clientId,
             ClientSecret = clientSecret,

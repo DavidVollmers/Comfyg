@@ -34,8 +34,8 @@ public class ConfigurationController : ValueControllerBase<IConfigurationValue>
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddConfigurationValuesAsync([FromBody] AddConfigurationValuesRequest request,
-        CancellationToken cancellationToken = default)
+    public async Task<ActionResult> AddConfigurationValuesAsync(
+        [FromBody] AddValuesRequest<IConfigurationValue> request, CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
