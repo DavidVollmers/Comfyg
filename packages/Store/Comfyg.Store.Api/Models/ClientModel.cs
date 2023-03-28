@@ -5,13 +5,13 @@ namespace Comfyg.Store.Api.Models;
 internal class ClientModel : IClient
 {
     public string ClientId { get; init; }
-    
+
     public string ClientSecret { get; init; }
-    
+
     public string FriendlyName { get; init; }
 
-    public ClientModel() {}
-    
+    public ClientModel() { }
+
     public ClientModel(IClient client)
     {
         ClientId = client.ClientId;

@@ -15,8 +15,8 @@ internal class SecretValueModel : ISecretValue
 
     public string Hash { get; init; }
 
-    public SecretValueModel() {}
-    
+    public SecretValueModel() { }
+
     public SecretValueModel(IComfygValue value)
     {
         Key = value.Key;

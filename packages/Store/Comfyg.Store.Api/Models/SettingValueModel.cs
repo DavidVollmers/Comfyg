@@ -15,8 +15,8 @@ internal class SettingValueModel : ISettingValue
 
     public string Hash { get; init; }
 
-    public SettingValueModel() {}
-    
+    public SettingValueModel() { }
+
     public SettingValueModel(IComfygValue value)
     {
         Key = value.Key;

@@ -15,8 +15,8 @@ internal class ConfigurationValueModel : IConfigurationValue
 
     public string Hash { get; init; }
 
-    public ConfigurationValueModel() {}
-    
+    public ConfigurationValueModel() { }
+
     public ConfigurationValueModel(IComfygValue value)
     {
         Key = value.Key;
