@@ -4,7 +4,7 @@
         <PackageId>Comfyg</PackageId>
         <Authors>david@vollmers.org</Authors>
         <Copyright>David Vollmers</Copyright>
-        <Description>Comfy configuration, settings and secrets management/distribution platform</Description>
+        <Description>Configuration provider to consume a Comfyg store as a configuration source.</Description>
         <PackageProjectUrl>https://github.com/DavidVollmers/Comfyg</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
