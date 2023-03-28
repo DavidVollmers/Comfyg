@@ -34,7 +34,10 @@ public sealed class E2ETestWebApplicationFactory<TEntryPoint> : IDisposable wher
             EnvironmentName = Environments.Development
         });
 
-        var mvcBuilder = builder.Services.AddControllers();
+        var mvcBuilder = builder.Services.AddControllers(options =>
+        {
+            options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+        });
         mvcBuilder.PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TEntryPoint).Assembly));
 
         builder.UseComfygStoreApi();

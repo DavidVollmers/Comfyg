@@ -15,18 +15,20 @@ internal class ContractConverter<TContract, TImplementation, TSerialization> : J
 {
     public override TContract? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        return JsonSerializer.Deserialize<TImplementation>(ref reader, options);
+        return JsonSerializer.Deserialize<TImplementation>(ref reader,
+            new JsonSerializerOptions(options) { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
     }
 
     public override void Write(Utf8JsonWriter writer, TContract value, JsonSerializerOptions options)
     {
-        var namingPolicy = options.PropertyNamingPolicy ?? JsonNamingPolicy.CamelCase;
-
         writer.WriteStartObject();
 
         foreach (var propertyInfo in typeof(TSerialization).GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
-            writer.WritePropertyName(namingPolicy.ConvertName(propertyInfo.Name));
+            var ignoreAttribute = propertyInfo.GetCustomAttribute<JsonIgnoreAttribute>(true) != null;
+            if (ignoreAttribute) continue;
+
+            writer.WritePropertyName(JsonNamingPolicy.CamelCase.ConvertName(propertyInfo.Name));
             writer.WriteRawValue(JsonSerializer.Serialize(propertyInfo.GetValue(value)));
         }
 
