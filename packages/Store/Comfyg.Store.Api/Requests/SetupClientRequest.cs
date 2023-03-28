@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Comfyg.Store.Contracts.Authentication;
+using Comfyg.Store.Contracts;
 
 namespace Comfyg.Store.Api.Requests;
 

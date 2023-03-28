@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using Comfyg.Client.Requests;
 using Comfyg.Client.Responses;
-using Comfyg.Store.Contracts.Authentication;
+using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Responses;
 
 namespace Comfyg.Client;

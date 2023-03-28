@@ -1,4 +1,4 @@
-﻿using Comfyg.Store.Contracts.Authentication;
+﻿using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Requests;
 
 namespace Comfyg.Client.Requests;

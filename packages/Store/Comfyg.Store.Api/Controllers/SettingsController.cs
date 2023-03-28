@@ -1,6 +1,6 @@
 ﻿using Comfyg.Store.Api.Requests;
 using Comfyg.Store.Authentication.Abstractions;
-using Comfyg.Store.Contracts.Settings;
+using Comfyg.Store.Contracts;
 using Comfyg.Store.Core.Abstractions;
 using Comfyg.Store.Core.Abstractions.Changes;
 using Comfyg.Store.Core.Abstractions.Permissions;

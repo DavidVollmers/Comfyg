@@ -1,4 +1,4 @@
-﻿namespace Comfyg.Store.Contracts.Settings;
+﻿namespace Comfyg.Store.Contracts;
 
 /// <summary>
 /// A Comfyg setting value. 

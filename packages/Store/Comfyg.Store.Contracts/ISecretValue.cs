@@ -1,4 +1,4 @@
-﻿namespace Comfyg.Store.Contracts.Secrets;
+﻿namespace Comfyg.Store.Contracts;
 
 /// <summary>
 /// A Comfyg secret value.

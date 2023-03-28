@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Comfyg.Store.Contracts.Authentication;
+namespace Comfyg.Store.Contracts;
 
 /// <summary>
 /// A Comfyg client used for authentication and authorization.

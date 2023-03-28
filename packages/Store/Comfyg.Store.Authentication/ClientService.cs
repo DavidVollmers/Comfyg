@@ -2,7 +2,7 @@
 using Azure.Data.Tables;
 using Azure.Data.Tables.Poco;
 using Comfyg.Store.Authentication.Abstractions;
-using Comfyg.Store.Contracts.Authentication;
+using Comfyg.Store.Contracts;
 using Comfyg.Store.Core.Abstractions.Secrets;
 
 namespace Comfyg.Store.Authentication;

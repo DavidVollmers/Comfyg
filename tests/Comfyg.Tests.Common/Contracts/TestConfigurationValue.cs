@@ -1,4 +1,4 @@
-﻿using Comfyg.Store.Contracts.Configuration;
+﻿using Comfyg.Store.Contracts;
 
 namespace Comfyg.Tests.Common.Contracts;
 

@@ -2,13 +2,10 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
-using System.Text;
 using Comfyg.Client.Operations;
 using Comfyg.Client.Responses;
-using Comfyg.Store.Contracts.Configuration;
+using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Responses;
-using Comfyg.Store.Contracts.Secrets;
-using Comfyg.Store.Contracts.Settings;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Comfyg.Client;

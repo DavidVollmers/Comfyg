@@ -1,6 +1,4 @@
-﻿using Comfyg.Store.Contracts.Authentication;
-
-namespace Comfyg.Store.Contracts.Responses;
+﻿namespace Comfyg.Store.Contracts.Responses;
 
 /// <summary>
 /// Response object returned when establishing a connection to a Comfyg store.

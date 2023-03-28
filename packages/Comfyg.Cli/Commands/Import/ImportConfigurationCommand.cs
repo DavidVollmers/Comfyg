@@ -1,5 +1,5 @@
 ﻿using Comfyg.Client;
-using Comfyg.Store.Contracts.Configuration;
+using Comfyg.Store.Contracts;
 
 namespace Comfyg.Cli.Commands.Import;
 

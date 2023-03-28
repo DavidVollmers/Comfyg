@@ -1,5 +1,5 @@
 ﻿using Azure.Data.Tables.Poco;
-using Comfyg.Store.Contracts.Authentication;
+using Comfyg.Store.Contracts;
 
 namespace Comfyg.Store.Authentication;
 

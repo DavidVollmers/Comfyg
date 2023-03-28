@@ -1,9 +1,5 @@
-﻿using Comfyg.Client;
-using Comfyg.Store.Authentication.Abstractions;
-using Comfyg.Store.Contracts.Authentication;
-using Comfyg.Store.Contracts.Configuration;
-using Comfyg.Store.Contracts.Secrets;
-using Comfyg.Store.Contracts.Settings;
+﻿using Comfyg.Store.Authentication.Abstractions;
+using Comfyg.Store.Contracts;
 using Comfyg.Store.Core.Abstractions;
 using Comfyg.Store.Core.Abstractions.Changes;
 using Comfyg.Tests.Common;

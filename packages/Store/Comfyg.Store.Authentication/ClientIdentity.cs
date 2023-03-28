@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Security.Principal;
 using Comfyg.Store.Authentication.Abstractions;
-using Comfyg.Store.Contracts.Authentication;
+using Comfyg.Store.Contracts;
 
 namespace Comfyg.Store.Authentication;
 

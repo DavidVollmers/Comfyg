@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Comfyg.Store.Authentication.Abstractions;
-using Comfyg.Store.Contracts.Authentication;
+using Comfyg.Store.Contracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 

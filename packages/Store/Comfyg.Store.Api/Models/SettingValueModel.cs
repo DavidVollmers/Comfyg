@@ -1,5 +1,4 @@
 ﻿using Comfyg.Store.Contracts;
-using Comfyg.Store.Contracts.Settings;
 
 namespace Comfyg.Store.Api.Models;
 
