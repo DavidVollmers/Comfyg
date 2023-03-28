@@ -7,6 +7,7 @@ namespace Comfyg.Store.Contracts;
 /// <summary>
 /// A Comfyg client used for authentication and authorization.
 /// </summary>
+[JsonConverter(typeof(ContractConverter<IClient, Implementation>))]
 public interface IClient
 {
     /// <summary>
@@ -30,4 +31,14 @@ public interface IClient
     [Required]
     [MaxLength(256)]
     string FriendlyName { get; }
+
+    // ReSharper disable once ClassNeverInstantiated.Local
+    private class Implementation : IClient
+    {
+        public string ClientId { get; init; } = null!;
+        
+        public string ClientSecret { get; init; } = null!;
+        
+        public string FriendlyName { get; init; } = null!;
+    }
 }
