@@ -1,5 +1,5 @@
-﻿using Comfyg.Store.Authentication.Abstractions;
-using Comfyg.Store.Api.Responses;
+﻿using Comfyg.Store.Api.Responses;
+using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
