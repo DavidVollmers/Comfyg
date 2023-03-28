@@ -4,7 +4,6 @@ using System.Text.Json;
 using Comfyg.Cli.Extensions;
 using Comfyg.Client;
 using Comfyg.Store.Contracts;
-using Comfyg.Store.Contracts.Requests;
 using Spectre.Console;
 
 namespace Comfyg.Cli.Commands.Import;
@@ -24,7 +23,7 @@ internal abstract class ImportCommandBase<T> : Command where T : IComfygValue
         this.SetHandler(HandleCommandAsync);
     }
 
-    protected abstract AddValuesRequest<T> BuildAddValuesRequest(IEnumerable<KeyValuePair<string, string>> kvp);
+    protected abstract IEnumerable<T> BuildAddValuesRequest(IEnumerable<KeyValuePair<string, string>> kvp);
 
     private async Task HandleCommandAsync(InvocationContext context)
     {
@@ -100,10 +99,10 @@ internal abstract class ImportCommandBase<T> : Command where T : IComfygValue
     private async Task ImportBatchAsync(ComfygClient client, IEnumerable<KeyValuePair<string, string>> batch,
         CancellationToken cancellationToken)
     {
-        var request = BuildAddValuesRequest(batch);
+        var values = BuildAddValuesRequest(batch).ToArray();
 
-        await client.Operations<T>().AddValuesAsync(request, cancellationToken);
+        await client.Operations<T>().AddValuesAsync(values, cancellationToken);
 
-        AnsiConsole.MarkupLine($"[bold green]Successfully imported {request.Values.Count()} values[/]");
+        AnsiConsole.MarkupLine($"[bold green]Successfully imported {values.Length} values[/]");
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Comfyg.Client;
-using Comfyg.Store.Contracts.Requests;
 using Comfyg.Store.Contracts.Settings;
 
 namespace Comfyg.Cli.Commands.Import;
@@ -11,9 +10,8 @@ internal class ImportSettingsCommand : ImportCommandBase<ISettingValue>
     {
     }
 
-    protected override AddValuesRequest<ISettingValue> BuildAddValuesRequest(
-        IEnumerable<KeyValuePair<string, string>> kvp)
+    protected override IEnumerable<ISettingValue> BuildAddValuesRequest(IEnumerable<KeyValuePair<string, string>> kvp)
     {
-        return new AddSettingValuesRequest { Values = kvp.Select(i => new SettingValue(i.Key, i.Value)) };
+        return kvp.Select(i => new SettingValue(i.Key, i.Value));
     }
 }

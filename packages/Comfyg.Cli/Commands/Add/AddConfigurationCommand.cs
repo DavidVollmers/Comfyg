@@ -3,7 +3,6 @@ using System.CommandLine.Invocation;
 using Comfyg.Cli.Extensions;
 using Comfyg.Client;
 using Comfyg.Store.Contracts.Configuration;
-using Comfyg.Store.Contracts.Requests;
 using Spectre.Console;
 
 namespace Comfyg.Cli.Commands.Add;
@@ -13,7 +12,8 @@ internal class AddConfigurationCommand : Command
     private readonly Argument<string> _keyArgument;
     private readonly Argument<string> _valueArgument;
 
-    public AddConfigurationCommand() : base("config", "Adds a key-value pair as a configuration value to the connected Comfyg store.")
+    public AddConfigurationCommand() : base("config",
+        "Adds a key-value pair as a configuration value to the connected Comfyg store.")
     {
         _keyArgument = new Argument<string>("KEY", "The key of the key-value pair.");
         AddArgument(_keyArgument);
@@ -33,13 +33,8 @@ internal class AddConfigurationCommand : Command
 
         using var client = await State.User.RequireClientAsync(cancellationToken);
 
-        await client.Configuration.AddValuesAsync(new AddConfigurationValuesRequest
-        {
-            Values = new IConfigurationValue[]
-            {
-                new ConfigurationValue(keyArgument, valueArgument)
-            }
-        }, cancellationToken);
+        await client.Configuration.AddValuesAsync(
+            new IConfigurationValue[] { new ConfigurationValue(keyArgument, valueArgument) }, cancellationToken);
 
         AnsiConsole.MarkupLine($"[bold green]Successfully added the configuration value for \"{keyArgument}\"[/]");
     }

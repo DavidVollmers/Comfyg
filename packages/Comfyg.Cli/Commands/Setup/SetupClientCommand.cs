@@ -1,7 +1,6 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using Comfyg.Cli.Extensions;
-using Comfyg.Store.Contracts.Requests;
 using Spectre.Console;
 
 namespace Comfyg.Cli.Commands.Setup;
@@ -13,10 +12,12 @@ internal class SetupClientCommand : Command
 
     public SetupClientCommand() : base("client", "Registers a new client on the connected Comfyg store.")
     {
-        _clientIdArgument = new Argument<string>("CLIENT_ID", "The ID of the client to create. This must be unique for the connected Comfyg store.");
+        _clientIdArgument = new Argument<string>("CLIENT_ID",
+            "The ID of the client to create. This must be unique for the connected Comfyg store.");
         AddArgument(_clientIdArgument);
 
-        _friendlyNameArgument = new Argument<string>("FRIENDLY_NAME", "The user friendly display name which is used for the created client.");
+        _friendlyNameArgument = new Argument<string>("FRIENDLY_NAME",
+            "The user friendly display name which is used for the created client.");
         AddArgument(_friendlyNameArgument);
 
         this.SetHandler(HandleCommandAsync);
@@ -31,10 +32,8 @@ internal class SetupClientCommand : Command
 
         using var client = await State.User.RequireClientAsync(cancellationToken);
 
-        var result = await client.SetupClientAsync(new SetupClientRequest
-        {
-            Client = new Client.Client(clientIdArgument, friendlyNameArgument)
-        }, cancellationToken);
+        var result = await client.SetupClientAsync(new Client.Client(clientIdArgument, friendlyNameArgument),
+            cancellationToken);
 
         AnsiConsole.MarkupLine($"[bold green]Successfully created a client for {client.EndpointUrl}[/]");
 

@@ -1,5 +1,4 @@
 ﻿using Comfyg.Client;
-using Comfyg.Store.Contracts.Requests;
 using Comfyg.Store.Contracts.Secrets;
 
 namespace Comfyg.Cli.Commands.Import;
@@ -11,9 +10,8 @@ internal class ImportSecretsCommand : ImportCommandBase<ISecretValue>
     {
     }
 
-    protected override AddValuesRequest<ISecretValue> BuildAddValuesRequest(
-        IEnumerable<KeyValuePair<string, string>> kvp)
+    protected override IEnumerable<ISecretValue> BuildAddValuesRequest(IEnumerable<KeyValuePair<string, string>> kvp)
     {
-        return new AddSecretValuesRequest { Values = kvp.Select(i => new SecretValue(i.Key, i.Value)) };
+        return kvp.Select(i => new SecretValue(i.Key, i.Value));
     }
 }

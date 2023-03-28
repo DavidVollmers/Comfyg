@@ -2,7 +2,6 @@
 using System.CommandLine.Invocation;
 using Comfyg.Cli.Extensions;
 using Comfyg.Client;
-using Comfyg.Store.Contracts.Requests;
 using Comfyg.Store.Contracts.Secrets;
 using Spectre.Console;
 
@@ -33,13 +32,8 @@ internal class AddSecretCommand : Command
 
         using var client = await State.User.RequireClientAsync(cancellationToken);
 
-        await client.Secrets.AddValuesAsync(new AddSecretValuesRequest
-        {
-            Values = new ISecretValue[]
-            {
-                new SecretValue(keyArgument, valueArgument)
-            }
-        }, cancellationToken);
+        await client.Secrets.AddValuesAsync(new ISecretValue[] { new SecretValue(keyArgument, valueArgument) },
+            cancellationToken);
 
         AnsiConsole.MarkupLine($"[bold green]Successfully added the secret value for \"{keyArgument}\"[/]");
     }
