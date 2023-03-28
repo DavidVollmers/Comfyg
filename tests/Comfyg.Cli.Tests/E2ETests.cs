@@ -27,14 +27,8 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
     {
         var json = new Dictionary<string, object>
         {
-            {"key1", "value1"},
-            {
-                "key2", new Dictionary<string, object>
-                {
-                    {"", "value2"},
-                    {"key3", "value3"}
-                }
-            }
+            { "key1", "value1" },
+            { "key2", new Dictionary<string, object> { { "", "value2" }, { "key3", "value3" } } }
         };
         var importFile = Path.GetTempPath() + Guid.NewGuid();
         await File.WriteAllTextAsync(importFile, JsonSerializer.Serialize(json));
@@ -85,6 +79,59 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
         });
     }
 
+    [Fact]
+    public async Task Test_Export()
+    {
+        var values = new List<IConfigurationValue>
+        {
+            new ConfigurationValue { Key = "key1", Value = "value1" },
+            new ConfigurationValue { Key = "key2", Value = "value2" },
+            new ConfigurationValue { Key = "key2:key3", Value = "value3" }
+        };
+        var exportFile = Path.GetTempPath() + Guid.NewGuid();
+        const string expectedOutput = "Successfully exported 3 values";
+
+        _factory.Mock<IValueService<IConfigurationValue>>(mock =>
+        {
+            mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(values.ToAsyncEnumerable());
+        });
+
+        var client = await ConnectAsync();
+
+        var result = await TestCli.ExecuteAsync($"export config \"{exportFile}\"");
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.StartsWith(expectedOutput, result.Output);
+       
+        Assert.True(File.Exists(exportFile));
+
+        var content = await File.ReadAllTextAsync(exportFile);
+        Assert.NotNull(content);
+
+        var json = JsonSerializer.Deserialize<IDictionary<string, JsonElement>>(content);
+        Assert.NotNull(json);
+        Assert.True(json!.ContainsKey("key1"));
+        Assert.Equal("value1", json["key1"].GetString());
+        Assert.True(json.ContainsKey("key2"));
+        Assert.False(json.ContainsKey("key3"));
+        Assert.Equal(JsonValueKind.Object, json["key2"].ValueKind);
+
+        var subJson = json["key2"].Deserialize<IDictionary<string, JsonElement>>();
+        Assert.NotNull(subJson);
+        Assert.True(subJson!.ContainsKey(""));
+        Assert.Equal("value2", subJson[""].GetString());
+        Assert.True(subJson.ContainsKey("key3"));
+        Assert.Equal("value3", subJson["key3"].GetString());
+        
+        _factory.Mock<IValueService<IConfigurationValue>>(mock =>
+        {
+            mock.Verify(
+                cs => cs.GetValuesAsync(It.Is<string>(s => s == client.ClientId), It.IsAny<CancellationToken>()),
+                Times.Once);
+        });
+    }
+
     private static string CreateClientSecret()
     {
         return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
@@ -97,9 +144,7 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
         const string friendlyName = "Test Client";
         var client = new Store.Contracts.Authentication.Client
         {
-            ClientId = clientId,
-            ClientSecret = clientSecret,
-            FriendlyName = friendlyName
+            ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName
         };
 
         using var httpClient = _factory.CreateClient();
