@@ -103,7 +103,7 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
-       
+
         Assert.True(File.Exists(exportFile));
 
         var content = await File.ReadAllTextAsync(exportFile);
@@ -123,7 +123,7 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
         Assert.Equal("value2", subJson[""].GetString());
         Assert.True(subJson.ContainsKey("key3"));
         Assert.Equal("value3", subJson["key3"].GetString());
-        
+
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
             mock.Verify(
@@ -144,7 +144,9 @@ public class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Program>>
         const string friendlyName = "Test Client";
         var client = new Store.Contracts.Authentication.Client
         {
-            ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName
+            ClientId = clientId,
+            ClientSecret = clientSecret,
+            FriendlyName = friendlyName
         };
 
         using var httpClient = _factory.CreateClient();
