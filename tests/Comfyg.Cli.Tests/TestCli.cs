@@ -30,8 +30,8 @@ public static class TestCli
             .ExecuteAsync();
 
         // https://stackoverflow.com/a/51141872/4382610
-        var regex = new Regex(@"s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g");
-        
+        var regex = new Regex(@"\x1B\[[0-9;]+[A-Za-z]");
+
         return new TestCliResult
         {
             ExitCode = result.ExitCode,
