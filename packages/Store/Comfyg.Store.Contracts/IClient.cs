@@ -36,9 +36,9 @@ public interface IClient
     private class Implementation : IClient
     {
         public string ClientId { get; init; } = null!;
-        
+
         public string ClientSecret { get; init; } = null!;
-        
+
         public string FriendlyName { get; init; } = null!;
     }
 }
