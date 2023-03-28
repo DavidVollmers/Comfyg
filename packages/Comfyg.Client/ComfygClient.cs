@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using Comfyg.Client.Operations;
+using Comfyg.Client.Responses;
 using Comfyg.Store.Contracts.Configuration;
 using Comfyg.Store.Contracts.Responses;
 using Comfyg.Store.Contracts.Secrets;
@@ -150,10 +151,7 @@ public sealed partial class ComfygClient : IDisposable
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, _clientId)
-            }),
+            Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, _clientId) }),
             //TODO adjustable
             Expires = DateTime.UtcNow.AddDays(1).AddMinutes(5),
             Issuer = _clientId,

@@ -1,9 +1,9 @@
 ﻿using Comfyg.Store.Contracts;
-using Comfyg.Store.Contracts.Secrets;
+using Comfyg.Store.Contracts.Settings;
 
 namespace Comfyg.Store.Api.Models;
 
-internal class SecretValueModel : ISecretValue
+internal class SettingValueModel : ISettingValue
 {
     public string Key { get; init; }
 
@@ -15,9 +15,9 @@ internal class SecretValueModel : ISecretValue
 
     public string Hash { get; init; }
 
-    public SecretValueModel() {}
+    public SettingValueModel() {}
     
-    public SecretValueModel(IComfygValue value)
+    public SettingValueModel(IComfygValue value)
     {
         Key = value.Key;
         Value = value.Value;

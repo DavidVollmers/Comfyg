@@ -43,12 +43,12 @@ public partial class ComfygClient
     /// <summary>
     /// Adds values of the specific type to the connected Comfyg store.
     /// </summary>
-    /// <param name="request"><see cref="AddValuesRequest{T}"/></param>
+    /// <param name="values"><see cref="IEnumerable{T}"/></param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
     /// <typeparam name="T">The type of the values to add.</typeparam>
-    public async Task AddValuesAsync<T>(IAddValuesRequest<T> request, CancellationToken cancellationToken = default)
+    public async Task AddValuesAsync<T>(IEnumerable<T> values, CancellationToken cancellationToken = default)
         where T : IComfygValue
     {
-        await Operations<T>().AddValuesAsync(request, cancellationToken).ConfigureAwait(false);
+        await Operations<T>().AddValuesAsync(values, cancellationToken).ConfigureAwait(false);
     }
 }

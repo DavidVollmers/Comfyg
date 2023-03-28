@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Comfyg.Client.Requests;
 using Comfyg.Store.Contracts.Configuration;
-using Comfyg.Store.Contracts.Requests;
 
 namespace Comfyg.Client.Operations;
 
@@ -39,16 +39,16 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
             yield return value!;
     }
 
-    public async Task AddValuesAsync(AddValuesRequest<IConfigurationValue> request,
+    public async Task AddValuesAsync(IEnumerable<IConfigurationValue> values,
         CancellationToken cancellationToken = default)
     {
-        if (request == null) throw new ArgumentNullException(nameof(request));
+        if (values == null) throw new ArgumentNullException(nameof(values));
 
         var response = await _client
             .SendRequestAsync(
                 () => new HttpRequestMessage(HttpMethod.Post, "configuration")
                 {
-                    Content = JsonContent.Create((AddConfigurationValuesRequest)request)
+                    Content = JsonContent.Create(new AddValuesRequest<IConfigurationValue>(values))
                 }, cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
