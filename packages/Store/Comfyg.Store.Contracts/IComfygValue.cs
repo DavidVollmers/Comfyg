@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Comfyg.Store.Contracts;
 
@@ -26,15 +25,15 @@ public interface IComfygValue
     /// <summary>
     /// The version of the Comfyg value.
     /// </summary>
-    [ValidateNever] string Version { get; }
+    string Version { get; }
 
     /// <summary>
     /// The time when the Comfyg value was created.
     /// </summary>
-    [ValidateNever] DateTimeOffset CreatedAt { get; }
+    DateTimeOffset CreatedAt { get; }
 
     /// <summary>
     /// A hash value to identity the Comfyg value.
     /// </summary>
-    [JsonIgnore][ValidateNever] string Hash { get; }
+    [JsonIgnore] string Hash { get; }
 }

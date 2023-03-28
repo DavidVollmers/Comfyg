@@ -21,8 +21,8 @@ public interface IComfygValueOperations<T> : IDisposable where T : IComfygValue
     /// <summary>
     /// Adds values of the specific type to the connected Comfyg store.
     /// </summary>
-    /// <param name="request"><see cref="AddValuesRequest{T}"/></param>
+    /// <param name="request"><see cref="IAddValuesRequest{T}"/></param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
     /// <typeparam name="T">The type of the values to add.</typeparam>
-    Task AddValuesAsync(AddValuesRequest<T> request, CancellationToken cancellationToken = default);
+    Task AddValuesAsync(IAddValuesRequest<T> request, CancellationToken cancellationToken = default);
 }

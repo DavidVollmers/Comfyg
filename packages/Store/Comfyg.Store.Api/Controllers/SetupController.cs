@@ -1,5 +1,6 @@
 ﻿using Comfyg.Store.Authentication.Abstractions;
-using Comfyg.Store.Contracts.Requests;
+using Comfyg.Store.Api.Requests;
+using Comfyg.Store.Api.Responses;
 using Comfyg.Store.Contracts.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ public class SetupController : ControllerBase
     }
 
     [HttpPost("client")]
-    public async Task<ActionResult<SetupClientResponse>> SetupClientAsync([FromBody] SetupClientRequest request,
+    public async Task<ActionResult<ISetupClientResponse>> SetupClientAsync([FromBody] SetupClientRequest request,
         CancellationToken cancellationToken = default)
     {
         var systemClient = _configuration["SystemClientId"];

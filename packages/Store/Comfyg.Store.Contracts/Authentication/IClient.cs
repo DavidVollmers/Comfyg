@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Comfyg.Store.Contracts.Authentication;
 
@@ -22,7 +21,6 @@ public interface IClient
     /// The client secret.
     /// </summary>
     [JsonIgnore]
-    [ValidateNever]
     [IgnoreDataMember]
     string ClientSecret { get; }
 

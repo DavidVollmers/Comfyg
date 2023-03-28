@@ -98,9 +98,9 @@ public sealed partial class ComfygClient : IDisposable
     /// Establishes a connection to the Comfyg store.
     /// </summary>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
-    /// <returns><see cref="ConnectionResponse"/></returns>
+    /// <returns><see cref="IConnectionResponse"/></returns>
     /// <exception cref="HttpRequestException">Invalid status code is returned.</exception>
-    public async Task<ConnectionResponse> EstablishConnectionAsync(CancellationToken cancellationToken = default)
+    public async Task<IConnectionResponse> EstablishConnectionAsync(CancellationToken cancellationToken = default)
     {
         var response = await SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Post, "connections/establish"),
             5, cancellationToken).ConfigureAwait(false);

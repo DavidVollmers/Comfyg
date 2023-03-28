@@ -39,7 +39,7 @@ internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
             yield return value!;
     }
 
-    public async Task AddValuesAsync(AddValuesRequest<ISecretValue> request,
+    public async Task AddValuesAsync(IAddValuesRequest<ISecretValue> request,
         CancellationToken cancellationToken = default)
     {
         if (request == null) throw new ArgumentNullException(nameof(request));

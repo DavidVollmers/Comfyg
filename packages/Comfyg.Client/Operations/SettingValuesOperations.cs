@@ -39,7 +39,7 @@ internal class SettingValuesOperations : IComfygValueOperations<ISettingValue>
             yield return value!;
     }
 
-    public async Task AddValuesAsync(AddValuesRequest<ISettingValue> request,
+    public async Task AddValuesAsync(IAddValuesRequest<ISettingValue> request,
         CancellationToken cancellationToken = default)
     {
         if (request == null) throw new ArgumentNullException(nameof(request));

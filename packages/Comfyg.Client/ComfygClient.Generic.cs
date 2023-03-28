@@ -46,7 +46,7 @@ public partial class ComfygClient
     /// <param name="request"><see cref="AddValuesRequest{T}"/></param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
     /// <typeparam name="T">The type of the values to add.</typeparam>
-    public async Task AddValuesAsync<T>(AddValuesRequest<T> request, CancellationToken cancellationToken = default)
+    public async Task AddValuesAsync<T>(IAddValuesRequest<T> request, CancellationToken cancellationToken = default)
         where T : IComfygValue
     {
         await Operations<T>().AddValuesAsync(request, cancellationToken).ConfigureAwait(false);
