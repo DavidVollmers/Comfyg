@@ -17,12 +17,12 @@ public interface ISetupClientResponse
     /// The generated client secret of the registered Comfyg client.
     /// </summary>
     string ClientSecret { get; }
-    
+
     // ReSharper disable once ClassNeverInstantiated.Local
     private class Implementation : ISetupClientResponse
     {
         public IClient Client { get; init; } = null!;
-        
+
         public string ClientSecret { get; init; } = null!;
     }
 }
