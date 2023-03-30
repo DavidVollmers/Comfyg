@@ -3,11 +3,11 @@ using Comfyg.Store.Contracts.Requests;
 
 namespace Comfyg.Client.Requests;
 
-internal class AddValuesRequest<T> : IAddValuesRequest<T> where T : IComfygValue
+internal class AddSecretValuesRequest : IAddSecretValuesRequest
 {
-    public IEnumerable<T> Values { get; }
+    public IEnumerable<ISecretValue> Values { get; }
 
-    public AddValuesRequest(IEnumerable<T> values)
+    public AddSecretValuesRequest(IEnumerable<ISecretValue> values)
     {
         Values = values ?? throw new ArgumentNullException(nameof(values));
     }

@@ -47,7 +47,7 @@ internal class SettingValuesOperations : IComfygValueOperations<ISettingValue>
             .SendRequestAsync(
                 () => new HttpRequestMessage(HttpMethod.Post, "settings")
                 {
-                    Content = JsonContent.Create(new AddValuesRequest<ISettingValue>(values))
+                    Content = JsonContent.Create(new AddSettingValuesRequest(values))
                 }, cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)

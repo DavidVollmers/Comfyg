@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Comfyg.Client.Requests;
 using Comfyg.Store.Contracts;
+using Comfyg.Store.Contracts.Requests;
 
 namespace Comfyg.Client.Operations;
 
@@ -48,7 +49,7 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
             .SendRequestAsync(
                 () => new HttpRequestMessage(HttpMethod.Post, "configuration")
                 {
-                    Content = JsonContent.Create(new AddValuesRequest<IConfigurationValue>(values))
+                    Content = JsonContent.Create(new AddConfigurationValuesRequest(values))
                 }, cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)

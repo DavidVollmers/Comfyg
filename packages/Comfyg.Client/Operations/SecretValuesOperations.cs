@@ -47,7 +47,7 @@ internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
             .SendRequestAsync(
                 () => new HttpRequestMessage(HttpMethod.Post, "secrets")
                 {
-                    Content = JsonContent.Create(new AddValuesRequest<ISecretValue>(values))
+                    Content = JsonContent.Create(new AddSecretValuesRequest(values))
                 }, cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)

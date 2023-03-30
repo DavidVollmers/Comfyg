@@ -39,7 +39,7 @@ public class SecretsController : ValueControllerBase<ISecretValue>
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddSecretValuesAsync([FromBody] IAddValuesRequest<ISecretValue> request,
+    public async Task<ActionResult> AddSecretValuesAsync([FromBody] IAddSecretValuesRequest request,
         CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
