@@ -12,15 +12,11 @@ env:
 jobs:
   Test:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        dotnet: [ '7.0.x', '6.0.x' ]
-    name: .NET ${{ matrix.dotnet }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: ${{ matrix.dotnet }}
+          dotnet-version: 6.0.x
       - run: |
           dotnet test tests/Comfyg.Cli.Tests
   Build:
