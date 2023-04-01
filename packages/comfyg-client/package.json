@@ -1,6 +1,6 @@
 {
-  "name": "@dvolper/comfyg-client",
-  "version": "0.1.0",
+  "name": "@comfyg/client",
+  "version": "0.1.0-preview",
   "description": "Comfyg Client Library",
   "author": "david@vollmers.org",
   "license": "MIT",
@@ -18,5 +18,10 @@
   "dependencies": {
     "jwt-simple": "^0.5.6",
     "node-fetch": "^3.3.1"
-  }
+  },
+  "files": [
+    "dist",
+    "lib",
+    "README.md"
+  ]
 }

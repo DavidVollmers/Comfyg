@@ -1,4 +1,5 @@
 dist
+*.tgz
 
 _exported_templates
 

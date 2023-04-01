@@ -1,0 +1,43 @@
+name: NPM Packages CD
+
+on:
+  push:
+    branches: 'main'
+    tags: '**'
+
+jobs:
+  Pack:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - run: npm i
+        working-directory: packages/comfyg-client
+      - run: npm run build
+        working-directory: packages/comfyg-client
+      - run: npm pack
+        working-directory: packages/comfyg-client
+      - uses: actions/upload-artifact@v3
+        with:
+          name: NPM
+          path: packages/comfyg-client/*.tgz
+  Publish:
+    runs-on: ubuntu-latest
+    needs: Pack
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: https://registry.npmjs.org
+      - uses: actions/download-artifact@v3
+        with:
+          name: NPM
+          path: npm
+      - run: ls -l *.tgz | npm publish --access public
+        working-directory: npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_API_KEY }}
