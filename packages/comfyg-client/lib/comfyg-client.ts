@@ -1,15 +1,33 @@
 import { ConnectionResponse } from './responses/connection-response.js'
-import fetch from 'node-fetch'
+import fetch, { RequestInit, Response } from 'node-fetch'
 import jwt from 'jwt-simple'
+import { Client } from './client.js'
+import { SetupClientResponse } from './responses/setup-client-response.js'
+import { ValueOperations } from './value-operations.js'
 
 export class ComfygClient {
   private readonly _endpoint: string
   private readonly _clientId: string
   private readonly _clientSecret: Buffer
+  private readonly _configuration: ValueOperations
+  private readonly _secrets: ValueOperations
+  private readonly _settings: ValueOperations
   private readonly _token: {
     raw?: string
     validTo?: Date
   } = {}
+
+  public get configuration(): ValueOperations {
+    return this._configuration
+  }
+
+  public get secrets(): ValueOperations {
+    return this._secrets
+  }
+
+  public get settings(): ValueOperations {
+    return this._settings
+  }
 
   public constructor(connectionString: string) {
     if (connectionString == null) throw new Error('Value cannot be null. Parameter name: connectionString')
@@ -37,21 +55,60 @@ export class ComfygClient {
     } catch (e: any) {
       throw new Error('Invalid connection string: ' + e.message)
     }
+    this._configuration = new ValueOperations(this, 'configuration')
+    this._secrets = new ValueOperations(this, 'secrets')
+    this._settings = new ValueOperations(this, 'settings')
   }
 
-  public async establishConnection(): Promise<ConnectionResponse> {
-    const token = this.createToken()
-    const response = await fetch(this._endpoint + '/connections/establish', {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + token,
+  public async establishConnection(signal: AbortSignal | null = null): Promise<ConnectionResponse> {
+    const response = await this.__sendRequest(
+      '/connections/establish',
+      {
+        method: 'POST',
       },
-    })
-    if (response.status < 200 || response.status > 299) {
+      signal,
+    )
+    if (!response.ok) {
       throw new Error('Invalid status code when trying to establish connection: ' + response.status)
     }
     const json = await response.json()
     return <ConnectionResponse>json
+  }
+
+  public async setupClient(client: Client, signal: AbortSignal | null = null): Promise<SetupClientResponse> {
+    if (client == null) throw new Error('Value cannot be null. Parameter name: client')
+    const response = await this.__sendRequest(
+      '/setup/client',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ client }),
+      },
+      signal,
+    )
+    if (!response.ok) {
+      throw new Error('Invalid status code when trying to setup client: ' + response.status)
+    }
+    const json = await response.json()
+    return <SetupClientResponse>json
+  }
+
+  public async __sendRequest(
+    relativeUrl: string,
+    init: RequestInit,
+    signal: AbortSignal | null = null,
+  ): Promise<Response> {
+    const token = this.createToken()
+    return await fetch(this._endpoint + relativeUrl, {
+      ...init,
+      headers: {
+        ...init.headers,
+        Authorization: 'Bearer ' + token,
+      },
+      signal,
+    })
   }
 
   private createToken(): string {
