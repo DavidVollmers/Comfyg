@@ -1,11 +1,11 @@
 import { ConnectionResponse } from './responses/connection-response.js'
 import fetch from 'node-fetch'
-import * as jwt from 'jwt-simple'
+import jwt from 'jwt-simple'
 
 export class ComfygClient {
   private readonly _endpoint: string
   private readonly _clientId: string
-  private readonly _clientSecret: string
+  private readonly _clientSecret: Buffer
   private readonly _token: {
     raw?: string
     validTo?: Date
@@ -32,7 +32,8 @@ export class ComfygClient {
       this._clientId = clientId.value
       const clientSecret = connectionInformation.filter((i) => i.key === 'ClientSecret')[0]
       if (!clientSecret) throw new Error('Missing "ClientSecret" information.')
-      this._clientSecret = clientSecret.value
+      this._clientSecret = Buffer.from(clientSecret.value, 'base64')
+      if (this._clientSecret.length < 16) throw new Error('Client secret must be at least 16 bytes long.')
     } catch (e: any) {
       throw new Error('Invalid connection string: ' + e.message)
     }
@@ -40,7 +41,7 @@ export class ComfygClient {
 
   public async establishConnection(): Promise<ConnectionResponse> {
     const token = this.createToken()
-    const response = await fetch(this._endpoint, {
+    const response = await fetch(this._endpoint + '/connections/establish', {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + token,
@@ -68,7 +69,8 @@ export class ComfygClient {
         aud: this._clientId,
         exp: Math.floor(expDate.valueOf() / 1000),
       },
-      this._clientSecret,
+      // https://github.com/hokaccha/node-jwt-simple/pull/99
+      <any>this._clientSecret,
       'HS512',
     ))
   }

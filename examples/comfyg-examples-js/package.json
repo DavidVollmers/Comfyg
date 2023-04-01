@@ -9,6 +9,6 @@
     "test": "node src/index.js"
   },
   "dependencies": {
-    "@comfyg/client": "^0.4.1-preview"
+    "@comfyg/client": "^0.4.4-preview"
   }
 }

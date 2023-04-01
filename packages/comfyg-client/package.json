@@ -1,6 +1,6 @@
 {
   "name": "@comfyg/client",
-  "version": "0.4.1-preview",
+  "version": "0.4.4-preview",
   "description": "Comfyg Client Library",
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@tsconfig/node18": "^1.0.1",
+    "@types/node": "^18.15.11",
     "typescript": "^5.0.3"
   },
   "dependencies": {
