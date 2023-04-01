@@ -1,4 +1,4 @@
-import { ConnectionResponse } from './responses/connection-response'
+import { ConnectionResponse } from './responses/connection-response.js'
 import fetch from 'node-fetch'
 import * as jwt from 'jwt-simple'
 

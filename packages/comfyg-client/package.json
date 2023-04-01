@@ -1,13 +1,17 @@
 {
   "name": "@comfyg/client",
-  "version": "0.1.0-preview",
+  "version": "0.4.1-preview",
   "description": "Comfyg Client Library",
-  "author": "david@vollmers.org",
-  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DavidVollmers/Comfyg"
+    "url": "git+https://github.com/DavidVollmers/Comfyg.git"
   },
+  "author": "david@vollmers.org",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DavidVollmers/Comfyg/issues"
+  },
+  "homepage": "https://github.com/DavidVollmers/Comfyg",
   "scripts": {
     "build": "tsc"
   },
@@ -23,5 +27,8 @@
     "dist",
     "lib",
     "README.md"
-  ]
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module"
 }
