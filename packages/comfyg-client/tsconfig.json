@@ -1,9 +1,14 @@
 {
+  "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
-    "module": "node16",
-    "target": "ESNext",
-    "sourceMap": true
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist"
   },
+  "include": [
+    "lib/**/*"
+  ],
   "exclude": [
     "node_modules"
   ]
