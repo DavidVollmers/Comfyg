@@ -1,6 +1,6 @@
 {
   "name": "@comfyg/client",
-  "version": "0.5.2-preview",
+  "version": "1.0.0",
   "description": "Comfyg Client Library",
   "repository": {
     "type": "git",
