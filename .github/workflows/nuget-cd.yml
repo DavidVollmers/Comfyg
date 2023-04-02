@@ -18,12 +18,12 @@ jobs:
         with:
           # https://github.com/actions/checkout/issues/701 https://github.com/actions/checkout/pull/579
           fetch-depth: 0
+      - run: echo "VERSION=$(git describe --tags --dirty)" >> $GITHUB_ENV
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: |
             6.0.x
             7.0.x
-      - run: echo "VERSION=$(git describe --tags --dirty)" >> $GITHUB_ENV
       - run: dotnet pack -c Release -p:PackageOutputPath=$GITHUB_WORKSPACE/nuget -p:Version=$VERSION
       - uses: actions/upload-artifact@v3
         with:
