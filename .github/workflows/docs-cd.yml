@@ -14,6 +14,13 @@ jobs:
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 7.x
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - run: npm i
+        working-directory: packages/comfyg-client
+      - run: npm run build:docs
+        working-directory: packages/comfyg-client
       - run: dotnet tool update -g docfx
       - run: docfx docs/docfx.json
       - uses: actions/upload-pages-artifact@v1

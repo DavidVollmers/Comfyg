@@ -13,11 +13,14 @@
   },
   "homepage": "https://github.com/DavidVollmers/Comfyg",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "build:docs": "typedoc --json node-api.json lib && type2docfx node-api.json ../../docs/node-api"
   },
   "devDependencies": {
     "@tsconfig/node18": "^1.0.1",
     "@types/node": "^18.15.11",
+    "type2docfx": "^0.10.5",
+    "typedoc": "^0.23.28",
     "typescript": "^5.0.3"
   },
   "dependencies": {
