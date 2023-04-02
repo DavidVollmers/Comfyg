@@ -54,15 +54,13 @@ internal static class DockerClientExtensions
             messageHandler("Starting Docker Container...");
 
             var result = await dockerClient.Containers
-                .StartContainerAsync(response.ID, new ContainerStartParameters(), cancellationToken)
-                ;
+                .StartContainerAsync(response.ID, new ContainerStartParameters(), cancellationToken);
 
             if (!result) throw new Exception("Could not start Docker Container!");
 
             messageHandler("Inspecting Docker Container...");
 
-            var inspectionResult = await dockerClient.Containers.InspectContainerAsync(response.ID, cancellationToken)
-                ;
+            var inspectionResult = await dockerClient.Containers.InspectContainerAsync(response.ID, cancellationToken);
 
             if (inspectionResult == null) throw new Exception("Could not inspect Docker Container!");
 
@@ -84,8 +82,7 @@ internal static class DockerClientExtensions
             messageHandler(
                 "Could not successfully start Comfyg store. Trying to stop and remove the Docker Container...");
 
-            await dockerClient.TryKillAndRemoveDockerContainerAsync(response.ID, cancellationToken)
-                ;
+            await dockerClient.TryKillAndRemoveDockerContainerAsync(response.ID, cancellationToken);
 
             throw;
         }
@@ -121,8 +118,7 @@ internal static class DockerClientExtensions
         if (messageHandler == null) throw new ArgumentNullException(nameof(messageHandler));
 
         await using var stream =
-            await CreateStreamFromDockerfileDirectoryAsync(dockerFile.Directory!, messageHandler, cancellationToken)
-                ;
+            await CreateStreamFromDockerfileDirectoryAsync(dockerFile.Directory!, messageHandler, cancellationToken);
 
         var progress = new Progress<JSONMessage>();
         progress.ProgressChanged += (_, message) =>
@@ -137,8 +133,7 @@ internal static class DockerClientExtensions
                 {
                     tag
                 }
-        }, stream, Array.Empty<AuthConfig>(), new Dictionary<string, string>(), progress, cancellationToken)
-            ;
+        }, stream, Array.Empty<AuthConfig>(), new Dictionary<string, string>(), progress, cancellationToken);
     }
 
     public static async Task TryKillAndRemoveDockerContainerAsync(this IDockerClient dockerClient, string containerId,
@@ -150,8 +145,7 @@ internal static class DockerClientExtensions
         try
         {
             await dockerClient.Containers
-                .KillContainerAsync(containerId, new ContainerKillParameters(), cancellationToken)
-                ;
+                .KillContainerAsync(containerId, new ContainerKillParameters(), cancellationToken);
         }
         catch
         {

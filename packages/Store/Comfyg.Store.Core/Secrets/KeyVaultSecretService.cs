@@ -27,8 +27,7 @@ public sealed class KeyVaultSecretService : ISecretService
         {
             name = $"{_systemId}{SecretNameDelimiter}{Guid.NewGuid()}";
 
-            var existing = await _client.GetSecretAsync(name, cancellationToken: cancellationToken)
-                ;
+            var existing = await _client.GetSecretAsync(name, cancellationToken: cancellationToken);
             if (existing.HasValue) name = null;
         } while (name == null && ++tries > MaxSecretNameGenerationTries);
 
@@ -51,8 +50,7 @@ public sealed class KeyVaultSecretService : ISecretService
 
         var name = $"{_systemId}{SecretNameDelimiter}{guid}";
 
-        var result = await _client.GetSecretAsync(name, parts[2], cancellationToken: cancellationToken)
-            ;
+        var result = await _client.GetSecretAsync(name, parts[2], cancellationToken: cancellationToken);
 
         if (!result.HasValue) throw new Exception("Could not get key vault secret.");
 

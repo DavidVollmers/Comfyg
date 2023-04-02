@@ -54,8 +54,7 @@ public class SecretsController : ValueControllerBase<ISecretValue>
     protected override async Task<ISecretValue?> ConvertValueToAsync(ISecretValue value,
         CancellationToken cancellationToken)
     {
-        var protectedValue = await _secretService.ProtectSecretValueAsync(value.Value, cancellationToken)
-            ;
+        var protectedValue = await _secretService.ProtectSecretValueAsync(value.Value, cancellationToken);
 
         return new SecretValueModel(value) { Value = protectedValue };
     }
@@ -63,8 +62,7 @@ public class SecretsController : ValueControllerBase<ISecretValue>
     protected override async Task<ISecretValue?> ConvertValueFromAsync(ISecretValue value,
         CancellationToken cancellationToken)
     {
-        var unprotectedValue = await _secretService.UnprotectSecretValueAsync(value.Value, cancellationToken)
-            ;
+        var unprotectedValue = await _secretService.UnprotectSecretValueAsync(value.Value, cancellationToken);
 
         return new SecretValueModel(value) { Value = unprotectedValue };
     }

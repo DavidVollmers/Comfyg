@@ -2,7 +2,8 @@
 
 public interface IPermissionService
 {
-    Task<bool> IsPermittedAsync<T>(string owner, string targetId, CancellationToken cancellationToken = default);
+    Task<bool> IsPermittedAsync<T>(string owner, string targetId, bool mustExist = true,
+        CancellationToken cancellationToken = default);
 
     IAsyncEnumerable<IPermission> GetPermissionsAsync<T>(string owner, CancellationToken cancellationToken = default);
 

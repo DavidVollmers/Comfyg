@@ -30,8 +30,7 @@ public class SetupController : ControllerBase
 
         if (identity.Client.ClientId != systemClient) return Forbid();
 
-        var existing = await _clientService.GetClientAsync(request.Client.ClientId, cancellationToken)
-            ;
+        var existing = await _clientService.GetClientAsync(request.Client.ClientId, cancellationToken);
         if (existing != null) return BadRequest();
 
         var client = await _clientService.CreateClientAsync(request.Client, cancellationToken);

@@ -25,22 +25,19 @@ internal class ClientService : IClientService
     {
         await _clients.CreateTableIfNotExistsAsync(cancellationToken);
 
-        return await _clients.GetIfExistsAsync(clientId, clientId, cancellationToken: cancellationToken)
-            ;
+        return await _clients.GetIfExistsAsync(clientId, clientId, cancellationToken: cancellationToken);
     }
 
     public async Task<string> ReceiveClientSecretAsync(IClient client, CancellationToken cancellationToken = default)
     {
-        return await _secretService.UnprotectSecretValueAsync(client.ClientSecret, cancellationToken)
-            ;
+        return await _secretService.UnprotectSecretValueAsync(client.ClientSecret, cancellationToken);
     }
 
     public async Task<IClient> CreateClientAsync(IClient client, CancellationToken cancellationToken = default)
     {
         var clientSecret = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 
-        var protectedSecret = await _secretService.ProtectSecretValueAsync(clientSecret, cancellationToken)
-            ;
+        var protectedSecret = await _secretService.ProtectSecretValueAsync(clientSecret, cancellationToken);
 
         var clientEntity = new ClientEntity
         {

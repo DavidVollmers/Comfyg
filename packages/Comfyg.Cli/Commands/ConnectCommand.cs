@@ -33,7 +33,6 @@ internal class ConnectCommand : Command
 
         AnsiConsole.Write(result.Client.ToTable());
 
-        await State.User.StoreAsync(nameof(Comfyg), nameof(ComfygClient), connectionString, cancellationToken)
-            ;
+        await State.User.StoreAsync(nameof(Comfyg), nameof(ComfygClient), connectionString, cancellationToken);
     }
 }

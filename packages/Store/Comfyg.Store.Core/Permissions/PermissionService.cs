@@ -21,7 +21,7 @@ internal class PermissionService : IPermissionService
             .OverrideTableName($"{systemId}{nameof(PermissionEntityMirrored)}");
     }
 
-    public async Task<bool> IsPermittedAsync<T>(string owner, string targetId,
+    public async Task<bool> IsPermittedAsync<T>(string owner, string targetId, bool mustExist = true,
         CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
@@ -33,8 +33,9 @@ internal class PermissionService : IPermissionService
         var ownedValues = await _permissionsMirrored.QueryAsync(filter, cancellationToken: cancellationToken)
             .ToArrayAsync(cancellationToken);
 
-        // if no target exists we assume permission (to create it)
-        return !ownedValues.Any() || ownedValues.Any(ov => ov.Owner == owner);
+        if (!ownedValues.Any()) return !mustExist;
+
+        return ownedValues.Any(ov => ov.Owner == owner);
     }
 
     public async IAsyncEnumerable<IPermission> GetPermissionsAsync<T>(string owner,

@@ -137,8 +137,7 @@ internal class SetupLocalhostCommand : Command
                 }
 
                 var existingContainers = await State.User
-                    .ReadAsync<List<string>>(nameof(Docker), "Containers", cancellationToken)
-                    ;
+                    .ReadAsync<List<string>>(nameof(Docker), "Containers", cancellationToken);
                 if (existingContainers != null && existingContainers.Any())
                 {
                     ctx.UpdateTarget(new Markup("[bold yellow]Removing existing Comfyg store Containers...[/]"));
@@ -148,16 +147,14 @@ internal class SetupLocalhostCommand : Command
                         ctx.UpdateTarget(new Markup(
                             $"[bold yellow]Removing existing Comfyg store Container: {existingContainerId}[/]"));
 
-                        await dockerClient.TryKillAndRemoveDockerContainerAsync(existingContainerId, cancellationToken)
-                            ;
+                        await dockerClient.TryKillAndRemoveDockerContainerAsync(existingContainerId, cancellationToken);
 
                         ctx.UpdateTarget(
                             new Markup($"Removed existing Comfyg store Container: [bold]{existingContainerId}[/]"));
                     }
                 }
 
-                await State.User.StoreAsync(nameof(Docker), "Containers", Array.Empty<string>(), cancellationToken)
-                    ;
+                await State.User.StoreAsync(nameof(Docker), "Containers", Array.Empty<string>(), cancellationToken);
 
                 if (dockerFileOption != null)
                 {
@@ -166,8 +163,7 @@ internal class SetupLocalhostCommand : Command
 
                     await dockerClient
                         .BuildImageFromDockerfileAsync(dockerFileOption, DockerImageLocalBuildTag, MessageHandler,
-                            cancellationToken)
-                        ;
+                            cancellationToken);
 
                     parameters.Image = DockerImageLocalBuildTag;
                 }
@@ -181,16 +177,14 @@ internal class SetupLocalhostCommand : Command
                 }
 
                 result = await dockerClient
-                    .RunComfygApiFromDockerImageAsync(parameters, MessageHandler, cancellationToken)
-                    ;
+                    .RunComfygApiFromDockerImageAsync(parameters, MessageHandler, cancellationToken);
 
                 var containers = await State.User
                     .ReadAsync<List<string>>(nameof(Docker), "Containers", cancellationToken)
                      ?? new List<string>();
                 containers.Add(result.ContainerId);
 
-                await State.User.StoreAsync(nameof(Docker), "Containers", containers, cancellationToken)
-                    ;
+                await State.User.StoreAsync(nameof(Docker), "Containers", containers, cancellationToken);
 
                 ctx.UpdateTarget(new Markup("[bold green]Successfully started local Comfyg store[/]"));
             });

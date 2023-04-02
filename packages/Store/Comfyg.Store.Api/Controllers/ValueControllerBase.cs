@@ -48,8 +48,7 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         await foreach (var change in changes.GroupBy(c => c.TargetId).WithCancellation(cancellationToken)
                       )
         {
-            var value = await _valueService.GetLatestValueAsync(change.Key, cancellationToken)
-                ;
+            var value = await _valueService.GetLatestValueAsync(change.Key, cancellationToken);
 
             if (value == null) continue;
 
@@ -71,8 +70,7 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
             if (string.IsNullOrWhiteSpace(value.Key)) throw new InvalidOperationException("Key cannot be empty.");
 
             var isPermitted = await _permissionService
-                    .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, cancellationToken)
-                ;
+                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, false, cancellationToken);
             if (!isPermitted) return false;
         }
 
@@ -85,9 +83,8 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
             var hash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(value.Value)));
 
             await _valueService
-                    .AddValueAsync(clientIdentity.Client.ClientId, convertedValue.Key, convertedValue.Value,
-                        hash, cancellationToken)
-                ;
+                .AddValueAsync(clientIdentity.Client.ClientId, convertedValue.Key, convertedValue.Value,
+                    hash, cancellationToken);
         }
 
         return true;

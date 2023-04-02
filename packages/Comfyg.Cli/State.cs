@@ -96,8 +96,7 @@ internal class State
     {
         await using var stream = file.OpenRead();
         return await JsonSerializer
-            .DeserializeAsync<Dictionary<string, string>>(stream, cancellationToken: cancellationToken)
-            ;
+            .DeserializeAsync<Dictionary<string, string>>(stream, cancellationToken: cancellationToken);
     }
 
     private static async Task<byte[]> SerializeAsync<T>(T data, CancellationToken cancellationToken)
@@ -110,7 +109,6 @@ internal class State
     private static async Task<T?> DeserializeAsync<T>(byte[] data, CancellationToken cancellationToken)
     {
         using var stream = new MemoryStream(data);
-        return await JsonSerializer.DeserializeAsync<T>(stream, cancellationToken: cancellationToken)
-            ;
+        return await JsonSerializer.DeserializeAsync<T>(stream, cancellationToken: cancellationToken);
     }
 }

@@ -8,8 +8,7 @@ internal static class StateExtensions
     {
         if (state == null) throw new ArgumentNullException(nameof(state));
 
-        var connectionString = await state.ReadAsync<string>(nameof(Comfyg), nameof(ComfygClient), cancellationToken)
-            ;
+        var connectionString = await state.ReadAsync<string>(nameof(Comfyg), nameof(ComfygClient), cancellationToken);
 
         if (connectionString == null)
             throw new InvalidOperationException("No connection established. Please use the connect command.");
