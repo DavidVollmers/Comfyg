@@ -21,16 +21,13 @@ public partial class ComfygClient
     {
         if (client == null) throw new ArgumentNullException(nameof(client));
 
-        var token = CreateToken();
-
-        var httpRequest = new HttpRequestMessage(HttpMethod.Post, "setup/client")
-        {
-            Content = JsonContent.Create(new SetupClientRequest(client))
-        };
-        httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        var response = await _httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
-
+        var response =
+            await SendRequestAsync(
+                () => new HttpRequestMessage(HttpMethod.Post, "setup/client")
+                {
+                    Content = JsonContent.Create(new SetupClientRequest(client))
+                }, cancellationToken: cancellationToken);
+        
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to setup client.", null,
                 response.StatusCode);

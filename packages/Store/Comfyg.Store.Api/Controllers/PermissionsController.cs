@@ -19,7 +19,7 @@ public class PermissionsController : ControllerBase
         _permissionService = permissionService;
     }
 
-    [HttpPost("config")]
+    [HttpPost("configuration")]
     public async Task<IActionResult> SetConfigurationPermissionsAsync([FromBody] ISetPermissionRequest[] request,
         CancellationToken cancellationToken = default)
     {
