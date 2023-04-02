@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/_exported_templates" />
+      <excludeFolder url="file://$MODULE_DIR$/docs/_site" />
+      <excludeFolder url="file://$MODULE_DIR$/examples/Comfyg.Examples.AspNetCore/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/examples/Comfyg.Examples.AspNetCore/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/nuget" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Comfyg.Cli/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Comfyg.Cli/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Comfyg.Client/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Comfyg.Client/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Comfyg/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Comfyg/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Store/Comfyg.Store.Api/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Store/Comfyg.Store.Api/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Store/Comfyg.Store.Authentication.Abstractions/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Store/Comfyg.Store.Authentication.Abstractions/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Store/Comfyg.Store.Authentication/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Store/Comfyg.Store.Authentication/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Store/Comfyg.Store.Contracts/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Store/Comfyg.Store.Contracts/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Store/Comfyg.Store.Core.Abstractions/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Store/Comfyg.Store.Core.Abstractions/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Store/Comfyg.Store.Core/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/Store/Comfyg.Store.Core/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/comfyg-client/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/Comfyg.Cli.Tests/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/Comfyg.Cli.Tests/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/Comfyg.Client.Tests/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/Comfyg.Client.Tests/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/Comfyg.Tests.Common/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/Comfyg.Tests.Common/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/Comfyg.Tests/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/Comfyg.Tests/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/Store/Comfyg.Store.Contracts.Tests/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/Store/Comfyg.Store.Contracts.Tests/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/Store/Comfyg.Store.Core.Tests/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/Store/Comfyg.Store.Core.Tests/obj" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

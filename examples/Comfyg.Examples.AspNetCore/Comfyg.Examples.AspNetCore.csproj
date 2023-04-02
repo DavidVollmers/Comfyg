@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>917d00b6-8aef-404c-9f8f-54a2337abf32</UserSecretsId>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>917d00b6-8aef-404c-9f8f-54a2337abf32</UserSecretsId>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\..\packages\Comfyg\Comfyg.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Comfyg" Version="1.0.1" />
+  </ItemGroup>
 
 </Project>

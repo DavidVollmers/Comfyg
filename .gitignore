@@ -1,3 +1,6 @@
+dist
+*.tgz
+
 _exported_templates
 
 nuget
@@ -489,5 +492,6 @@ $RECYCLE.BIN/
 # Don't ignore project packages
 !packages/Store
 !packages/Comfyg
+!packages/comfyg-client
 !packages/Comfyg.Client
 !packages/Comfyg.Cli

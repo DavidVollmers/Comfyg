@@ -1,0 +1,35 @@
+{
+  "name": "@comfyg/client",
+  "version": "0.5.2-preview",
+  "description": "Comfyg Client Library",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavidVollmers/Comfyg.git"
+  },
+  "author": "david@vollmers.org",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DavidVollmers/Comfyg/issues"
+  },
+  "homepage": "https://github.com/DavidVollmers/Comfyg",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@tsconfig/node18": "^1.0.1",
+    "@types/node": "^18.15.11",
+    "typescript": "^5.0.3"
+  },
+  "dependencies": {
+    "jwt-simple": "^0.5.6",
+    "node-fetch": "^3.3.1"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "README.md"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module"
+}

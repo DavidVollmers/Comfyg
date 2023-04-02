@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "name": "comfyg-examples",
+  "version": "1.0.0",
+  "description": "Comfyg Examples",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node src/index.js"
+  },
+  "dependencies": {
+    "@comfyg/client": "^0.5.2-preview"
+  }
+}

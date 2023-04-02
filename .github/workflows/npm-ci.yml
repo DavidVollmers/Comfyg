@@ -1,0 +1,25 @@
+name: NPM Packages CI
+
+on:
+  push:
+    branches-ignore: 'main'
+  pull_request:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - run: npm i
+        working-directory: packages/comfyg-client
+      - run: npm run build
+        working-directory: packages/comfyg-client
+      - run: npm pack
+        working-directory: packages/comfyg-client
+      - uses: actions/upload-artifact@v3
+        with:
+          name: NPM
+          path: packages/comfyg-client/*.tgz
