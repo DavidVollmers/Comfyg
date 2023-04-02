@@ -43,7 +43,7 @@ jobs:
         with:
           name: NPM
           path: npm
-      - run: ls -l *.tgz | xargs -t npm publish --access public
+      - run: find . -name '*.tgz' | xargs npm publish --access public
         working-directory: npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_API_KEY }}
