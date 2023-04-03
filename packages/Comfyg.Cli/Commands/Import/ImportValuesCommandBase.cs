@@ -8,13 +8,13 @@ using Spectre.Console;
 
 namespace Comfyg.Cli.Commands.Import;
 
-internal abstract class ImportCommandBase<T> : Command where T : IComfygValue
+internal abstract class ImportValuesCommandBase<T> : Command where T : IComfygValue
 {
     private const int MaxBatchSize = 100;
 
     private readonly Argument<FileInfo> _fileArgument;
 
-    protected ImportCommandBase(string name, string? description = null) : base(name, description)
+    protected ImportValuesCommandBase(string name, string? description = null) : base(name, description)
     {
         _fileArgument = new Argument<FileInfo>("INPUT_FILE",
             "The input file which will be used to import all key-value pairs from.");

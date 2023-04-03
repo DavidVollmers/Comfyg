@@ -9,11 +9,11 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Comfyg.Cli.Commands.Export;
 
-internal abstract class ExportCommandBase<T> : Command where T : IComfygValue
+internal abstract class ExportValuesCommandBase<T> : Command where T : IComfygValue
 {
     private readonly Argument<FileInfo> _fileArgument;
 
-    protected ExportCommandBase(string name, string? description = null) : base(name, description)
+    protected ExportValuesCommandBase(string name, string? description = null) : base(name, description)
     {
         _fileArgument = new Argument<FileInfo>("OUTPUT_FILE",
             "The output file which will be used to export key-value pairs into.");

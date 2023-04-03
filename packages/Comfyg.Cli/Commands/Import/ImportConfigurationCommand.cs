@@ -3,7 +3,7 @@ using Comfyg.Store.Contracts;
 
 namespace Comfyg.Cli.Commands.Import;
 
-internal class ImportConfigurationCommand : ImportCommandBase<IConfigurationValue>
+internal class ImportConfigurationCommand : ImportValuesCommandBase<IConfigurationValue>
 {
     public ImportConfigurationCommand()
         : base("config", "Imports key-value pairs as configuration values into the connected Comfyg store.")
