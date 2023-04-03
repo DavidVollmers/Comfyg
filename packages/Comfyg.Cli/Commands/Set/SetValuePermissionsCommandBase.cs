@@ -1,5 +1,8 @@
 ﻿using System.CommandLine;
+using System.CommandLine.Invocation;
+using Comfyg.Cli.Extensions;
 using Comfyg.Store.Contracts;
+using Spectre.Console;
 
 namespace Comfyg.Cli.Commands.Set;
 
@@ -15,5 +18,21 @@ internal abstract class SetValuePermissionsCommandBase<T> : Command where T : IC
         
         _clientIdArgument = new Argument<string>("CLIENT_ID", "The ID of the client to set the permission for.");
         AddArgument(_clientIdArgument);
+
+        this.SetHandler(HandleCommandAsync);
+    }
+
+    private async Task HandleCommandAsync(InvocationContext context)
+    {
+        var keyArgument = context.ParseResult.GetValueForArgument(_keyArgument);
+        var clientIdArgument = context.ParseResult.GetValueForArgument(_clientIdArgument);
+        
+        var cancellationToken = context.GetCancellationToken();
+
+        using var client = await State.User.RequireClientAsync(cancellationToken);
+
+        await client.SetPermissionAsync<T>(clientIdArgument, keyArgument, cancellationToken);
+
+        AnsiConsole.MarkupLine($"[bold green]Successfully set permission for \"{clientIdArgument}\"[/]");
     }
 }

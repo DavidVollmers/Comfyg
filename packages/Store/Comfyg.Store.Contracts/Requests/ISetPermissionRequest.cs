@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace Comfyg.Store.Contracts.Requests;
 
 /// <summary>
-/// Request object to set permissions on a Comfyg value for a specific client.
+/// Request object to set permission on a Comfyg value for a specific client.
 /// </summary>
 [JsonConverter(typeof(ContractConverter<ISetPermissionRequest, Implementation>))]
 public interface ISetPermissionRequest

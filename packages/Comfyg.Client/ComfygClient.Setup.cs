@@ -26,7 +26,7 @@ public partial class ComfygClient
                 () => new HttpRequestMessage(HttpMethod.Post, "setup/client")
                 {
                     Content = JsonContent.Create(new SetupClientRequest(client))
-                }, cancellationToken: cancellationToken);
+                }, cancellationToken: cancellationToken).ConfigureAwait(false);
         
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to setup client.", null,

@@ -13,10 +13,29 @@ namespace Comfyg.Store.Api.Controllers;
 public class PermissionsController : ControllerBase
 {
     private readonly IPermissionService _permissionService;
+    private readonly IClientService _clientService;
 
-    public PermissionsController(IPermissionService permissionService)
+    public PermissionsController(IPermissionService permissionService, IClientService clientService)
     {
         _permissionService = permissionService;
+        _clientService = clientService;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SetPermissionsAsync([FromBody] ISetPermissionsRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
+
+        var client = await _clientService.GetClientAsync(request.ClientId, cancellationToken);
+
+        if (client == null) return Forbid();
+
+        await SetPermissionsAsync<IConfigurationValue>(clientIdentity, client, cancellationToken);
+        await SetPermissionsAsync<ISecretValue>(clientIdentity, client, cancellationToken);
+        await SetPermissionsAsync<ISettingValue>(clientIdentity, client, cancellationToken);
+
+        return Ok();
     }
 
     [HttpPost("configuration")]
@@ -55,20 +74,38 @@ public class PermissionsController : ControllerBase
     private async Task<bool> SetPermissionsAsync<T>(IClientIdentity clientIdentity, ISetPermissionRequest[] permissions,
         CancellationToken cancellationToken) where T : IComfygValue
     {
+        var clients = new List<string>();
         foreach (var permission in permissions)
         {
             var isPermitted = await _permissionService
                 .IsPermittedAsync<T>(clientIdentity.Client.ClientId, permission.Key,
                     cancellationToken: cancellationToken);
             if (!isPermitted) return false;
+
+            if (clients.Contains(permission.ClientId)) continue;
+
+            var client = await _clientService.GetClientAsync(permission.ClientId, cancellationToken);
+            if (client == null) return false;
+
+            clients.Add(client.ClientId);
         }
 
         foreach (var permission in permissions)
         {
-            await _permissionService.SetPermissionAsync<T>(clientIdentity.Client.ClientId, permission.Key,
+            await _permissionService.SetPermissionAsync<T>(permission.ClientId, permission.Key,
                 cancellationToken);
         }
 
         return true;
+    }
+
+    private async Task SetPermissionsAsync<T>(IClientIdentity clientIdentity, IClient client,
+        CancellationToken cancellationToken) where T : IComfygValue
+    {
+        var permissions = _permissionService.GetPermissionsAsync<T>(clientIdentity.Client.ClientId, cancellationToken);
+        await foreach (var permission in permissions.WithCancellation(cancellationToken))
+        {
+            await _permissionService.SetPermissionAsync<T>(client.ClientId, permission.TargetId, cancellationToken);
+        }
     }
 }
