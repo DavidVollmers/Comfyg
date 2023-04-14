@@ -55,7 +55,7 @@ public partial class ComfygClient
             await SendRequestAsync(
                 () => new HttpRequestMessage(HttpMethod.Post, "permissions")
                 {
-                    Content = JsonContent.Create(new[] { new SetPermissionsRequest(clientId) })
+                    Content = JsonContent.Create(new SetPermissionsRequest(clientId))
                 }, cancellationToken: cancellationToken).ConfigureAwait(false);
         
         if (!response.IsSuccessStatusCode)
