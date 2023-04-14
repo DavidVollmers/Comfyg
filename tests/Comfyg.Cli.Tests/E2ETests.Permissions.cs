@@ -78,4 +78,47 @@ public partial class E2ETests
                     It.Is<string>(s => s == settingValueKey1), It.IsAny<CancellationToken>()), Times.Once);
         });
     }
+
+    [Fact]
+    public async Task Test_SetConfigurationPermissions()
+    {
+        var targetClientId = Guid.NewGuid().ToString();
+        var expectedOutput = $"Successfully set permission for \"{targetClientId}\"";
+        var targetClient = new TestClient { ClientId = targetClientId };
+        var key = Guid.NewGuid().ToString();
+
+        _factory.Mock<IClientService>(mock =>
+        {
+            mock.Setup(cs => cs.GetClientAsync(It.Is<string>(s => s == targetClientId), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(targetClient);
+        });
+
+        _factory.Mock<IPermissionService>(mock =>
+        {
+            mock.Setup(ps => ps.IsPermittedAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+        });
+
+        var client = await ConnectAsync();
+
+        var result = await TestCli.ExecuteAsync($"set permissions config {key} {targetClientId}");
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.StartsWith(expectedOutput, result.Output);
+
+        _factory.Mock<IClientService>(mock =>
+        {
+            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == targetClientId), It.IsAny<CancellationToken>()),
+                Times.Once);
+        });
+
+        _factory.Mock<IPermissionService>(mock =>
+        {
+            mock.Verify(
+                ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == client.ClientId),
+                    It.Is<string>(s => s == key), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Once);
+            mock.Verify(ps => ps.SetPermissionAsync<IConfigurationValue>(It.Is<string>(s => s == targetClientId),
+                It.Is<string>(s => s == key), It.IsAny<CancellationToken>()), Times.Once);
+        });
+    }
 }
