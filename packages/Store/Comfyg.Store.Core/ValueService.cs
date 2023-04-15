@@ -115,14 +115,24 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         var original = await _values.GetIfExistsAsync(key.ToLower(), version, cancellationToken: cancellationToken);
         if (original == null) throw new InvalidOperationException("Value does not exist.");
 
-        await _values.AddAsync(new TEntity
+        var parentVersion = original.Version;
+        if (parentVersion == ContractConstants.LatestVersion)
         {
-            Key = key,
-            Value = original.Value,
-            Version = $"{original.Version}-{tag}",
-            Hash = original.Hash,
-            ParentVersion = original.Version
-        }, cancellationToken);
+            parentVersion = original.ParentVersion;
+            if (parentVersion == null) throw new Exception("Cannot tag latest version without link to parent version.");
+        }
+        else if (original.ParentVersion != null)
+            throw new InvalidOperationException("Cannot create version tag from different tag.");
+
+        await _values.AddAsync(
+            new TEntity
+            {
+                Key = key,
+                Value = original.Value,
+                Version = $"{original.Version}-{tag}",
+                Hash = original.Hash,
+                ParentVersion = parentVersion
+            }, cancellationToken);
 
         await _changeService.LogChangeAsync<TValue>(key, ChangeType.Tag, owner, cancellationToken);
     }
