@@ -8,17 +8,17 @@ namespace Comfyg.Cli.Commands.Set;
 
 internal abstract class SetValuePermissionsCommandBase<T> : Command where T : IComfygValue
 {
-    private readonly Argument<string> _keyArgument;
     private readonly Argument<string> _clientIdArgument;
+    private readonly Argument<string> _keyArgument;
     private readonly Option<Permissions[]> _permissionsOption;
 
     protected SetValuePermissionsCommandBase(string name, string? description = null) : base(name, description)
     {
-        _keyArgument = new Argument<string>("KEY", "The key of the key-value pair to set the permission for.");
-        AddArgument(_keyArgument);
-
         _clientIdArgument = new Argument<string>("CLIENT_ID", "The ID of the client to set the permission for.");
         AddArgument(_clientIdArgument);
+        
+        _keyArgument = new Argument<string>("KEY", "The key of the key-value pair to set the permission for.");
+        AddArgument(_keyArgument);
 
         _permissionsOption =
             new Option<Permissions[]>(new[] { "-p", "--permissions" },
@@ -34,8 +34,8 @@ internal abstract class SetValuePermissionsCommandBase<T> : Command where T : IC
 
     private async Task HandleCommandAsync(InvocationContext context)
     {
-        var keyArgument = context.ParseResult.GetValueForArgument(_keyArgument);
         var clientIdArgument = context.ParseResult.GetValueForArgument(_clientIdArgument);
+        var keyArgument = context.ParseResult.GetValueForArgument(_keyArgument);
         var permissionsOption = context.ParseResult.GetValueForOption(_permissionsOption)!;
 
         var cancellationToken = context.GetCancellationToken();

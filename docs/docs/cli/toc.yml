@@ -10,6 +10,8 @@
       href: command_export.md
     - name: comfyg import
       href: command_import.md
+    - name: comfyg set permissions
+      href: command_set_permissions.md
     - name: comfyg setup client
       href: command_setup_client.md
     - name: comfyg setup localhost
