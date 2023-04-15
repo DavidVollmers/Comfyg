@@ -17,9 +17,16 @@ public interface ISetPermissionsRequest
     [TechnicalIdentifier]
     string ClientId { get; }
 
+    /// <summary>
+    /// The kind of permissions to set for the client.
+    /// </summary>
+    [Required] Permissions Permissions { get; }
+
     // ReSharper disable once ClassNeverInstantiated.Local
     private class Implementation : ISetPermissionsRequest
     {
         public string ClientId { get; init; } = null!;
+
+        public Permissions Permissions { get; } = Permissions.Read;
     }
 }

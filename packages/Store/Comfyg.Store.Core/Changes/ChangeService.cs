@@ -68,7 +68,7 @@ internal class ChangeService : IChangeService
         if (owner == null) throw new ArgumentNullException(nameof(owner));
 
         var permissions = await _permissionService
-            .GetPermissionsAsync<T>(owner, Abstractions.Permissions.Permissions.Read, cancellationToken)
+            .GetPermissionsAsync<T>(owner, Contracts.Permissions.Read, cancellationToken)
             .ToArrayAsync(cancellationToken);
 
         var changes = GetChangesSinceAsync<T>(since, cancellationToken)

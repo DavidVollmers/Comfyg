@@ -1,16 +1,20 @@
-﻿using Comfyg.Store.Contracts.Requests;
+﻿using Comfyg.Store.Contracts;
+using Comfyg.Store.Contracts.Requests;
 
 namespace Comfyg.Client.Requests;
 
 internal class SetPermissionRequest : ISetPermissionRequest
 {
     public string ClientId { get; }
-    
+
     public string Key { get; }
 
-    public SetPermissionRequest(string clientId, string key)
+    public Permissions Permissions { get; set; }
+
+    public SetPermissionRequest(string clientId, string key, Permissions permissions)
     {
         ClientId = clientId ?? throw new ArgumentNullException(nameof(clientId));
         Key = key ?? throw new ArgumentNullException(nameof(key));
+        Permissions = permissions;
     }
 }

@@ -22,8 +22,7 @@ internal class PermissionService : IPermissionService
     }
 
     public async Task<bool> IsPermittedAsync<T>(string owner, string targetId,
-        Abstractions.Permissions.Permissions permissions, bool mustExist = true,
-        CancellationToken cancellationToken = default)
+        Contracts.Permissions permissions, bool mustExist = true, CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
         if (targetId == null) throw new ArgumentNullException(nameof(targetId));
@@ -40,7 +39,7 @@ internal class PermissionService : IPermissionService
     }
 
     public async IAsyncEnumerable<IPermission> GetPermissionsAsync<T>(string owner,
-        Abstractions.Permissions.Permissions? requiredPermissions = null,
+        Contracts.Permissions? requiredPermissions = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
@@ -57,7 +56,7 @@ internal class PermissionService : IPermissionService
     }
 
     public async Task SetPermissionAsync<T>(string owner, string targetId,
-        Abstractions.Permissions.Permissions permissions, CancellationToken cancellationToken = default)
+        Contracts.Permissions permissions, CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
         if (targetId == null) throw new ArgumentNullException(nameof(targetId));

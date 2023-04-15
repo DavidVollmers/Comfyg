@@ -31,9 +31,9 @@ public class PermissionsController : ControllerBase
 
         if (client == null) return Forbid();
 
-        await SetPermissionsAsync<IConfigurationValue>(clientIdentity, client, cancellationToken);
-        await SetPermissionsAsync<ISecretValue>(clientIdentity, client, cancellationToken);
-        await SetPermissionsAsync<ISettingValue>(clientIdentity, client, cancellationToken);
+        await SetPermissionsAsync<IConfigurationValue>(clientIdentity, client, request.Permissions, cancellationToken);
+        await SetPermissionsAsync<ISecretValue>(clientIdentity, client, request.Permissions, cancellationToken);
+        await SetPermissionsAsync<ISettingValue>(clientIdentity, client, request.Permissions, cancellationToken);
 
         return Ok();
     }
@@ -92,8 +92,7 @@ public class PermissionsController : ControllerBase
 
         foreach (var permission in permissions)
         {
-            //TODO write/delete/permit option
-            await _permissionService.SetPermissionAsync<T>(permission.ClientId, permission.Key, Permissions.Read,
+            await _permissionService.SetPermissionAsync<T>(permission.ClientId, permission.Key, permission.Permissions,
                 cancellationToken);
         }
 
@@ -101,16 +100,15 @@ public class PermissionsController : ControllerBase
     }
 
     private async Task SetPermissionsAsync<T>(IClientIdentity clientIdentity, IClient client,
-        CancellationToken cancellationToken) where T : IComfygValue
+        Permissions permissionsToSet, CancellationToken cancellationToken) where T : IComfygValue
     {
         var permissions =
             _permissionService.GetPermissionsAsync<T>(clientIdentity.Client.ClientId, Permissions.Permit,
                 cancellationToken);
         await foreach (var permission in permissions.WithCancellation(cancellationToken))
         {
-            //TODO write/delete/permit option
-            await _permissionService.SetPermissionAsync<T>(client.ClientId, permission.TargetId, Permissions.Read,
-                cancellationToken);
+            await _permissionService.SetPermissionAsync<T>(client.ClientId, permission.TargetId,
+                permissionsToSet, cancellationToken);
         }
     }
 }

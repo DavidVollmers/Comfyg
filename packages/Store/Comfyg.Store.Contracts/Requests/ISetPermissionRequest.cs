@@ -16,7 +16,7 @@ public interface ISetPermissionRequest
     [MaxLength(64)]
     [TechnicalIdentifier]
     string ClientId { get; }
-    
+
     /// <summary>
     /// The key of the Comfyg value to set the permission for.
     /// </summary>
@@ -25,11 +25,18 @@ public interface ISetPermissionRequest
     [TechnicalIdentifier]
     string Key { get; }
 
+    /// <summary>
+    /// The kind of permissions to set for the client.
+    /// </summary>
+    [Required] Permissions Permissions { get; }
+
     // ReSharper disable once ClassNeverInstantiated.Local
     private class Implementation : ISetPermissionRequest
     {
         public string ClientId { get; init; } = null!;
 
         public string Key { get; init; } = null!;
+
+        public Permissions Permissions { get; } = Permissions.Read;
     }
 }

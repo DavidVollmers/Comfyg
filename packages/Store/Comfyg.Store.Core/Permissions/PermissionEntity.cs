@@ -15,7 +15,7 @@ internal abstract class PermissionEntityBase : IPermission
 
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
 
-    public Abstractions.Permissions.Permissions Permissions { get; init; } = Abstractions.Permissions.Permissions.Read;
+    public Contracts.Permissions Permissions { get; init; } = Contracts.Permissions.Read;
 }
 
 internal class PermissionEntity : PermissionEntityBase

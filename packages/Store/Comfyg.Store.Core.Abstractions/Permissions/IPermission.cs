@@ -10,5 +10,5 @@ public interface IPermission
 
     DateTimeOffset CreatedAt { get; }
     
-    Permissions Permissions { get; }
+    Contracts.Permissions Permissions { get; }
 }

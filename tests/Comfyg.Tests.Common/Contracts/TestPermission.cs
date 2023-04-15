@@ -1,4 +1,5 @@
-﻿using Comfyg.Store.Core.Abstractions.Permissions;
+﻿using Comfyg.Store.Contracts;
+using Comfyg.Store.Core.Abstractions.Permissions;
 
 namespace Comfyg.Tests.Common.Contracts;
 

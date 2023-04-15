@@ -55,8 +55,8 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         await _changeService.LogChangeAsync<TValue>(key, ChangeType.Add, owner, cancellationToken);
 
         await _permissionService.SetPermissionAsync<TValue>(owner, key,
-            Abstractions.Permissions.Permissions.Read | Abstractions.Permissions.Permissions.Write |
-            Abstractions.Permissions.Permissions.Delete | Abstractions.Permissions.Permissions.Permit,
+            Contracts.Permissions.Read | Contracts.Permissions.Write | Contracts.Permissions.Delete |
+            Contracts.Permissions.Permit,
             cancellationToken);
     }
 
@@ -68,8 +68,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         await _values.CreateTableIfNotExistsAsync(cancellationToken);
 
         var permissions =
-            _permissionService.GetPermissionsAsync<TValue>(owner, Abstractions.Permissions.Permissions.Read,
-                cancellationToken);
+            _permissionService.GetPermissionsAsync<TValue>(owner, Contracts.Permissions.Read, cancellationToken);
         await foreach (var permission in permissions.WithCancellation(cancellationToken))
         {
             var latest = await _values

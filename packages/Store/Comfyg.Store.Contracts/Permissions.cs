@@ -1,4 +1,4 @@
-﻿namespace Comfyg.Store.Core.Abstractions.Permissions;
+﻿namespace Comfyg.Store.Contracts;
 
 [Flags]
 public enum Permissions

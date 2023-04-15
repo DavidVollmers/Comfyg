@@ -2,12 +2,12 @@
 
 public interface IPermissionService
 {
-    Task<bool> IsPermittedAsync<T>(string owner, string targetId, Permissions permissions, bool mustExist = true,
-        CancellationToken cancellationToken = default);
+    Task<bool> IsPermittedAsync<T>(string owner, string targetId, Contracts.Permissions permissions,
+        bool mustExist = true, CancellationToken cancellationToken = default);
 
-    IAsyncEnumerable<IPermission> GetPermissionsAsync<T>(string owner, Permissions? requiredPermissions = null,
-        CancellationToken cancellationToken = default);
+    IAsyncEnumerable<IPermission> GetPermissionsAsync<T>(string owner,
+        Contracts.Permissions? requiredPermissions = null, CancellationToken cancellationToken = default);
 
-    Task SetPermissionAsync<T>(string owner, string targetId, Permissions permissions,
+    Task SetPermissionAsync<T>(string owner, string targetId, Contracts.Permissions permissions,
         CancellationToken cancellationToken = default);
 }

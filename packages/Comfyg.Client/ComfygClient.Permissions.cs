@@ -11,12 +11,14 @@ public partial class ComfygClient
     /// </summary>
     /// <param name="clientId">The ID of the client to set the permission for.</param>
     /// <param name="key">The key of the Comfyg value to set the permission for.</param>
+    /// <param name="permissions">The kind of permissions to set for the client.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
     /// <typeparam name="T">The type of the Comfyg value.</typeparam>
     /// <exception cref="ArgumentNullException"><paramref name="clientId"/> or <paramref name="key"/> is null.</exception>
     /// <exception cref="HttpRequestException">Invalid status code is returned.</exception>
     /// <exception cref="NotSupportedException"><typeparamref name="T"/> is not supported.</exception>
-    public async Task SetPermissionAsync<T>(string clientId, string key, CancellationToken cancellationToken = default)
+    public async Task SetPermissionAsync<T>(string clientId, string key, Permissions permissions,
+        CancellationToken cancellationToken = default)
         where T : IComfygValue
     {
         if (clientId == null) throw new ArgumentNullException(nameof(clientId));
@@ -27,14 +29,14 @@ public partial class ComfygClient
         else if (typeof(T) == typeof(ISecretValue)) uri += "secrets";
         else if (typeof(T) == typeof(ISettingValue)) uri += "settings";
         else throw new NotSupportedException();
-        
+
         var response = await SendRequestAsync(
             () => new HttpRequestMessage(HttpMethod.Post, uri)
             {
-                Content = JsonContent.Create(new[] { new SetPermissionRequest(clientId, key) })
+                Content = JsonContent.Create(new[] { new SetPermissionRequest(clientId, key, permissions) })
             },
             cancellationToken: cancellationToken).ConfigureAwait(false);
-        
+
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to set permission.", null,
                 response.StatusCode);
@@ -44,10 +46,12 @@ public partial class ComfygClient
     /// Sets the same permissions of the currently connected client for a specific client.
     /// </summary>
     /// <param name="clientId">The ID of the client to set the permissions for.</param>
+    /// <param name="permissions">The kind of permissions to set for the client.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
     /// <exception cref="ArgumentNullException"><paramref name="clientId"/> is null.</exception>
     /// <exception cref="HttpRequestException">Invalid status code is returned.</exception>
-    public async Task SetPermissionsAsync(string clientId, CancellationToken cancellationToken = default)
+    public async Task SetPermissionsAsync(string clientId, Permissions permissions,
+        CancellationToken cancellationToken = default)
     {
         if (clientId == null) throw new ArgumentNullException(nameof(clientId));
 
@@ -55,9 +59,9 @@ public partial class ComfygClient
             await SendRequestAsync(
                 () => new HttpRequestMessage(HttpMethod.Post, "permissions")
                 {
-                    Content = JsonContent.Create(new SetPermissionsRequest(clientId))
+                    Content = JsonContent.Create(new SetPermissionsRequest(clientId, permissions))
                 }, cancellationToken: cancellationToken).ConfigureAwait(false);
-        
+
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to set permissions.", null,
                 response.StatusCode);
