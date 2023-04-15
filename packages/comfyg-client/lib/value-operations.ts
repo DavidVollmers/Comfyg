@@ -2,6 +2,7 @@ import { ComfygValue } from './comfyg-value.js'
 import { ComfygClient } from './comfyg-client.js'
 import { Response } from 'node-fetch'
 import ReadableStream = NodeJS.ReadableStream
+import { Permissions } from './permissions'
 
 export class ValueOperations {
   public constructor(private readonly _client: ComfygClient, private readonly _operation: string) {}
@@ -60,6 +61,31 @@ export class ValueOperations {
     )
     if (!response.ok) {
       throw new Error(`Invalid status code when trying to add values (${this._operation}): ` + response.status)
+    }
+  }
+
+  public async setPermission(
+    clientId: string,
+    key: string,
+    permissions: Permissions,
+    signal: AbortSignal | null = null,
+  ): Promise<void> {
+    if (clientId == null) throw new Error('Value cannot be null. Parameter name: clientId')
+    if (key == null) throw new Error('Value cannot be null. Parameter name: key')
+    if (permissions == null) throw new Error('Value cannot be null. Parameter name: permissions')
+    const response = await this._client.__sendRequest(
+      '/permissions/' + this._operation,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify([{ clientId, key, permissions }]),
+      },
+      signal,
+    )
+    if (!response.ok) {
+      throw new Error(`Invalid status code when trying set permission (${this._operation}): ` + response.status)
     }
   }
 }

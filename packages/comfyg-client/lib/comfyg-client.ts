@@ -4,6 +4,7 @@ import jwt from 'jwt-simple'
 import { Client } from './client.js'
 import { SetupClientResponse } from './responses/setup-client-response.js'
 import { ValueOperations } from './value-operations.js'
+import { Permissions } from './permissions.js'
 
 export class ComfygClient {
   private readonly _endpoint: string
@@ -93,6 +94,29 @@ export class ComfygClient {
     }
     const json = await response.json()
     return <SetupClientResponse>json
+  }
+
+  public async setPermissions(
+    clientId: string,
+    permissions: Permissions,
+    signal: AbortSignal | null = null,
+  ): Promise<void> {
+    if (clientId == null) throw new Error('Value cannot be null. Parameter name: clientId')
+    if (permissions == null) throw new Error('Value cannot be null. Parameter name: permissions')
+    const response = await this.__sendRequest(
+      '/permissions',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ clientId, permissions }),
+      },
+      signal,
+    )
+    if (!response.ok) {
+      throw new Error(`Invalid status code when trying set permissions: ` + response.status)
+    }
   }
 
   public async __sendRequest(
