@@ -10,22 +10,11 @@ internal abstract class ComfygValueEntity : IComfygValueInitializer
 
     public string Value { get; init; } = null!;
 
-    public string Version { get; init; } = null!;
+    [RowKey] public string Version { get; init; } = null!;
 
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
 
     public string Hash { get; init; } = null!;
 
-    public string? Tag { get; init; } = null;
-
-    [RowKey]
-    public string RowKey
-    {
-        get
-        {
-            var version = Version;
-            if (Tag != null) version += "-" + Tag;
-            return version;
-        }
-    }
+    public string? ParentVersion { get; init; }
 }

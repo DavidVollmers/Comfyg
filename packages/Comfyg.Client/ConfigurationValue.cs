@@ -45,7 +45,7 @@ public sealed class ConfigurationValue : IConfigurationValue
     public string Hash => null!;
 
     /// <summary>
-    /// The tag of the configuration value. Always returns `null`.
+    /// The parent version of the configuration value. Always returns `null`.
     /// </summary>
-    public string? Tag => null;
+    public string? ParentVersion => null;
 }

@@ -14,7 +14,7 @@ internal class SecretValueModel : ISecretValue
 
     public string Hash { get; init; }
 
-    public string? Tag { get; init; } = null;
+    public string? ParentVersion { get; init; }
 
     public SecretValueModel(IComfygValue value)
     {
@@ -23,5 +23,6 @@ internal class SecretValueModel : ISecretValue
         Version = value.Version;
         CreatedAt = value.CreatedAt;
         Hash = value.Hash;
+        ParentVersion = value.ParentVersion;
     }
 }

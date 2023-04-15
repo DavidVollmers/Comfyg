@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Comfyg.Client.Requests;
 using Comfyg.Store.Contracts;
-using Comfyg.Store.Contracts.Requests;
 
 namespace Comfyg.Client.Operations;
 

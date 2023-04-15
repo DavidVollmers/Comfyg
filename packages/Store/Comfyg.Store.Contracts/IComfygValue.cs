@@ -40,8 +40,8 @@ public interface IComfygValue
     string Hash { get; }
 
     /// <summary>
-    /// The tag of the Comfyg value.
+    /// The parent version of the Comfyg value.
     /// </summary>
     [JsonIgnore]
-    string? Tag { get; }
+    string? ParentVersion { get; }
 }

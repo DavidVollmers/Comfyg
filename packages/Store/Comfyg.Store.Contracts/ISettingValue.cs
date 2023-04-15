@@ -21,6 +21,6 @@ public interface ISettingValue : IComfygValue
 
         public string Hash { get; init; } = null!;
 
-        public string? Tag { get; init; }
+        public string? ParentVersion { get; init; }
     }
 }

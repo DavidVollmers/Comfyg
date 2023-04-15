@@ -21,6 +21,6 @@ public interface ISecretValue : IComfygValue
 
         public string Hash { get; init; } = null!;
 
-        public string? Tag { get; init; }
+        public string? ParentVersion { get; init; }
     }
 }

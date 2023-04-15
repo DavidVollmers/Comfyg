@@ -45,7 +45,7 @@ public sealed class SettingValue : ISettingValue
     public string Hash => null!;
 
     /// <summary>
-    /// The tag of the setting value. Always returns `null`.
+    /// The parent version of the setting value. Always returns `null`.
     /// </summary>
-    public string? Tag => null;
+    public string? ParentVersion => null;
 }

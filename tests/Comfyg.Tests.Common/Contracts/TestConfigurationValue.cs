@@ -14,5 +14,5 @@ public class TestConfigurationValue : IConfigurationValue
 
     public string Hash { get; set; } = null!;
     
-    public string? Tag { get; set; }
+    public string? ParentVersion { get; set; }
 }

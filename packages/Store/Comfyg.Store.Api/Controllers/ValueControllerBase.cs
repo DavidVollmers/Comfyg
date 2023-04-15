@@ -31,7 +31,7 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
             Permissions.Write, cancellationToken: cancellationToken);
         if (!isPermitted) return false;
 
-        await _valueService.TagValueAsync(clientIdentity.Client.ClientId, key, version, tag, cancellationToken);
+        await _valueService.TagValueAsync(clientIdentity.Client.ClientId, key, tag, version, cancellationToken);
 
         return true;
     }

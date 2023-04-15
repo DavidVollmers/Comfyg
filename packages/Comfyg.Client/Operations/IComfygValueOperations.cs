@@ -24,4 +24,7 @@ public interface IComfygValueOperations<T> : IDisposable where T : IComfygValue
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
     /// <typeparam name="T">The type of the values to add.</typeparam>
     Task AddValuesAsync(IEnumerable<T> values, CancellationToken cancellationToken = default);
+
+    Task TagValueAsync(string key, string tag, string version = ContractConstants.LatestVersion,
+        CancellationToken cancellationToken = default);
 }

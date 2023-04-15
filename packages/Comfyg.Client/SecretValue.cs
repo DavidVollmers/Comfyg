@@ -45,7 +45,7 @@ public sealed class SecretValue : ISecretValue
     public string Hash => null!;
 
     /// <summary>
-    /// The tag of the secret value. Always returns `null`.
+    /// The parent version of the secret value. Always returns `null`.
     /// </summary>
-    public string? Tag => null;
+    public string? ParentVersion => null;
 }
