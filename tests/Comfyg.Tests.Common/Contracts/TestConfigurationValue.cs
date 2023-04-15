@@ -13,4 +13,6 @@ public class TestConfigurationValue : IConfigurationValue
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
     public string Hash { get; set; } = null!;
+    
+    public string? Tag { get; set; }
 }

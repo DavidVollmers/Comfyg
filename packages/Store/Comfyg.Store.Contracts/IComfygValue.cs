@@ -39,5 +39,9 @@ public interface IComfygValue
     [JsonIgnore]
     string Hash { get; }
 
-    [MaxLength(64)] [TechnicalIdentifier] string? Tag { get; }
+    /// <summary>
+    /// The tag of the Comfyg value.
+    /// </summary>
+    [JsonIgnore]
+    string? Tag { get; }
 }

@@ -24,6 +24,18 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         _changeService = changeService;
     }
 
+    protected async Task<bool> TagValueAsync(IClientIdentity clientIdentity, string key, string version, string tag,
+        CancellationToken cancellationToken)
+    {
+        var isPermitted = await _permissionService.IsPermittedAsync<T>(clientIdentity.Client.ClientId, key,
+            Permissions.Write, cancellationToken: cancellationToken);
+        if (!isPermitted) return false;
+
+        await _valueService.TagValueAsync(clientIdentity.Client.ClientId, key, version, tag, cancellationToken);
+
+        return true;
+    }
+
     protected async IAsyncEnumerable<IComfygValue> GetValuesAsync(IClientIdentity clientIdentity,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {

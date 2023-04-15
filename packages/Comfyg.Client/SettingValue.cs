@@ -43,4 +43,9 @@ public sealed class SettingValue : ISettingValue
     /// A hash value to identity the setting value. Always returns `null`.
     /// </summary>
     public string Hash => null!;
+
+    /// <summary>
+    /// The tag of the setting value. Always returns `null`.
+    /// </summary>
+    public string? Tag => null;
 }

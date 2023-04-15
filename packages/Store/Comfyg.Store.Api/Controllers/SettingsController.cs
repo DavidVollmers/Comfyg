@@ -34,12 +34,25 @@ public class SettingsController : ValueControllerBase<ISettingValue>
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddSettingValuesAsync([FromBody] IAddSettingValuesRequest request,
+    public async Task<IActionResult> AddSettingValuesAsync([FromBody] IAddSettingValuesRequest request,
         CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
         var result = await AddValuesAsync(clientIdentity, request.Values, cancellationToken);
+
+        if (!result) return Forbid();
+
+        return Ok();
+    }
+
+    [HttpPost("tag")]
+    public async Task<IActionResult> TagSettingValueAsync([FromBody] ITagValueRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
+
+        var result = await TagValueAsync(clientIdentity, request.Key, request.Version, request.Tag, cancellationToken);
 
         if (!result) return Forbid();
 

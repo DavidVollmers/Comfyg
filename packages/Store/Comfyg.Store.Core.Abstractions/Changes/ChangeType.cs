@@ -4,5 +4,6 @@ public enum ChangeType
 {
     Unknown,
     Add,
-    Remove
+    Remove,
+    Tag
 }

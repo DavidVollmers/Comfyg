@@ -58,10 +58,13 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
 
         await _changeService.LogChangeAsync<TValue>(key, ChangeType.Add, owner, cancellationToken);
 
-        await _permissionService.SetPermissionAsync<TValue>(owner, key,
-            Contracts.Permissions.Read | Contracts.Permissions.Write | Contracts.Permissions.Delete |
-            Contracts.Permissions.Permit,
-            cancellationToken);
+        if (latest == null)
+        {
+            await _permissionService.SetPermissionAsync<TValue>(owner, key,
+                Contracts.Permissions.Read | Contracts.Permissions.Write | Contracts.Permissions.Delete |
+                Contracts.Permissions.Permit,
+                cancellationToken);
+        }
     }
 
     public async IAsyncEnumerable<TValue> GetValuesAsync(string owner,
@@ -98,7 +101,8 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
     public async Task<TValue?> GetLatestValueAsync(string key, CancellationToken cancellationToken = default)
         => await GetValueAsync(key, CoreConstants.LatestVersion, cancellationToken);
 
-    public async Task TagAsync(string key, string version, string tag, CancellationToken cancellationToken = default)
+    public async Task TagValueAsync(string owner, string key, string version, string tag,
+        CancellationToken cancellationToken = default)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (version == null) throw new ArgumentNullException(nameof(version));
@@ -117,5 +121,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
             Hash = original.Hash,
             Tag = tag
         }, cancellationToken);
+
+        await _changeService.LogChangeAsync<TValue>(key, ChangeType.Tag, owner, cancellationToken);
     }
 }

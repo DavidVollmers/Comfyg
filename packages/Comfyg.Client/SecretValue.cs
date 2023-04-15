@@ -43,4 +43,9 @@ public sealed class SecretValue : ISecretValue
     /// A hash value to identity the secret value. Always returns `null`.
     /// </summary>
     public string Hash => null!;
+
+    /// <summary>
+    /// The tag of the secret value. Always returns `null`.
+    /// </summary>
+    public string? Tag => null;
 }

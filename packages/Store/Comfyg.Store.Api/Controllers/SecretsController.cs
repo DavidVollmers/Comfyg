@@ -39,12 +39,25 @@ public class SecretsController : ValueControllerBase<ISecretValue>
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddSecretValuesAsync([FromBody] IAddSecretValuesRequest request,
+    public async Task<IActionResult> AddSecretValuesAsync([FromBody] IAddSecretValuesRequest request,
         CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
         var result = await AddValuesAsync(clientIdentity, request.Values, cancellationToken);
+
+        if (!result) return Forbid();
+
+        return Ok();
+    }
+
+    [HttpPost("tag")]
+    public async Task<IActionResult> TagSecretValueAsync([FromBody] ITagValueRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
+
+        var result = await TagValueAsync(clientIdentity, request.Key, request.Version, request.Tag, cancellationToken);
 
         if (!result) return Forbid();
 

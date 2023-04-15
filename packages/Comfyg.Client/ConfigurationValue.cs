@@ -43,4 +43,9 @@ public sealed class ConfigurationValue : IConfigurationValue
     /// A hash value to identity the configuration value. Always returns `null`.
     /// </summary>
     public string Hash => null!;
+
+    /// <summary>
+    /// The tag of the configuration value. Always returns `null`.
+    /// </summary>
+    public string? Tag => null;
 }
