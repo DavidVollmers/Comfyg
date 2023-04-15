@@ -190,7 +190,7 @@ public partial class E2ETests
 
         var client = await ConnectAsync();
 
-        var result = await TestCli.ExecuteAsync($"set permissions config {key} {targetClientId}");
+        var result = await TestCli.ExecuteAsync($"set permissions config {targetClientId} {key}");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
