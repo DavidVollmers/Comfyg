@@ -29,11 +29,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
     {
         var systemClientId = Guid.NewGuid().ToString();
         var systemClientSecret = CreateClientSecret();
-        var client = new TestClient
-        {
-            ClientId = Guid.NewGuid().ToString(),
-            FriendlyName = "New Client"
-        };
+        var client = new TestClient { ClientId = Guid.NewGuid().ToString(), FriendlyName = "New Client" };
         var clientSecret = CreateClientSecret();
 
         using var httpClient = _factory.CreateClient();
@@ -92,12 +88,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         var friendlyName = "Test Client";
-        var client = new TestClient
-        {
-            ClientId = clientId,
-            ClientSecret = clientSecret,
-            FriendlyName = friendlyName
-        };
+        var client = new TestClient { ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName };
 
         using var httpClient = _factory.CreateClient();
 
@@ -135,12 +126,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         var friendlyName = "Test Client";
-        var client = new TestClient
-        {
-            ClientId = clientId,
-            ClientSecret = clientSecret,
-            FriendlyName = friendlyName
-        };
+        var client = new TestClient { ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName };
         var configurationValues = new[]
         {
             new ConfigurationValue("key1", "value1"), new ConfigurationValue("key2", "value2")
@@ -162,7 +148,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
         {
             mock.Setup(ps =>
                     ps.IsPermittedAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<string>(),
-                        It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                        It.IsAny<Permissions>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
         });
 
@@ -181,10 +167,12 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
         {
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == clientId),
-                    It.Is<string>(s => s == "key1"), It.Is<bool>(b => !b), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == "key1"), It.Is<Permissions>(p => p == Permissions.Write),
+                    It.Is<bool>(b => !b), It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == clientId),
-                    It.Is<string>(s => s == "key2"), It.Is<bool>(b => !b), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == "key2"), It.Is<Permissions>(p => p == Permissions.Write),
+                    It.Is<bool>(b => !b), It.IsAny<CancellationToken>()), Times.Once);
         });
 
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>

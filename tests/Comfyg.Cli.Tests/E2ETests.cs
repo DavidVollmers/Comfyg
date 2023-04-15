@@ -38,7 +38,7 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
         {
             mock.Setup(ps =>
                     ps.IsPermittedAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<string>(),
-                        It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                        It.IsAny<Permissions>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
         });
 
@@ -53,13 +53,16 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
         {
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == client.ClientId),
-                    It.Is<string>(s => s == "key1"), It.Is<bool>(b => !b), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == "key1"), It.Is<Permissions>(p => p == Permissions.Write),
+                    It.Is<bool>(b => !b), It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == client.ClientId),
-                    It.Is<string>(s => s == "key2"), It.Is<bool>(b => !b), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == "key2"), It.Is<Permissions>(p => p == Permissions.Write),
+                    It.Is<bool>(b => !b), It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == client.ClientId),
-                    It.Is<string>(s => s == "key2:key3"), It.Is<bool>(b => !b), It.IsAny<CancellationToken>()),
+                    It.Is<string>(s => s == "key2:key3"), It.Is<Permissions>(p => p == Permissions.Write),
+                    It.Is<bool>(b => !b), It.IsAny<CancellationToken>()),
                 Times.Once);
         });
 

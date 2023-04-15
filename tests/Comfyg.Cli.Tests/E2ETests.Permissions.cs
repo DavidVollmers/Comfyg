@@ -33,13 +33,16 @@ public partial class E2ETests
         _factory.Mock<IPermissionService>(mock =>
         {
             mock.Setup(ps =>
-                    ps.GetPermissionsAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    ps.GetPermissionsAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<Permissions>(),
+                        It.IsAny<CancellationToken>()))
                 .Returns(configurationValuePermissions.ToAsyncEnumerable());
             mock.Setup(ps =>
-                    ps.GetPermissionsAsync<ISecretValue>(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    ps.GetPermissionsAsync<ISecretValue>(It.IsAny<string>(), It.IsAny<Permissions>(),
+                        It.IsAny<CancellationToken>()))
                 .Returns(secretValuePermissions.ToAsyncEnumerable());
             mock.Setup(ps =>
-                    ps.GetPermissionsAsync<ISettingValue>(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    ps.GetPermissionsAsync<ISettingValue>(It.IsAny<string>(), It.IsAny<Permissions>(),
+                        It.IsAny<CancellationToken>()))
                 .Returns(settingValuePermissions.ToAsyncEnumerable());
         });
 
@@ -60,22 +63,28 @@ public partial class E2ETests
         {
             mock.Verify(
                 ps => ps.GetPermissionsAsync<IConfigurationValue>(It.Is<string>(s => s == client.ClientId),
+                    It.Is<Permissions>(p => p == Permissions.Permit),
                     It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(
                 ps => ps.SetPermissionAsync<IConfigurationValue>(It.Is<string>(s => s == targetClientId),
-                    It.Is<string>(s => s == configurationValueKey1), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == configurationValueKey1), It.Is<Permissions>(p => p == Permissions.Read),
+                    It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(
                 ps => ps.GetPermissionsAsync<ISecretValue>(It.Is<string>(s => s == client.ClientId),
+                    It.Is<Permissions>(p => p == Permissions.Permit),
                     It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(
                 ps => ps.SetPermissionAsync<ISecretValue>(It.Is<string>(s => s == targetClientId),
-                    It.Is<string>(s => s == secretValueKey1), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == secretValueKey1), It.Is<Permissions>(p => p == Permissions.Read),
+                    It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(
                 ps => ps.GetPermissionsAsync<ISettingValue>(It.Is<string>(s => s == client.ClientId),
+                    It.Is<Permissions>(p => p == Permissions.Permit),
                     It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(
                 ps => ps.SetPermissionAsync<ISettingValue>(It.Is<string>(s => s == targetClientId),
-                    It.Is<string>(s => s == settingValueKey1), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == settingValueKey1), It.Is<Permissions>(p => p == Permissions.Read),
+                    It.IsAny<CancellationToken>()), Times.Once);
         });
     }
 
@@ -96,7 +105,7 @@ public partial class E2ETests
         _factory.Mock<IPermissionService>(mock =>
         {
             mock.Setup(ps => ps.IsPermittedAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<string>(),
-                It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+                It.IsAny<Permissions>(), It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
         });
 
         var client = await ConnectAsync();
@@ -116,9 +125,11 @@ public partial class E2ETests
         {
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == client.ClientId),
-                    It.Is<string>(s => s == key), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == key), It.Is<Permissions>(p => p == Permissions.Permit), It.IsAny<bool>(),
+                    It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(ps => ps.SetPermissionAsync<IConfigurationValue>(It.Is<string>(s => s == targetClientId),
-                It.Is<string>(s => s == key), It.IsAny<CancellationToken>()), Times.Once);
+                It.Is<string>(s => s == key), It.Is<Permissions>(p => p == Permissions.Read),
+                It.IsAny<CancellationToken>()), Times.Once);
         });
     }
 }
