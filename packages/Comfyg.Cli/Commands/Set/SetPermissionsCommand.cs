@@ -9,7 +9,7 @@ namespace Comfyg.Cli.Commands.Set;
 internal class SetPermissionsCommand : Command
 {
     private readonly Argument<string> _clientIdArgument;
-    private readonly Option<Permissions> _permissionsOption;
+    private readonly Option<Permissions[]> _permissionsOption;
 
     public SetPermissionsCommand(SetConfigurationPermissionsCommand setConfigurationPermissionsCommand,
         SetSecretPermissionsCommand setSecretPermissionsCommand,
@@ -28,7 +28,7 @@ internal class SetPermissionsCommand : Command
         _clientIdArgument = new Argument<string>("CLIENT_ID", "The ID of the client to set the permissions for.");
         AddArgument(_clientIdArgument);
 
-        _permissionsOption = new Option<Permissions>(new []
+        _permissionsOption = new Option<Permissions[]>(new []
         {
             "-p",
             "--permissions"
@@ -46,13 +46,13 @@ internal class SetPermissionsCommand : Command
     private async Task HandleCommandAsync(InvocationContext context)
     {
         var clientIdArgument = context.ParseResult.GetValueForArgument(_clientIdArgument);
-        var permissionsOption = context.ParseResult.GetValueForOption(_permissionsOption);
+        var permissionsOption = context.ParseResult.GetValueForOption(_permissionsOption)!;
 
         var cancellationToken = context.GetCancellationToken();
 
         using var client = await State.User.RequireClientAsync(cancellationToken);
 
-        await client.SetPermissionsAsync(clientIdArgument, permissionsOption, cancellationToken);
+        await client.SetPermissionsAsync(clientIdArgument, permissionsOption.ToFlags(), cancellationToken);
 
         AnsiConsole.MarkupLine($"[bold green]Successfully set permissions for \"{clientIdArgument}\"[/]");
     }

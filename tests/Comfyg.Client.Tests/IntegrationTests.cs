@@ -8,7 +8,7 @@ using Moq;
 
 namespace Comfyg.Client.Tests;
 
-public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFactory>
+public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFactory>
 {
     private readonly IntegrationTestWebApplicationFactory _factory;
 
@@ -87,7 +87,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
     {
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
-        var friendlyName = "Test Client";
+        const string friendlyName = "Test Client";
         var client = new TestClient { ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName };
 
         using var httpClient = _factory.CreateClient();
@@ -125,7 +125,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
     {
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
-        var friendlyName = "Test Client";
+        const string friendlyName = "Test Client";
         var client = new TestClient { ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName };
         var configurationValues = new[]
         {

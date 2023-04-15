@@ -1,5 +1,6 @@
 ﻿using Comfyg.Store.Api;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,12 +49,19 @@ public sealed class E2ETestWebApplicationFactory<TEntryPoint> : IDisposable wher
 
         _mocks.ConfigureServices(builder.Services);
 
+        builder.Services.AddHttpLogging(options =>
+        {
+            options.LoggingFields = HttpLoggingFields.All;
+        });
+        
         _webApplication = builder.Build();
 
         _webApplication.MapControllers();
 
         _webApplication.UseAuthentication();
         _webApplication.UseAuthorization();
+
+        _webApplication.UseHttpLogging();
 
         _webApplication.StartAsync().GetAwaiter().GetResult();
     }

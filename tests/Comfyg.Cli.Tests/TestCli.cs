@@ -7,9 +7,9 @@ namespace Comfyg.Cli.Tests;
 
 public class TestCliResult
 {
-    public string Output { get; set; }
+    public string Output { get; set; } = null!;
 
-    public string Error { get; set; }
+    public string Error { get; set; } = null!;
 
     public int ExitCode { get; set; }
 }

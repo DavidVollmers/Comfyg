@@ -37,6 +37,6 @@ public interface ISetPermissionRequest
 
         public string Key { get; init; } = null!;
 
-        public Permissions Permissions { get; } = Permissions.Read;
+        public Permissions Permissions { get; init; } = Permissions.Read;
     }
 }

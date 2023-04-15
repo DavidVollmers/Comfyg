@@ -24,6 +24,8 @@ public partial class ComfygClient
         if (clientId == null) throw new ArgumentNullException(nameof(clientId));
         if (key == null) throw new ArgumentNullException(nameof(key));
 
+        if (permissions == 0) permissions = Permissions.Read;
+
         var uri = "permissions/";
         if (typeof(T) == typeof(IConfigurationValue)) uri += "configuration";
         else if (typeof(T) == typeof(ISecretValue)) uri += "secrets";
@@ -54,6 +56,8 @@ public partial class ComfygClient
         CancellationToken cancellationToken = default)
     {
         if (clientId == null) throw new ArgumentNullException(nameof(clientId));
+
+        if (permissions == 0) permissions = Permissions.Read;
 
         var response =
             await SendRequestAsync(

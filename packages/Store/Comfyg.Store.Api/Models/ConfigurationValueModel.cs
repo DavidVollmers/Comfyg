@@ -14,7 +14,9 @@ internal class ConfigurationValueModel : IConfigurationValue
 
     public string Hash { get; init; }
 
+#pragma warning disable CS8618
     public ConfigurationValueModel() { }
+#pragma warning restore CS8618
 
     public ConfigurationValueModel(IComfygValue value)
     {

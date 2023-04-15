@@ -10,7 +10,9 @@ internal class ClientModel : IClient
 
     public string FriendlyName { get; init; }
 
+#pragma warning disable CS8618
     public ClientModel() { }
+#pragma warning restore CS8618
 
     public ClientModel(IClient client)
     {

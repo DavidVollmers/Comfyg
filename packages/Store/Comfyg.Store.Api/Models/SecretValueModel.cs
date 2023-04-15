@@ -14,7 +14,9 @@ internal class SecretValueModel : ISecretValue
 
     public string Hash { get; init; }
 
+#pragma warning disable CS8618
     public SecretValueModel() { }
+#pragma warning restore CS8618
 
     public SecretValueModel(IComfygValue value)
     {

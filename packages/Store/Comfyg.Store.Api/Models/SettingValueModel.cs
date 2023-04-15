@@ -14,7 +14,9 @@ internal class SettingValueModel : ISettingValue
 
     public string Hash { get; init; }
 
+#pragma warning disable CS8618
     public SettingValueModel() { }
+#pragma warning restore CS8618
 
     public SettingValueModel(IComfygValue value)
     {

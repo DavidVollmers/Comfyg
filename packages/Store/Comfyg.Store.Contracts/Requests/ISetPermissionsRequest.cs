@@ -27,6 +27,6 @@ public interface ISetPermissionsRequest
     {
         public string ClientId { get; init; } = null!;
 
-        public Permissions Permissions { get; } = Permissions.Read;
+        public Permissions Permissions { get; init; } = Permissions.Read;
     }
 }
