@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Comfyg.Tests"/>
+    <InternalsVisibleTo Include="Comfyg.Tests" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Comfyg.Store.Contracts\Comfyg.Store.Contracts.csproj"/>
+    <ProjectReference Include="..\Comfyg.Store.Contracts\Comfyg.Store.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

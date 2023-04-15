@@ -45,8 +45,7 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         var changes =
             _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since, cancellationToken);
 
-        await foreach (var change in changes.GroupBy(c => c.TargetId).WithCancellation(cancellationToken)
-                      )
+        await foreach (var change in changes.GroupBy(c => c.TargetId).WithCancellation(cancellationToken))
         {
             var value = await _valueService.GetLatestValueAsync(change.Key, cancellationToken);
 
@@ -70,7 +69,8 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
             if (string.IsNullOrWhiteSpace(value.Key)) throw new InvalidOperationException("Key cannot be empty.");
 
             var isPermitted = await _permissionService
-                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, false, cancellationToken);
+                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, Permissions.Write, false,
+                    cancellationToken);
             if (!isPermitted) return false;
         }
 

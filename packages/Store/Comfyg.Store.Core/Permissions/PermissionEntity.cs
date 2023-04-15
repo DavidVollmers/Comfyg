@@ -14,6 +14,8 @@ internal abstract class PermissionEntityBase : IPermission
     [StoreAsTypeInfo] public Type TargetType { get; init; } = null!;
 
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
+
+    public Abstractions.Permissions.Permissions Permissions { get; init; } = Abstractions.Permissions.Permissions.Read;
 }
 
 internal class PermissionEntity : PermissionEntityBase

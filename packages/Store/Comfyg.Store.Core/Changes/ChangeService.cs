@@ -36,10 +36,7 @@ internal class ChangeService : IChangeService
             .AddAsync(
                 new ChangeLogEntity
                 {
-                    TargetId = targetId,
-                    ChangeType = changeType,
-                    TargetType = typeof(T),
-                    ChangedBy = changedBy
+                    TargetId = targetId, ChangeType = changeType, TargetType = typeof(T), ChangedBy = changedBy
                 }, cancellationToken);
 
         await _changeLogMirrored.CreateTableIfNotExistsAsync(cancellationToken);
@@ -47,10 +44,7 @@ internal class ChangeService : IChangeService
             .AddAsync(
                 new ChangeLogEntityMirrored
                 {
-                    TargetId = targetId,
-                    ChangeType = changeType,
-                    TargetType = typeof(T),
-                    ChangedBy = changedBy
+                    TargetId = targetId, ChangeType = changeType, TargetType = typeof(T), ChangedBy = changedBy
                 }, cancellationToken);
     }
 
@@ -73,7 +67,8 @@ internal class ChangeService : IChangeService
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
 
-        var permissions = await _permissionService.GetPermissionsAsync<T>(owner, cancellationToken)
+        var permissions = await _permissionService
+            .GetPermissionsAsync<T>(owner, Abstractions.Permissions.Permissions.Read, cancellationToken)
             .ToArrayAsync(cancellationToken);
 
         var changes = GetChangesSinceAsync<T>(since, cancellationToken)

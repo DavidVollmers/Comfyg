@@ -9,4 +9,6 @@ public interface IPermission
     Type TargetType { get; }
 
     DateTimeOffset CreatedAt { get; }
+    
+    Permissions Permissions { get; }
 }

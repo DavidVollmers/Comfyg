@@ -11,4 +11,6 @@ public class TestPermission : IPermission
     public Type TargetType { get; set; }= null!;
     
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+    public Permissions Permissions { get; set; } = Permissions.Read;
 }

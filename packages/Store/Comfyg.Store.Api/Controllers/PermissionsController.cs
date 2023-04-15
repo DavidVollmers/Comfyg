@@ -78,7 +78,7 @@ public class PermissionsController : ControllerBase
         foreach (var permission in permissions)
         {
             var isPermitted = await _permissionService
-                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, permission.Key,
+                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, permission.Key, Permissions.Permit,
                     cancellationToken: cancellationToken);
             if (!isPermitted) return false;
 
@@ -92,7 +92,8 @@ public class PermissionsController : ControllerBase
 
         foreach (var permission in permissions)
         {
-            await _permissionService.SetPermissionAsync<T>(permission.ClientId, permission.Key,
+            //TODO write/delete/permit option
+            await _permissionService.SetPermissionAsync<T>(permission.ClientId, permission.Key, Permissions.Read,
                 cancellationToken);
         }
 
@@ -102,10 +103,14 @@ public class PermissionsController : ControllerBase
     private async Task SetPermissionsAsync<T>(IClientIdentity clientIdentity, IClient client,
         CancellationToken cancellationToken) where T : IComfygValue
     {
-        var permissions = _permissionService.GetPermissionsAsync<T>(clientIdentity.Client.ClientId, cancellationToken);
+        var permissions =
+            _permissionService.GetPermissionsAsync<T>(clientIdentity.Client.ClientId, Permissions.Permit,
+                cancellationToken);
         await foreach (var permission in permissions.WithCancellation(cancellationToken))
         {
-            await _permissionService.SetPermissionAsync<T>(client.ClientId, permission.TargetId, cancellationToken);
+            //TODO write/delete/permit option
+            await _permissionService.SetPermissionAsync<T>(client.ClientId, permission.TargetId, Permissions.Read,
+                cancellationToken);
         }
     }
 }

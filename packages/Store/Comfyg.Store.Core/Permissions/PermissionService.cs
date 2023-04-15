@@ -21,7 +21,8 @@ internal class PermissionService : IPermissionService
             .OverrideTableName($"{systemId}{nameof(PermissionEntityMirrored)}");
     }
 
-    public async Task<bool> IsPermittedAsync<T>(string owner, string targetId, bool mustExist = true,
+    public async Task<bool> IsPermittedAsync<T>(string owner, string targetId,
+        Abstractions.Permissions.Permissions permissions, bool mustExist = true,
         CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
@@ -35,10 +36,11 @@ internal class PermissionService : IPermissionService
 
         if (!ownedValues.Any()) return !mustExist;
 
-        return ownedValues.Any(ov => ov.Owner == owner);
+        return ownedValues.Any(ov => ov.Owner == owner && ov.Permissions.HasFlag(permissions));
     }
 
     public async IAsyncEnumerable<IPermission> GetPermissionsAsync<T>(string owner,
+        Abstractions.Permissions.Permissions? requiredPermissions = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
@@ -48,23 +50,34 @@ internal class PermissionService : IPermissionService
         var filter = $"PartitionKey eq '{owner}-{typeof(T).FullName}'";
         var permissions = _permissions.QueryAsync(filter, cancellationToken: cancellationToken);
         await foreach (var permission in permissions.WithCancellation(cancellationToken))
+        {
+            if (requiredPermissions.HasValue && !permission.Permissions.HasFlag(requiredPermissions)) continue;
             yield return permission;
+        }
     }
 
     public async Task SetPermissionAsync<T>(string owner, string targetId,
-        CancellationToken cancellationToken = default)
+        Abstractions.Permissions.Permissions permissions, CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
         if (targetId == null) throw new ArgumentNullException(nameof(targetId));
 
         await _permissions.CreateTableIfNotExistsAsync(cancellationToken);
         await _permissions
-            .UpsertAsync(new PermissionEntity { Owner = owner, TargetId = targetId, TargetType = typeof(T) },
+            .UpsertAsync(
+                new PermissionEntity
+                {
+                    Owner = owner, TargetId = targetId, TargetType = typeof(T), Permissions = permissions
+                },
                 cancellationToken: cancellationToken);
 
         await _permissionsMirrored.CreateTableIfNotExistsAsync(cancellationToken);
         await _permissionsMirrored
-            .UpsertAsync(new PermissionEntityMirrored { Owner = owner, TargetId = targetId, TargetType = typeof(T) },
+            .UpsertAsync(
+                new PermissionEntityMirrored
+                {
+                    Owner = owner, TargetId = targetId, TargetType = typeof(T), Permissions = permissions
+                },
                 cancellationToken: cancellationToken);
     }
 }
