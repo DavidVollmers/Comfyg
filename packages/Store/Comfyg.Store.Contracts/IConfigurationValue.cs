@@ -20,5 +20,7 @@ public interface IConfigurationValue : IComfygValue
         public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
 
         public string Hash { get; init; } = null!;
+
+        public string? Tag { get; } = null;
     }
 }

@@ -13,4 +13,6 @@ internal interface IComfygValueInitializer : IComfygValue
     new DateTimeOffset CreatedAt { get; init; }
 
     new string Hash { get; init; }
+    
+    new string Tag { get; init; }
 }

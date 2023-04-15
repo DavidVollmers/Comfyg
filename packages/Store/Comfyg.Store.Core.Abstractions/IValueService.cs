@@ -12,4 +12,6 @@ public interface IValueService<T> where T : IComfygValue
     Task<T?> GetValueAsync(string key, string version, CancellationToken cancellationToken = default);
 
     Task<T?> GetLatestValueAsync(string key, CancellationToken cancellationToken = default);
+
+    Task TagAsync(string key, string version, string tag, CancellationToken cancellationToken = default);
 }

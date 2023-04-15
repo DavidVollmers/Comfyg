@@ -43,14 +43,18 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
 
         if (latest?.Hash == hash) return;
 
-        foreach (var version in new[]
-                 {
-                     CoreConstants.LatestVersion, (long.MaxValue - DateTimeOffset.UtcNow.Ticks).ToString()
-                 })
-        {
-            await _values.UpsertAsync(new TEntity { Key = key, Value = value, Version = version, Hash = hash },
-                cancellationToken: cancellationToken);
-        }
+        await _values.AddAsync(
+            new TEntity
+            {
+                Key = key,
+                Value = value,
+                Version = (long.MaxValue - DateTimeOffset.UtcNow.Ticks).ToString(),
+                Hash = hash
+            },
+            cancellationToken: cancellationToken);
+        await _values.UpsertAsync(
+            new TEntity { Key = key, Value = value, Version = CoreConstants.LatestVersion, Hash = hash },
+            cancellationToken: cancellationToken);
 
         await _changeService.LogChangeAsync<TValue>(key, ChangeType.Add, owner, cancellationToken);
 
@@ -93,4 +97,25 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
 
     public async Task<TValue?> GetLatestValueAsync(string key, CancellationToken cancellationToken = default)
         => await GetValueAsync(key, CoreConstants.LatestVersion, cancellationToken);
+
+    public async Task TagAsync(string key, string version, string tag, CancellationToken cancellationToken = default)
+    {
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (version == null) throw new ArgumentNullException(nameof(version));
+        if (tag == null) throw new ArgumentNullException(nameof(tag));
+
+        await _values.CreateTableIfNotExistsAsync(cancellationToken);
+
+        var original = await _values.GetIfExistsAsync(key.ToLower(), version, cancellationToken: cancellationToken);
+        if (original == null) throw new InvalidOperationException("Value does not exist.");
+
+        await _values.AddAsync(new TEntity
+        {
+            Key = key,
+            Value = original.Value,
+            Version = version,
+            Hash = original.Hash,
+            Tag = tag
+        }, cancellationToken);
+    }
 }

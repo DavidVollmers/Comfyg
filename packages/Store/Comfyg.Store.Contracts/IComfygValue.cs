@@ -38,4 +38,6 @@ public interface IComfygValue
     /// </summary>
     [JsonIgnore]
     string Hash { get; }
+
+    [MaxLength(64)] [TechnicalIdentifier] string? Tag { get; }
 }
