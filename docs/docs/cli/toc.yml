@@ -16,3 +16,5 @@
       href: command_setup_client.md
     - name: comfyg setup localhost
       href: command_setup_localhost.md
+    - name: comfyg tag
+      href: command_tag.md

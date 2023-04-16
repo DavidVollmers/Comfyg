@@ -4,7 +4,7 @@
 
 ## Name
 
-`comfyg set permissions` - Sets permissions on permitted key-value pairs for a different client.
+`comfyg set permissions` - Sets permissions on permitted key-value pairs for another client.
 
 ## Synopsis
 
@@ -17,7 +17,7 @@ comfyg set permissions [config|secret|setting] -?|-h|--help
 ## Description
 
 The `comfyg set permissions` command sets permissions on permitted key-value pairs of the currently connected client for
-a different client.
+another client.
 
 There are three sub commands, one for each supported Comfyg value type. Otherwise it will assign permissions to **all**
 permitted key-value pairs.
@@ -72,3 +72,11 @@ permitted key-value pairs.
   - `permit`
 
     Permission to set permissions for other clients on the key-value pair(s).
+
+## Examples
+
+- Set `write` and `read` permissions for all permitted key-value pairs for another client with the ID "test":
+
+  ```shell
+  comfyg set permissions "test" -p write read
+  ```

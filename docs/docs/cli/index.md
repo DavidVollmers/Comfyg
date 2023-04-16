@@ -30,5 +30,7 @@ Here you can find a list of all existing Comfyg CLI commands:
 - [connect](command_connect.md)
 - [export](command_export.md)
 - [import](command_import.md)
+- [set permissions](command_set_permissions.md)
 - [setup client](command_setup_client.md)
 - [setup localhost](command_setup_localhost.md)
+- [tag](command_tag.md)

@@ -14,7 +14,7 @@ internal class SetPermissionsCommand : Command
     public SetPermissionsCommand(SetConfigurationPermissionsCommand setConfigurationPermissionsCommand,
         SetSecretPermissionsCommand setSecretPermissionsCommand,
         SetSettingPermissionsCommand setSettingPermissionsCommand)
-        : base("permissions", "Sets permissions on all permitted key-value pairs for a different client.")
+        : base("permissions", "Sets permissions on all permitted key-value pairs for another client.")
     {
         if (setConfigurationPermissionsCommand == null)
             throw new ArgumentNullException(nameof(setConfigurationPermissionsCommand));
