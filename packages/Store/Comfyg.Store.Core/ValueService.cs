@@ -38,7 +38,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
 
         await _values.CreateTableIfNotExistsAsync(cancellationToken);
 
-        var latest = await _values.GetIfExistsAsync(key.ToLower(), ContractConstants.LatestVersion,
+        var latest = await _values.GetIfExistsAsync(key.ToLower(), ComfygConstants.LatestVersion,
             cancellationToken: cancellationToken);
 
         if (latest?.Hash == hash) return;
@@ -52,7 +52,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
             {
                 Key = key,
                 Value = value,
-                Version = ContractConstants.LatestVersion,
+                Version = ComfygConstants.LatestVersion,
                 Hash = hash,
                 ParentVersion = version
             },
@@ -81,7 +81,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         await foreach (var permission in permissions.WithCancellation(cancellationToken))
         {
             var latest = await _values
-                .GetIfExistsAsync(permission.TargetId, ContractConstants.LatestVersion,
+                .GetIfExistsAsync(permission.TargetId, ComfygConstants.LatestVersion,
                     cancellationToken: cancellationToken);
 
             if (latest == null) continue;
@@ -101,7 +101,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
     }
 
     public async Task<TValue?> GetLatestValueAsync(string key, CancellationToken cancellationToken = default)
-        => await GetValueAsync(key, ContractConstants.LatestVersion, cancellationToken);
+        => await GetValueAsync(key, ComfygConstants.LatestVersion, cancellationToken);
 
     public async Task TagValueAsync(string owner, string key, string tag, string version,
         CancellationToken cancellationToken = default)
@@ -116,7 +116,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         if (original == null) throw new InvalidOperationException("Value does not exist.");
 
         var parentVersion = original.Version;
-        if (parentVersion == ContractConstants.LatestVersion)
+        if (parentVersion == ComfygConstants.LatestVersion)
         {
             parentVersion = original.ParentVersion;
             if (parentVersion == null) throw new Exception("Cannot tag latest version without link to parent version.");

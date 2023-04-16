@@ -55,6 +55,25 @@ internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
                 response.StatusCode);
     }
 
+    public async Task TagValueAsync(string key, string tag, string version = ComfygConstants.LatestVersion,
+        CancellationToken cancellationToken = default)
+    {
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (tag == null) throw new ArgumentNullException(nameof(tag));
+        if (version == null) throw new ArgumentNullException(nameof(version));
+        
+        var response = await _client
+            .SendRequestAsync(
+                () => new HttpRequestMessage(HttpMethod.Post, "secrets/tag")
+                {
+                    Content = JsonContent.Create(new TagValueRequest(key, tag, version))
+                }, cancellationToken: cancellationToken).ConfigureAwait(false);
+
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException("Invalid status code when trying to tag secret value.", null,
+                response.StatusCode);
+    }
+
     public void Dispose()
     {
         _client.Dispose();
