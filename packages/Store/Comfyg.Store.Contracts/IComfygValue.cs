@@ -42,6 +42,5 @@ public interface IComfygValue
     /// <summary>
     /// The parent version of the Comfyg value.
     /// </summary>
-    [JsonIgnore]
     string? ParentVersion { get; }
 }

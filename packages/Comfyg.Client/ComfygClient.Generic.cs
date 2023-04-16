@@ -38,6 +38,20 @@ public partial class ComfygClient
     }
 
     /// <summary>
+    /// Retrieves a single value from the connected Comfyg store.
+    /// </summary>
+    /// <param name="key">The key of the value to retrieve.</param>
+    /// <param name="version">The version of the value to retrieve. If not provided the latest version will be retrieved.</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
+    /// <typeparam name="T">The type of the values to retrieve.</typeparam>
+    /// <returns><see cref="T"/>></returns>
+    public async Task<T> GetValueAsync<T>(string key, string? version = null,
+        CancellationToken cancellationToken = default) where T : IComfygValue
+    {
+        return await Operations<T>().GetValueAsync(key, version, cancellationToken);
+    }
+
+    /// <summary>
     /// Adds values of the specific type to the connected Comfyg store.
     /// </summary>
     /// <param name="values"><see cref="IEnumerable{T}"/></param>
@@ -50,11 +64,11 @@ public partial class ComfygClient
     }
 
     /// <summary>
-    /// Tags a key-value pair version.
+    /// Tags a version of a specific value.
     /// </summary>
-    /// <param name="key">The key of the key-value pair to tag.</param>
+    /// <param name="key">The key of the value to tag.</param>
     /// <param name="tag">The identifier of the tag.</param>
-    /// <param name="version">The version of the key-value pair to tag. Defaults to `latest`.</param>
+    /// <param name="version">The version of the value to tag. Defaults to `latest`.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
     /// <typeparam name="T">The type of the values to add.</typeparam>
     public async Task<T> TagValueAsync<T>(string key, string tag, string version = ComfygConstants.LatestVersion,
