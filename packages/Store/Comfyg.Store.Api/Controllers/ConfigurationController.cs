@@ -21,7 +21,7 @@ public class ConfigurationController : ValueControllerBase<IConfigurationValue>
     }
 
     [HttpGet]
-    public IActionResult GetConfigurationValuesAsync([FromQuery] DateTimeOffset? since = null,
+    public IActionResult GetConfigurationValues([FromQuery] DateTimeOffset? since = null,
         [FromQuery] string[]? tags = null, CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
@@ -31,6 +31,19 @@ public class ConfigurationController : ValueControllerBase<IConfigurationValue>
             : GetValuesAsync(clientIdentity, tags, cancellationToken);
 
         return Ok(values);
+    }
+
+    [HttpGet("{key}/{version?}")]
+    public async Task<IActionResult> GetConfigurationValueAsync([FromRoute] string key, [FromRoute] string version,
+        CancellationToken cancellationToken = default)
+    {
+        if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
+
+        var value = await GetValueAsync(clientIdentity, key, version, cancellationToken);
+
+        if (value == null) return Forbid();
+
+        return Ok(value);
     }
 
     [HttpPost]

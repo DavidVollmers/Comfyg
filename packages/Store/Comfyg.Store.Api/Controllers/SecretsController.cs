@@ -26,7 +26,7 @@ public class SecretsController : ValueControllerBase<ISecretValue>
     }
 
     [HttpGet]
-    public IActionResult GetSecretValuesAsync([FromQuery] DateTimeOffset? since = null,
+    public IActionResult GetSecretValues([FromQuery] DateTimeOffset? since = null,
         [FromQuery] string[]? tags = null, CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
@@ -36,6 +36,19 @@ public class SecretsController : ValueControllerBase<ISecretValue>
             : GetValuesAsync(clientIdentity, tags, cancellationToken);
 
         return Ok(values);
+    }
+
+    [HttpGet("{key}/{version?}")]
+    public async Task<IActionResult> GetSecretValueAsync([FromRoute] string key, [FromRoute] string version,
+        CancellationToken cancellationToken = default)
+    {
+        if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
+
+        var value = await GetValueAsync(clientIdentity, key, version, cancellationToken);
+
+        if (value == null) return Forbid();
+
+        return Ok(value);
     }
 
     [HttpPost]

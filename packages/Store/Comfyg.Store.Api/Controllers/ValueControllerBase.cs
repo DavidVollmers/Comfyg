@@ -34,7 +34,17 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         return await _valueService.TagValueAsync(clientIdentity.Client.ClientId, key, tag, version, cancellationToken);
     }
 
-    protected async IAsyncEnumerable<IComfygValue> GetValuesAsync(IClientIdentity clientIdentity, string[]? tags,
+    protected async Task<T?> GetValueAsync(IClientIdentity clientIdentity, string key, string? version,
+        CancellationToken cancellationToken)
+    {
+        var isPermitted = await _permissionService.IsPermittedAsync<T>(clientIdentity.Client.ClientId, key,
+            Permissions.Read, cancellationToken: cancellationToken);
+        if (!isPermitted) return default;
+
+        return await _valueService.GetValueAsync(key, version ?? ComfygConstants.LatestVersion, cancellationToken);
+    }
+
+    protected async IAsyncEnumerable<T> GetValuesAsync(IClientIdentity clientIdentity, string[]? tags,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var values = _valueService.GetLatestValuesAsync(clientIdentity.Client.ClientId, cancellationToken);
@@ -51,7 +61,7 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         }
     }
 
-    protected async IAsyncEnumerable<IComfygValue> GetValuesSinceAsync(IClientIdentity clientIdentity,
+    protected async IAsyncEnumerable<T> GetValuesSinceAsync(IClientIdentity clientIdentity,
         DateTimeOffset since, string[]? tags, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var changes =

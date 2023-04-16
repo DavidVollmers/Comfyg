@@ -21,7 +21,7 @@ public class SettingsController : ValueControllerBase<ISettingValue>
     }
 
     [HttpGet]
-    public IActionResult GetSettingValuesAsync([FromQuery] DateTimeOffset? since = null,
+    public IActionResult GetSettingValues([FromQuery] DateTimeOffset? since = null,
         [FromQuery] string[]? tags = null, CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
@@ -31,6 +31,19 @@ public class SettingsController : ValueControllerBase<ISettingValue>
             : GetValuesAsync(clientIdentity, tags, cancellationToken);
 
         return Ok(values);
+    }
+
+    [HttpGet("{key}/{version?}")]
+    public async Task<IActionResult> GetSettingValueAsync([FromRoute] string key, [FromRoute] string version,
+        CancellationToken cancellationToken = default)
+    {
+        if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
+
+        var value = await GetValueAsync(clientIdentity, key, version, cancellationToken);
+
+        if (value == null) return Forbid();
+
+        return Ok(value);
     }
 
     [HttpPost]
