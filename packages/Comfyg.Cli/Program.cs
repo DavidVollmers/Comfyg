@@ -11,10 +11,7 @@ using var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services => { services.AddComfygCommands(); })
     .Build();
 
-var rootCommand = new RootCommand("Comfyg Command-Line Interface")
-{
-    Name = "comfyg"
-};
+var rootCommand = new RootCommand("Comfyg Command-Line Interface") { Name = "comfyg" };
 
 var commands = host.Services.GetServices<Command>();
 foreach (var command in commands)
@@ -29,8 +26,11 @@ if (args.Length == 0)
 
 var parser = new CommandLineBuilder(rootCommand)
     .UseDefaults()
-    .UseExceptionHandler((e, _) => { AnsiConsole.WriteException(e, ExceptionFormats.ShortenEverything); },
-        errorExitCode: 1)
+    .UseExceptionHandler((e, context) =>
+    {
+        AnsiConsole.WriteException(e, ExceptionFormats.ShortenEverything);
+        context.ExitCode = 1;
+    })
     .Build();
 
 return await parser.InvokeAsync(args);

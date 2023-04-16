@@ -136,6 +136,49 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
         });
     }
 
+    [Fact]
+    public async Task Test_TagConfigurationValue()
+    {
+        var key = Guid.NewGuid().ToString();
+        var tag = Guid.NewGuid().ToString();
+        var version = Guid.NewGuid().ToString();
+        var expectedOutput = $"Successfully tagged key-value pair \"{key}\": \r\n{version}-{tag}";
+        var taggedValue = new TestConfigurationValue { Key = key, Version = $"{version}-{tag}" };
+
+        var client = await ConnectAsync();
+
+        _factory.Mock<IPermissionService>(mock =>
+        {
+            mock.Setup(ps => ps.IsPermittedAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<Permissions>(), It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+        });
+
+        _factory.Mock<IValueService<IConfigurationValue>>(mock =>
+        {
+            mock.Setup(vs => vs.TagValueAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(taggedValue);
+        });
+
+        var result = await TestCli.ExecuteAsync($"tag config {key} {tag}");
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.StartsWith(expectedOutput, result.Output);
+
+        _factory.Mock<IPermissionService>(mock =>
+        {
+            mock.Verify(ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == client.ClientId),
+                It.Is<string>(s => s == key), It.Is<Permissions>(p => p == Permissions.Write), It.IsAny<bool>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        });
+
+        _factory.Mock<IValueService<IConfigurationValue>>(mock =>
+        {
+            mock.Verify(vs => vs.TagValueAsync(It.Is<string>(s => s == client.ClientId), It.Is<string>(s => s == key),
+                It.Is<string>(s => s == tag), It.Is<string>(s => s == ComfygConstants.LatestVersion),
+                It.IsAny<CancellationToken>()), Times.Once);
+        });
+    }
+
     private static string CreateClientSecret()
     {
         return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
