@@ -37,7 +37,6 @@ internal class SetPermissionsCommand : Command
             Arity = ArgumentArity.ZeroOrMore,
             AllowMultipleArgumentsPerToken = true
         };
-        _permissionsOption.SetDefaultValue(Permissions.Read);
         AddOption(_permissionsOption);
 
         this.SetHandler(HandleCommandAsync);

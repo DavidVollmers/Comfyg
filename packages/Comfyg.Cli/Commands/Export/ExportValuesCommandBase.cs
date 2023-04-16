@@ -39,7 +39,7 @@ internal abstract class ExportValuesCommandBase<T> : Command where T : IComfygVa
 
         using var client = await State.User.RequireClientAsync(cancellationToken);
 
-        var values = client.Operations<T>().GetValuesAsync(cancellationToken: cancellationToken);
+        var values = client.GetValuesAsync<T>(cancellationToken: cancellationToken);
 
         var count = 0;
         var json = new Dictionary<string, object>();

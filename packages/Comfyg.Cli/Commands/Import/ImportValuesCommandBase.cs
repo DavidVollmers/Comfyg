@@ -101,7 +101,7 @@ internal abstract class ImportValuesCommandBase<T> : Command where T : IComfygVa
     {
         var values = BuildAddValuesRequest(batch).ToArray();
 
-        await client.Operations<T>().AddValuesAsync(values, cancellationToken);
+        await client.AddValuesAsync(values, cancellationToken);
 
         AnsiConsole.MarkupLine($"[bold green]Successfully imported {values.Length} values[/]");
     }

@@ -5,6 +5,7 @@ using Comfyg.Cli.Commands.Export;
 using Comfyg.Cli.Commands.Import;
 using Comfyg.Cli.Commands.Set;
 using Comfyg.Cli.Commands.Setup;
+using Comfyg.Cli.Commands.Tag;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Comfyg.Cli.Extensions;
@@ -41,6 +42,11 @@ internal static class ComfygCommandExtensions
         serviceCollection.AddScoped<SetSettingPermissionsCommand>();
         serviceCollection.AddScoped<SetPermissionsCommand>();
         serviceCollection.AddScoped<Command, SetCommand>();
+
+        serviceCollection.AddScoped<Command, TagConfigurationCommand>();
+        serviceCollection.AddScoped<Command, TagSecretCommand>();
+        serviceCollection.AddScoped<Command, TagSettingCommand>();
+        serviceCollection.AddScoped<Command, TagCommand>();
 
         return serviceCollection;
     }

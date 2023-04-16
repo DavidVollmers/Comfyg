@@ -26,7 +26,6 @@ internal abstract class SetValuePermissionsCommandBase<T> : Command where T : IC
             {
                 Arity = ArgumentArity.ZeroOrMore, AllowMultipleArgumentsPerToken = true
             };
-        _permissionsOption.SetDefaultValue(Permissions.Read);
         AddOption(_permissionsOption);
 
         this.SetHandler(HandleCommandAsync);

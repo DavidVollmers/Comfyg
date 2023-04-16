@@ -23,7 +23,7 @@ public interface ITagValueRequest
     string Version { get; }
 
     /// <summary>
-    /// The tag of the Comfyg value.
+    /// The identifier of the tag.
     /// </summary>
     [Required]
     [MaxLength(256)]
