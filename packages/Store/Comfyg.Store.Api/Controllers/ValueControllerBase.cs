@@ -34,23 +34,25 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         return await _valueService.TagValueAsync(clientIdentity.Client.ClientId, key, tag, version, cancellationToken);
     }
 
-    protected async IAsyncEnumerable<IComfygValue> GetValuesAsync(IClientIdentity clientIdentity,
+    protected async IAsyncEnumerable<IComfygValue> GetValuesAsync(IClientIdentity clientIdentity, string[]? tags,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        var values = _valueService.GetValuesAsync(clientIdentity.Client.ClientId, cancellationToken);
+        var values = _valueService.GetLatestValuesAsync(clientIdentity.Client.ClientId, cancellationToken);
 
         await foreach (var value in values.WithCancellation(cancellationToken))
         {
-            var convertedValue = await ConvertValueFromAsync(value, cancellationToken);
+            var result = await ResolveValueByTagsAsync(value, tags, cancellationToken);
 
-            if (convertedValue == null) continue;
+            result = await ConvertValueFromAsync(result, cancellationToken);
 
-            yield return convertedValue;
+            if (result == null) continue;
+
+            yield return result;
         }
     }
 
     protected async IAsyncEnumerable<IComfygValue> GetValuesSinceAsync(IClientIdentity clientIdentity,
-        DateTimeOffset since, [EnumeratorCancellation] CancellationToken cancellationToken)
+        DateTimeOffset since, string[]? tags, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var changes =
             _changeService.GetChangesForOwnerAsync<T>(clientIdentity.Client.ClientId, since, cancellationToken);
@@ -61,11 +63,13 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
 
             if (value == null) continue;
 
-            var convertedValue = await ConvertValueFromAsync(value, cancellationToken);
+            var result = await ResolveValueByTagsAsync(value, tags, cancellationToken);
 
-            if (convertedValue == null) continue;
+            result = await ConvertValueFromAsync(result, cancellationToken);
 
-            yield return convertedValue;
+            if (result == null) continue;
+
+            yield return result;
         }
     }
 
@@ -108,5 +112,21 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
     protected virtual Task<T?> ConvertValueFromAsync(T value, CancellationToken cancellationToken)
     {
         return Task.FromResult(value)!;
+    }
+
+    private async Task<T> ResolveValueByTagsAsync(T value, IReadOnlyList<string>? tags,
+        CancellationToken cancellationToken)
+    {
+        if (tags == null || tags.Count == 0) return value;
+
+        for (var i = tags.Count - 1; i >= 0; i--)
+        {
+            var taggedValue =
+                await _valueService.GetValueAsync(value.Key, $"{value.Version}-{tags[i]}", cancellationToken);
+
+            if (taggedValue != null) return taggedValue;
+        }
+
+        return value;
     }
 }

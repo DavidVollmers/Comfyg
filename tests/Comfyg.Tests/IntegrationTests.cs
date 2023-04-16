@@ -68,19 +68,19 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
 
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
-            mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            mock.Setup(cs => cs.GetLatestValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(configurationValues.ToAsyncEnumerable);
         });
 
         _factory.Mock<IValueService<ISettingValue>>(mock =>
         {
-            mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            mock.Setup(cs => cs.GetLatestValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Array.Empty<ISettingValue>().ToAsyncEnumerable);
         });
 
         _factory.Mock<IValueService<ISecretValue>>(mock =>
         {
-            mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            mock.Setup(cs => cs.GetLatestValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Array.Empty<ISecretValue>().ToAsyncEnumerable);
         });
 
@@ -118,7 +118,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
 
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
-            mock.Verify(cs => cs.GetValuesAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()), Times.Once);
+            mock.Verify(cs => cs.GetLatestValuesAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()), Times.Once);
         });
     }
 
@@ -183,7 +183,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
 
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
-            mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).Returns(configurationValues1.ToAsyncEnumerable);
+            mock.Setup(cs => cs.GetLatestValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).Returns(configurationValues1.ToAsyncEnumerable);
             mock.Setup(cs => cs.GetLatestValueAsync(It.Is<string>(s => s == "key2"), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(configurationValue2Change);
             mock.Setup(cs => cs.GetLatestValueAsync(It.Is<string>(s => s == "key3"), It.IsAny<CancellationToken>()))
@@ -192,13 +192,13 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
 
         _factory.Mock<IValueService<ISettingValue>>(mock =>
         {
-            mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            mock.Setup(cs => cs.GetLatestValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Array.Empty<ISettingValue>().ToAsyncEnumerable);
         });
 
         _factory.Mock<IValueService<ISecretValue>>(mock =>
         {
-            mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            mock.Setup(cs => cs.GetLatestValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Array.Empty<ISecretValue>().ToAsyncEnumerable);
         });
 
@@ -261,7 +261,7 @@ public class IntegrationTests : IClassFixture<IntegrationTestWebApplicationFacto
 
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
-            mock.Verify(cs => cs.GetValuesAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()), Times.Once);
+            mock.Verify(cs => cs.GetLatestValuesAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(cs => cs.GetLatestValueAsync(It.Is<string>(s => s == "key2"), It.IsAny<CancellationToken>()),
                 Times.Exactly(2));
             mock.Verify(cs => cs.GetLatestValueAsync(It.Is<string>(s => s == "key3"), It.IsAny<CancellationToken>()),

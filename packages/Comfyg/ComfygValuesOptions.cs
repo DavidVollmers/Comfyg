@@ -11,6 +11,8 @@ public sealed class ComfygValuesOptions
 
     internal ITimer? ChangeDetectionTimerOverride { get; private set; }
 
+    internal IList<string> Tags { get; } = new List<string>();
+
     internal ITimer? ChangeDetectionTimer
     {
         get
@@ -28,10 +30,27 @@ public sealed class ComfygValuesOptions
     /// Set the interval in which change detection is performed.
     /// </summary>
     /// <param name="interval">The interval in which change detection is performed.</param>
-    /// <returns>The provided <see cref="ComfygValuesOptions"/>.</returns>
+    /// <returns><see cref="ComfygValuesOptions"/></returns>
     public ComfygValuesOptions DetectChanges(TimeSpan interval)
     {
         ChangeDetectionInterval = interval;
+        return this;
+    }
+
+    /// <summary>
+    /// Loads key-value pairs tagged with the provided tags.
+    /// </summary>
+    /// <param name="tags">The tags to load key-valur pairs for.</param>
+    /// <exception cref="ArgumentNullException">An element of <paramref name="tags"/> is null.</exception>
+    /// <returns><see cref="ComfygOptions"/></returns>
+    public ComfygValuesOptions LoadTags(params string[] tags)
+    {
+        foreach (var tag in tags)
+        {
+            if (tag == null) throw new ArgumentNullException(nameof(tags));
+            Tags.Add(tag);
+        }
+
         return this;
     }
 

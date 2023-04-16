@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Web;
 using Comfyg.Client.Requests;
 using Comfyg.Store.Contracts;
 
@@ -16,10 +17,14 @@ internal class SettingValuesOperations : IComfygValueOperations<ISettingValue>
     }
 
     public async IAsyncEnumerable<ISettingValue> GetValuesAsync(DateTimeOffset? since = null,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        IEnumerable<string>? tags = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var uri = "settings";
-        if (since.HasValue) uri += $"?since={since.Value.ToUniversalTime():s}Z";
+
+        var queryParameters = new List<string>();
+        if (since.HasValue) queryParameters.Add($"since={since.Value.ToUniversalTime():s}Z");
+        if (tags != null) queryParameters.AddRange(tags.Select(t => $"tags={HttpUtility.UrlEncode(t)}"));
+        if (queryParameters.Any()) uri += "?" + string.Join('&', queryParameters);
 
         var response = await _client
             .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken: cancellationToken)

@@ -10,7 +10,9 @@ internal abstract class ComfygValueEntity : IComfygValueInitializer
 
     public string Value { get; init; } = null!;
 
-    [RowKey] public string Version { get; init; } = null!;
+    private readonly string _version = null!;
+
+    [RowKey] public string Version { get => _version; init => _version = value.ToLower(); }
 
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
 

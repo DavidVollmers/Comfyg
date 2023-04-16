@@ -10,10 +10,12 @@ internal class ComfygProvider<T> : ConfigurationProvider, IDisposable where T : 
 {
     private readonly IComfygValueOperations<T> _operations;
     private readonly ChangeDetector<T>? _changeDetector;
+    private readonly string[] _tags;
 
-    public ComfygProvider(IComfygValueOperations<T> operations, ITimer? timer = null)
+    public ComfygProvider(IComfygValueOperations<T> operations, ITimer? timer, IEnumerable<string>? tags)
     {
         _operations = operations ?? throw new ArgumentNullException(nameof(operations));
+        _tags = tags?.ToArray() ?? throw new ArgumentNullException(nameof(tags)); 
 
         if (timer == null) return;
         _changeDetector = new ChangeDetector<T>(_operations, timer);
@@ -27,7 +29,7 @@ internal class ComfygProvider<T> : ConfigurationProvider, IDisposable where T : 
     {
         try
         {
-            var values = _operations.GetValuesAsync(since);
+            var values = _operations.GetValuesAsync(since, _tags);
 
             if (!since.HasValue) Data.Clear();
 

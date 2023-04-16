@@ -23,6 +23,25 @@ internal class ComfygSource<T> : IConfigurationSource where T : IComfygValue
         var client = _options.HttpClient == null
             ? new ComfygClient(_options.ConnectionString)
             : new ComfygClient(_options.ConnectionString, _options.HttpClient);
-        return new ComfygProvider<T>(client.Operations<T>(), _valuesOptions.ChangeDetectionTimer);
+        return new ComfygProvider<T>(client.Operations<T>(), _valuesOptions.ChangeDetectionTimer, GetTags());
+    }
+
+    private IEnumerable<string> GetTags()
+    {
+        var result = new List<string>();
+
+        foreach (var tag in _options.Tags)
+        {
+            if (result.Contains(tag)) throw new InvalidOperationException("Cannot load the same tag twice: " + tag);
+            result.Add(tag);
+        }
+
+        foreach (var tag in _valuesOptions.Tags)
+        {
+            if (result.Contains(tag)) throw new InvalidOperationException("Cannot load the same tag twice: " + tag);
+            result.Add(tag);
+        }
+
+        return result;
     }
 }

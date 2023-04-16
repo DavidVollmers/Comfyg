@@ -24,13 +24,14 @@ public partial class ComfygClient
     /// Retrieves values from the connected Comfyg store.
     /// </summary>
     /// <param name="since">If provided, only values which were created or edited afterwards are retrieved.</param>
+    /// <param name="tags">Can be used to filter all values by their tags. If no tag matches the original value will be returned, otherwise the last matching tag from the array is returned.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
     /// <typeparam name="T">The type of the values to retrieve.</typeparam>
     /// <returns><see cref="IAsyncEnumerable{T}"/></returns>
-    public async IAsyncEnumerable<T> GetValuesAsync<T>(DateTimeOffset? since = null,
+    public async IAsyncEnumerable<T> GetValuesAsync<T>(DateTimeOffset? since = null, IEnumerable<string>? tags = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default) where T : IComfygValue
     {
-        var values = Operations<T>().GetValuesAsync(since, cancellationToken);
+        var values = Operations<T>().GetValuesAsync(since, tags, cancellationToken);
 
         await foreach (var value in values.WithCancellation(cancellationToken).ConfigureAwait(false))
             yield return value;

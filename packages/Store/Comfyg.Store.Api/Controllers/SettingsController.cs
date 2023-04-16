@@ -22,13 +22,13 @@ public class SettingsController : ValueControllerBase<ISettingValue>
 
     [HttpGet]
     public IActionResult GetSettingValuesAsync([FromQuery] DateTimeOffset? since = null,
-        CancellationToken cancellationToken = default)
+        [FromQuery] string[]? tags = null, CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
         var values = since.HasValue
-            ? GetValuesSinceAsync(clientIdentity, since.Value, cancellationToken)
-            : GetValuesAsync(clientIdentity, cancellationToken);
+            ? GetValuesSinceAsync(clientIdentity, since.Value, tags, cancellationToken)
+            : GetValuesAsync(clientIdentity, tags, cancellationToken);
 
         return Ok(values);
     }

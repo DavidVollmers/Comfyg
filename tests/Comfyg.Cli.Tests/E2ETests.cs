@@ -97,7 +97,7 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
 
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
-            mock.Setup(cs => cs.GetValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            mock.Setup(cs => cs.GetLatestValuesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(values.ToAsyncEnumerable());
         });
 
@@ -131,7 +131,7 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
             mock.Verify(
-                cs => cs.GetValuesAsync(It.Is<string>(s => s == client.ClientId), It.IsAny<CancellationToken>()),
+                cs => cs.GetLatestValuesAsync(It.Is<string>(s => s == client.ClientId), It.IsAny<CancellationToken>()),
                 Times.Once);
         });
     }

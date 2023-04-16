@@ -27,13 +27,13 @@ public class SecretsController : ValueControllerBase<ISecretValue>
 
     [HttpGet]
     public IActionResult GetSecretValuesAsync([FromQuery] DateTimeOffset? since = null,
-        CancellationToken cancellationToken = default)
+        [FromQuery] string[]? tags = null, CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
         var values = since.HasValue
-            ? GetValuesSinceAsync(clientIdentity, since.Value, cancellationToken)
-            : GetValuesAsync(clientIdentity, cancellationToken);
+            ? GetValuesSinceAsync(clientIdentity, since.Value, tags, cancellationToken)
+            : GetValuesAsync(clientIdentity, tags, cancellationToken);
 
         return Ok(values);
     }

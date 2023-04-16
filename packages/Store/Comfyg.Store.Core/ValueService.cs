@@ -69,7 +69,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         }
     }
 
-    public async IAsyncEnumerable<TValue> GetValuesAsync(string owner,
+    public async IAsyncEnumerable<TValue> GetLatestValuesAsync(string owner,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
@@ -97,7 +97,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
 
         await _values.CreateTableIfNotExistsAsync(cancellationToken);
 
-        return await _values.GetIfExistsAsync(key.ToLower(), version, cancellationToken: cancellationToken);
+        return await _values.GetIfExistsAsync(key.ToLower(), version.ToLower(), cancellationToken: cancellationToken);
     }
 
     public async Task<TValue?> GetLatestValueAsync(string key, CancellationToken cancellationToken = default)
@@ -112,7 +112,8 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
 
         await _values.CreateTableIfNotExistsAsync(cancellationToken);
 
-        var original = await _values.GetIfExistsAsync(key.ToLower(), version, cancellationToken: cancellationToken);
+        var original =
+            await _values.GetIfExistsAsync(key.ToLower(), version.ToLower(), cancellationToken: cancellationToken);
         if (original == null) throw new InvalidOperationException("Value does not exist.");
 
         var parentVersion = original.Version;
@@ -124,16 +125,27 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         else if (original.ParentVersion != null)
             throw new InvalidOperationException("Cannot create version tag from different tag.");
 
+        var taggedVersion = $"{original.Version}-{tag}";
         var taggedValue = new TEntity
         {
             Key = key,
             Value = original.Value,
-            Version = $"{original.Version}-{tag}",
+            Version = taggedVersion,
             Hash = original.Hash,
             ParentVersion = parentVersion
         };
-        
+
         await _values.AddAsync(taggedValue, cancellationToken);
+        await _values.UpsertAsync(
+            new TEntity
+            {
+                Key = key,
+                Value = original.Value,
+                Version = $"{ComfygConstants.LatestVersion}-{tag}",
+                Hash = original.Hash,
+                ParentVersion = taggedVersion
+            },
+            cancellationToken: cancellationToken);
 
         await _changeService.LogChangeAsync<TValue>(key, ChangeType.Tag, owner, cancellationToken);
 

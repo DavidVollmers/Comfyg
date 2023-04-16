@@ -13,7 +13,7 @@ public static class ComfygExtensions
     /// </summary>
     /// <param name="configurationBuilder">The configuration builder to add key-values to.</param>
     /// <param name="optionsConfigurator">A callback used to configure Comfyg options.</param>
-    /// <returns>The provided configuration builder.</returns>
+    /// <returns><see cref="IConfigurationBuilder"/></returns>
     /// <exception cref="ArgumentNullException"><paramref name="configurationBuilder"/> or <paramref name="optionsConfigurator"/> is null.</exception>
     public static IConfigurationBuilder AddComfyg(this IConfigurationBuilder configurationBuilder,
         Action<ComfygOptions> optionsConfigurator)
