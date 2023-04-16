@@ -54,8 +54,8 @@ public class SettingsController : ValueControllerBase<ISettingValue>
 
         var result = await TagValueAsync(clientIdentity, request.Key, request.Version, request.Tag, cancellationToken);
 
-        if (!result) return Forbid();
+        if (result == null) return Forbid();
 
-        return Ok();
+        return Ok(result);
     }
 }

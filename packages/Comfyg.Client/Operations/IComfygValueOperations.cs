@@ -32,6 +32,6 @@ public interface IComfygValueOperations<T> : IDisposable where T : IComfygValue
     /// <param name="tag">The identifier of the tag.</param>
     /// <param name="version">The version of the key-value pair to tag. Defaults to `latest`.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
-    Task TagValueAsync(string key, string tag, string version = ComfygConstants.LatestVersion,
+    Task<T> TagValueAsync(string key, string tag, string version = ComfygConstants.LatestVersion,
         CancellationToken cancellationToken = default);
 }

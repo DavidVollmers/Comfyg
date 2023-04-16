@@ -32,7 +32,7 @@ internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
         var values =
-            JsonSerializer.DeserializeAsyncEnumerable<SecretValue>(stream,
+            JsonSerializer.DeserializeAsyncEnumerable<ISecretValue>(stream,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
 
         await foreach (var value in values.WithCancellation(cancellationToken).ConfigureAwait(false))
@@ -55,13 +55,13 @@ internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
                 response.StatusCode);
     }
 
-    public async Task TagValueAsync(string key, string tag, string version = ComfygConstants.LatestVersion,
-        CancellationToken cancellationToken = default)
+    public async Task<ISecretValue> TagValueAsync(string key, string tag,
+        string version = ComfygConstants.LatestVersion, CancellationToken cancellationToken = default)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (tag == null) throw new ArgumentNullException(nameof(tag));
         if (version == null) throw new ArgumentNullException(nameof(version));
-        
+
         var response = await _client
             .SendRequestAsync(
                 () => new HttpRequestMessage(HttpMethod.Post, "secrets/tag")
@@ -72,6 +72,8 @@ internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to tag secret value.", null,
                 response.StatusCode);
+
+        return (await response.Content.ReadFromJsonAsync<ISecretValue>(cancellationToken: cancellationToken))!;
     }
 
     public void Dispose()

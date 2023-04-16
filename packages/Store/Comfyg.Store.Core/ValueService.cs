@@ -103,7 +103,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
     public async Task<TValue?> GetLatestValueAsync(string key, CancellationToken cancellationToken = default)
         => await GetValueAsync(key, ComfygConstants.LatestVersion, cancellationToken);
 
-    public async Task TagValueAsync(string owner, string key, string tag, string version,
+    public async Task<TValue> TagValueAsync(string owner, string key, string tag, string version,
         CancellationToken cancellationToken = default)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
@@ -124,16 +124,19 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         else if (original.ParentVersion != null)
             throw new InvalidOperationException("Cannot create version tag from different tag.");
 
-        await _values.AddAsync(
-            new TEntity
-            {
-                Key = key,
-                Value = original.Value,
-                Version = $"{original.Version}-{tag}",
-                Hash = original.Hash,
-                ParentVersion = parentVersion
-            }, cancellationToken);
+        var taggedValue = new TEntity
+        {
+            Key = key,
+            Value = original.Value,
+            Version = $"{original.Version}-{tag}",
+            Hash = original.Hash,
+            ParentVersion = parentVersion
+        };
+        
+        await _values.AddAsync(taggedValue, cancellationToken);
 
         await _changeService.LogChangeAsync<TValue>(key, ChangeType.Tag, owner, cancellationToken);
+
+        return taggedValue;
     }
 }

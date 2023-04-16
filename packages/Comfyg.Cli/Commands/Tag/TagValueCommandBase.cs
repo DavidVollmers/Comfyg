@@ -38,8 +38,8 @@ internal abstract class TagValueCommandBase<T> : Command where T : IComfygValue
 
         using var client = await State.User.RequireClientAsync(cancellationToken);
 
-        await client.TagValueAsync<T>(keyArgument, tagArgument, versionOption, cancellationToken);
+        var result = await client.TagValueAsync<T>(keyArgument, tagArgument, versionOption, cancellationToken);
 
-        AnsiConsole.MarkupLine($"[bold green]Successfully tagged key-value pair \"{keyArgument}\": {versionOption}-{tagArgument}[/]");
+        AnsiConsole.MarkupLine($"[bold green]Successfully tagged key-value pair \"{result.Key}\": {result.Version}[/]");
     }
 }

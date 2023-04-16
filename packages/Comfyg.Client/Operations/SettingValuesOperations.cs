@@ -55,13 +55,13 @@ internal class SettingValuesOperations : IComfygValueOperations<ISettingValue>
                 response.StatusCode);
     }
 
-    public async Task TagValueAsync(string key, string tag, string version = ComfygConstants.LatestVersion,
-        CancellationToken cancellationToken = default)
+    public async Task<ISettingValue> TagValueAsync(string key, string tag,
+        string version = ComfygConstants.LatestVersion, CancellationToken cancellationToken = default)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (tag == null) throw new ArgumentNullException(nameof(tag));
         if (version == null) throw new ArgumentNullException(nameof(version));
-        
+
         var response = await _client
             .SendRequestAsync(
                 () => new HttpRequestMessage(HttpMethod.Post, "settings/tag")
@@ -72,6 +72,8 @@ internal class SettingValuesOperations : IComfygValueOperations<ISettingValue>
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to tag setting value.", null,
                 response.StatusCode);
+
+        return (await response.Content.ReadFromJsonAsync<ISettingValue>(cancellationToken: cancellationToken))!;
     }
 
     public void Dispose()

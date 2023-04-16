@@ -32,7 +32,7 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
         var values =
-            JsonSerializer.DeserializeAsyncEnumerable<ConfigurationValue>(stream,
+            JsonSerializer.DeserializeAsyncEnumerable<IConfigurationValue>(stream,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
 
         await foreach (var value in values.WithCancellation(cancellationToken).ConfigureAwait(false))
@@ -56,13 +56,13 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
                 response.StatusCode);
     }
 
-    public async Task TagValueAsync(string key, string tag, string version = ComfygConstants.LatestVersion,
-        CancellationToken cancellationToken = default)
+    public async Task<IConfigurationValue> TagValueAsync(string key, string tag,
+        string version = ComfygConstants.LatestVersion, CancellationToken cancellationToken = default)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (tag == null) throw new ArgumentNullException(nameof(tag));
         if (version == null) throw new ArgumentNullException(nameof(version));
-        
+
         var response = await _client
             .SendRequestAsync(
                 () => new HttpRequestMessage(HttpMethod.Post, "configuration/tag")
@@ -73,6 +73,8 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException("Invalid status code when trying to tag configuration value.", null,
                 response.StatusCode);
+
+        return (await response.Content.ReadFromJsonAsync<IConfigurationValue>(cancellationToken: cancellationToken))!;
     }
 
     public void Dispose()

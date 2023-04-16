@@ -56,9 +56,9 @@ public partial class ComfygClient
     /// <param name="version">The version of the key-value pair to tag. Defaults to `latest`.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
     /// <typeparam name="T">The type of the values to add.</typeparam>
-    public async Task TagValueAsync<T>(string key, string tag, string version = ComfygConstants.LatestVersion,
+    public async Task<T> TagValueAsync<T>(string key, string tag, string version = ComfygConstants.LatestVersion,
         CancellationToken cancellationToken = default) where T : IComfygValue
     {
-        await Operations<T>().TagValueAsync(key, tag, version, cancellationToken).ConfigureAwait(false);
+        return await Operations<T>().TagValueAsync(key, tag, version, cancellationToken).ConfigureAwait(false);
     }
 }

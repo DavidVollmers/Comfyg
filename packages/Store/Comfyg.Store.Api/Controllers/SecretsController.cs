@@ -59,9 +59,9 @@ public class SecretsController : ValueControllerBase<ISecretValue>
 
         var result = await TagValueAsync(clientIdentity, request.Key, request.Version, request.Tag, cancellationToken);
 
-        if (!result) return Forbid();
+        if (result == null) return Forbid();
 
-        return Ok();
+        return Ok(result);
     }
 
     protected override async Task<ISecretValue?> ConvertValueToAsync(ISecretValue value,
