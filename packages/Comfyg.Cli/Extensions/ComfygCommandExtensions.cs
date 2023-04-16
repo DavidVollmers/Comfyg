@@ -43,9 +43,9 @@ internal static class ComfygCommandExtensions
         serviceCollection.AddScoped<SetPermissionsCommand>();
         serviceCollection.AddScoped<Command, SetCommand>();
 
-        serviceCollection.AddScoped<Command, TagConfigurationCommand>();
-        serviceCollection.AddScoped<Command, TagSecretCommand>();
-        serviceCollection.AddScoped<Command, TagSettingCommand>();
+        serviceCollection.AddScoped<TagConfigurationCommand>();
+        serviceCollection.AddScoped<TagSecretCommand>();
+        serviceCollection.AddScoped<TagSettingCommand>();
         serviceCollection.AddScoped<Command, TagCommand>();
 
         return serviceCollection;
