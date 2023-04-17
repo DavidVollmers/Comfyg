@@ -12,6 +12,7 @@ namespace Comfyg.Cli.Commands.Export;
 internal abstract class ExportValuesCommandBase<T> : Command where T : IComfygValue
 {
     private readonly Argument<FileInfo> _fileArgument;
+    private readonly Option<string[]> _tagsOption;
 
     protected ExportValuesCommandBase(string name, string? description = null) : base(name, description)
     {
@@ -19,12 +20,20 @@ internal abstract class ExportValuesCommandBase<T> : Command where T : IComfygVa
             "The output file which will be used to export key-value pairs into.");
         AddArgument(_fileArgument);
 
+        _tagsOption = new Option<string[]>(new[] { "-t", "--tags" },
+            "Export key-value pairs tagged with the provided tags.")
+        {
+            Arity = ArgumentArity.ZeroOrMore, AllowMultipleArgumentsPerToken = true
+        };
+        AddOption(_tagsOption);
+
         this.SetHandler(HandleCommandAsync);
     }
 
     private async Task HandleCommandAsync(InvocationContext context)
     {
         var fileArgument = context.ParseResult.GetValueForArgument(_fileArgument);
+        var tagsOptions = context.ParseResult.GetValueForOption(_tagsOption);
 
         if (fileArgument.Exists)
         {
@@ -39,7 +48,7 @@ internal abstract class ExportValuesCommandBase<T> : Command where T : IComfygVa
 
         using var client = await State.User.RequireClientAsync(cancellationToken);
 
-        var values = client.GetValuesAsync<T>(cancellationToken: cancellationToken);
+        var values = client.GetValuesAsync<T>(tags: tagsOptions, cancellationToken: cancellationToken);
 
         var count = 0;
         var json = new Dictionary<string, object>();
