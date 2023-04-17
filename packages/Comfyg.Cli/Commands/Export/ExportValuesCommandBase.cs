@@ -3,7 +3,6 @@ using System.CommandLine.Invocation;
 using System.Text.Json;
 using Comfyg.Cli.Extensions;
 using Comfyg.Store.Contracts;
-using Newtonsoft.Json;
 using Spectre.Console;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
