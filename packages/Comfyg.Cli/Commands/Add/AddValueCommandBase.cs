@@ -37,6 +37,7 @@ internal abstract class AddValueCommandBase<T> : Command where T : IComfygValue
 
         var result = await client.GetValueAsync<T>(keyArgument, cancellationToken: cancellationToken);
 
-        AnsiConsole.MarkupLine($"[bold green]Successfully added value. (Key: \"{result.Key}\", Version: {result.ParentVersion})[/]");
+        AnsiConsole.MarkupLine(
+            $"[bold green]Successfully added value. (Key: {result.Key}, Version: {result.ParentVersion})[/]");
     }
 }

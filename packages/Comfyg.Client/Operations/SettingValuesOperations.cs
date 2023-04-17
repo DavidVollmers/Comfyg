@@ -44,6 +44,23 @@ internal class SettingValuesOperations : IComfygValueOperations<ISettingValue>
             yield return value!;
     }
 
+    public async Task<ISettingValue> GetValueAsync(string key, string? version = null,
+        CancellationToken cancellationToken = default)
+    {
+        var uri = $"settings/{HttpUtility.UrlEncode(key)}";
+        if (version != null) uri += $"/{HttpUtility.UrlEncode(version)}";
+
+        var response = await _client
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException("Invalid status code when trying to get setting value.", null,
+                response.StatusCode);
+
+        return (await response.Content.ReadFromJsonAsync<ISettingValue>(cancellationToken: cancellationToken))!;
+    }
+
     public async Task AddValuesAsync(IEnumerable<ISettingValue> values, CancellationToken cancellationToken = default)
     {
         if (values == null) throw new ArgumentNullException(nameof(values));
@@ -69,7 +86,7 @@ internal class SettingValuesOperations : IComfygValueOperations<ISettingValue>
 
         var response = await _client
             .SendRequestAsync(
-                () => new HttpRequestMessage(HttpMethod.Post, "settings/tag")
+                () => new HttpRequestMessage(HttpMethod.Post, "settings/tags")
                 {
                     Content = JsonContent.Create(new TagValueRequest(key, tag, version))
                 }, cancellationToken: cancellationToken).ConfigureAwait(false);

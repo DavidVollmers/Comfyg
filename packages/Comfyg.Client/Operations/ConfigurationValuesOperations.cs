@@ -44,6 +44,23 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
             yield return value!;
     }
 
+    public async Task<IConfigurationValue> GetValueAsync(string key, string? version = null,
+        CancellationToken cancellationToken = default)
+    {
+        var uri = $"configuration/{HttpUtility.UrlEncode(key)}";
+        if (version != null) uri += $"/{HttpUtility.UrlEncode(version)}";
+
+        var response = await _client
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException("Invalid status code when trying to get configuration value.", null,
+                response.StatusCode);
+
+        return (await response.Content.ReadFromJsonAsync<IConfigurationValue>(cancellationToken: cancellationToken))!;
+    }
+
     public async Task AddValuesAsync(IEnumerable<IConfigurationValue> values,
         CancellationToken cancellationToken = default)
     {
@@ -70,7 +87,7 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
 
         var response = await _client
             .SendRequestAsync(
-                () => new HttpRequestMessage(HttpMethod.Post, "configuration/tag")
+                () => new HttpRequestMessage(HttpMethod.Post, "configuration/tags")
                 {
                     Content = JsonContent.Create(new TagValueRequest(key, tag, version))
                 }, cancellationToken: cancellationToken).ConfigureAwait(false);

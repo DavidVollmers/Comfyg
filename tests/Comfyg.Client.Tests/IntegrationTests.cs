@@ -1,4 +1,6 @@
-﻿using Comfyg.Store.Authentication.Abstractions;
+﻿using System.Security.Cryptography;
+using System.Text;
+using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Core.Abstractions;
 using Comfyg.Store.Core.Abstractions.Permissions;
@@ -131,6 +133,8 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         {
             new ConfigurationValue("key1", "value1"), new ConfigurationValue("key2", "value2")
         };
+        var expectedHash1 = Convert.ToBase64String(SHA256.HashData("value1"u8.ToArray()));
+        var expectedHash2 = Convert.ToBase64String(SHA256.HashData("value2"u8.ToArray()));
 
         using var httpClient = _factory.CreateClient();
 
@@ -178,12 +182,12 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
             mock.Verify(cs => cs.AddValueAsync(It.Is<string>(s => s == clientId),
-                    It.Is<string>(s => s == "key1"), It.Is<string>(s => s == "value1"), It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()),
+                    It.Is<string>(s => s == "key1"), It.Is<string>(s => s == "value1"),
+                    It.Is<string>(s => s == expectedHash1), It.IsAny<CancellationToken>()),
                 Times.Once);
             mock.Verify(cs => cs.AddValueAsync(It.Is<string>(s => s == clientId),
-                    It.Is<string>(s => s == "key2"), It.Is<string>(s => s == "value2"), It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()),
+                    It.Is<string>(s => s == "key2"), It.Is<string>(s => s == "value2"),
+                    It.Is<string>(s => s == expectedHash2), It.IsAny<CancellationToken>()),
                 Times.Once);
         });
     }

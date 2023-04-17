@@ -44,6 +44,23 @@ internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
             yield return value!;
     }
 
+    public async Task<ISecretValue> GetValueAsync(string key, string? version = null,
+        CancellationToken cancellationToken = default)
+    {
+        var uri = $"secrets/{HttpUtility.UrlEncode(key)}";
+        if (version != null) uri += $"/{HttpUtility.UrlEncode(version)}";
+
+        var response = await _client
+            .SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException("Invalid status code when trying to get secret value.", null,
+                response.StatusCode);
+
+        return (await response.Content.ReadFromJsonAsync<ISecretValue>(cancellationToken: cancellationToken))!;
+    }
+
     public async Task AddValuesAsync(IEnumerable<ISecretValue> values, CancellationToken cancellationToken = default)
     {
         if (values == null) throw new ArgumentNullException(nameof(values));
@@ -69,7 +86,7 @@ internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
 
         var response = await _client
             .SendRequestAsync(
-                () => new HttpRequestMessage(HttpMethod.Post, "secrets/tag")
+                () => new HttpRequestMessage(HttpMethod.Post, "secrets/tags")
                 {
                     Content = JsonContent.Create(new TagValueRequest(key, tag, version))
                 }, cancellationToken: cancellationToken).ConfigureAwait(false);

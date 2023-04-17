@@ -64,7 +64,7 @@ public class SecretsController : ValueControllerBase<ISecretValue>
         return Ok();
     }
 
-    [HttpPost("tag")]
+    [HttpPost("tags")]
     public async Task<IActionResult> TagSecretValueAsync([FromBody] ITagValueRequest request,
         CancellationToken cancellationToken = default)
     {

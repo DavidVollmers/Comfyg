@@ -59,7 +59,7 @@ public class SettingsController : ValueControllerBase<ISettingValue>
         return Ok();
     }
 
-    [HttpPost("tag")]
+    [HttpPost("tags")]
     public async Task<IActionResult> TagSettingValueAsync([FromBody] ITagValueRequest request,
         CancellationToken cancellationToken = default)
     {

@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Core.Abstractions;
@@ -142,7 +144,7 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
         var key = Guid.NewGuid().ToString();
         var tag = Guid.NewGuid().ToString();
         var version = Guid.NewGuid().ToString();
-        var expectedOutput = $"Successfully tagged key-value pair \"{key}\": \r\n{version}-{tag}";
+        var expectedOutput = $"Successfully tagged value. (Key: {key}, Version: \r\n{version}-{tag})";
         var taggedValue = new TestConfigurationValue { Key = key, Version = $"{version}-{tag}" };
 
         var client = await ConnectAsync();
@@ -176,6 +178,56 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
             mock.Verify(vs => vs.TagValueAsync(It.Is<string>(s => s == client.ClientId), It.Is<string>(s => s == key),
                 It.Is<string>(s => s == tag), It.Is<string>(s => s == ComfygConstants.LatestVersion),
                 It.IsAny<CancellationToken>()), Times.Once);
+        });
+    }
+
+    [Fact]
+    public async Task Test_AddSetting()
+    {
+        var key = Guid.NewGuid().ToString();
+        var value = Guid.NewGuid().ToString();
+        var expectedVersion = Guid.NewGuid().ToString();
+        var expectedOutput = $"Successfully added value. (Key: {key}, Version: \r\n{expectedVersion})";
+        var expectedHash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
+        var settingValue = new TestSettingValue { Key = key, ParentVersion = expectedVersion };
+
+        var client = await ConnectAsync();
+
+        _factory.Mock<IPermissionService>(mock =>
+        {
+            mock.Setup(ps => ps.IsPermittedAsync<ISettingValue>(It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<Permissions>(), It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+        });
+
+        _factory.Mock<IValueService<ISettingValue>>(mock =>
+        {
+            mock.Setup(vs => vs.GetValueAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(settingValue);
+        });
+
+        var result = await TestCli.ExecuteAsync($"add setting {key} {value}");
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.StartsWith(expectedOutput, result.Output);
+
+        _factory.Mock<IPermissionService>(mock =>
+        {
+            mock.Verify(ps => ps.IsPermittedAsync<ISettingValue>(It.Is<string>(s => s == client.ClientId),
+                It.Is<string>(s => s == key), It.Is<Permissions>(p => p == Permissions.Write), It.IsAny<bool>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+            mock.Verify(ps => ps.IsPermittedAsync<ISettingValue>(It.Is<string>(s => s == client.ClientId),
+                It.Is<string>(s => s == key), It.Is<Permissions>(p => p == Permissions.Read), It.IsAny<bool>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        });
+
+        _factory.Mock<IValueService<ISettingValue>>(mock =>
+        {
+            mock.Verify(vs => vs.AddValueAsync(It.Is<string>(s => s == client.ClientId), It.Is<string>(s => s == key),
+                    It.Is<string>(s => s == value), It.Is<string>(s => s == expectedHash),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
+            mock.Verify(vs => vs.GetValueAsync(It.Is<string>(s => s == key),
+                It.Is<string>(s => s == ComfygConstants.LatestVersion), It.IsAny<CancellationToken>()), Times.Once);
         });
     }
 

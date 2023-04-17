@@ -40,6 +40,7 @@ internal abstract class TagValueCommandBase<T> : Command where T : IComfygValue
 
         var result = await client.TagValueAsync<T>(keyArgument, tagArgument, versionOption, cancellationToken);
 
-        AnsiConsole.MarkupLine($"[bold green]Successfully tagged value. (Key: \"{result.Key}\", Version: {result.Version})[/]");
+        AnsiConsole.MarkupLine(
+            $"[bold green]Successfully tagged value. (Key: {result.Key}, Version: {result.Version})[/]");
     }
 }

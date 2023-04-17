@@ -59,7 +59,7 @@ public class ConfigurationController : ValueControllerBase<IConfigurationValue>
         return Ok();
     }
 
-    [HttpPost("tag")]
+    [HttpPost("tags")]
     public async Task<IActionResult> TagConfigurationValueAsync([FromBody] ITagValueRequest request,
         CancellationToken cancellationToken = default)
     {
