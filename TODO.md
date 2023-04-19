@@ -2,6 +2,8 @@
 
 These are things which still need to be done.
 
+- Make creation of new values only available for system client (with opt-out)
+- Support E2EE on demand
 - Add option to use Azure KeyVault instead of system encryption
 - Add client side exception handling
 - Add detailed feedback on AddValues response
@@ -9,4 +11,3 @@ These are things which still need to be done.
 - Add convert command to convert value types
 - Add option to delete values
 - Make systemId configurable
-- Add option for wildcard permissions
