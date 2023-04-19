@@ -14,5 +14,5 @@ internal interface IComfygValueInitializer : IComfygValue
 
     new string Hash { get; init; }
     
-    new string ParentVersion { get; init; }
+    new string? ParentVersion { get; init; }
 }
