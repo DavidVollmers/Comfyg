@@ -185,7 +185,7 @@ public partial class E2ETests
         _factory.Mock<IPermissionService>(mock =>
         {
             mock.Setup(ps => ps.IsPermittedAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<string>(),
-                It.IsAny<Permissions>(), It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+                It.IsAny<Permissions>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
         });
 
         var client = await ConnectAsync();
@@ -205,8 +205,7 @@ public partial class E2ETests
         {
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == client.ClientId),
-                    It.Is<string>(s => s == key), It.Is<Permissions>(p => p == Permissions.Permit), It.IsAny<bool>(),
-                    It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == key), It.Is<Permissions>(p => p == Permissions.Permit), It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(ps => ps.SetPermissionAsync<IConfigurationValue>(It.Is<string>(s => s == targetClientId),
                 It.Is<string>(s => s == key), It.Is<Permissions>(p => p == Permissions.Read),
                 It.IsAny<CancellationToken>()), Times.Once);

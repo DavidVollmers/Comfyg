@@ -22,7 +22,7 @@ internal class PermissionService : IPermissionService
     }
 
     public async Task<bool> IsPermittedAsync<T>(string owner, string targetId,
-        Contracts.Permissions permissions, bool mustExist = true, CancellationToken cancellationToken = default)
+        Contracts.Permissions permissions, CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
         if (targetId == null) throw new ArgumentNullException(nameof(targetId));
@@ -32,8 +32,6 @@ internal class PermissionService : IPermissionService
         var filter = $"PartitionKey eq '{typeof(T).FullName}-{targetId.ToLower()}'";
         var ownedValues = await _permissionsMirrored.QueryAsync(filter, cancellationToken: cancellationToken)
             .ToArrayAsync(cancellationToken);
-
-        if (!ownedValues.Any()) return !mustExist;
 
         return ownedValues.Any(ov => ov.Owner == owner && ov.Permissions.HasFlag(permissions));
     }

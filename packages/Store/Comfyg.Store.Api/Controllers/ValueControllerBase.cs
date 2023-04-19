@@ -27,9 +27,13 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
     protected async Task<T?> TagValueAsync(IClientIdentity clientIdentity, string key, string version, string tag,
         CancellationToken cancellationToken)
     {
-        var isPermitted = await _permissionService.IsPermittedAsync<T>(clientIdentity.Client.ClientId, key,
-            Permissions.Write, cancellationToken: cancellationToken);
-        if (!isPermitted) return default;
+        // ReSharper disable once InvertIf
+        if (!clientIdentity.IsSystemClient)
+        {
+            var isPermitted = await _permissionService.IsPermittedAsync<T>(clientIdentity.Client.ClientId, key,
+                Permissions.Write, cancellationToken: cancellationToken);
+            if (!isPermitted) return default;
+        }
 
         return await _valueService.TagValueAsync(clientIdentity.Client.ClientId, key, tag, version, cancellationToken);
     }
@@ -37,9 +41,13 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
     protected async Task<T?> GetValueAsync(IClientIdentity clientIdentity, string key, string? version,
         CancellationToken cancellationToken)
     {
-        var isPermitted = await _permissionService.IsPermittedAsync<T>(clientIdentity.Client.ClientId, key,
-            Permissions.Read, cancellationToken: cancellationToken);
-        if (!isPermitted) return default;
+        // ReSharper disable once InvertIf
+        if (!clientIdentity.IsSystemClient)
+        {
+            var isPermitted = await _permissionService.IsPermittedAsync<T>(clientIdentity.Client.ClientId, key,
+                Permissions.Read, cancellationToken: cancellationToken);
+            if (!isPermitted) return default;
+        }
 
         return await _valueService.GetValueAsync(key, version ?? ComfygConstants.LatestVersion, cancellationToken);
     }
@@ -92,9 +100,10 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         {
             if (string.IsNullOrWhiteSpace(value.Key)) throw new InvalidOperationException("Key cannot be empty.");
 
+            if (clientIdentity.IsSystemClient) continue;
+
             var isPermitted = await _permissionService
-                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, Permissions.Write, false,
-                    cancellationToken);
+                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, Permissions.Write, cancellationToken);
             if (!isPermitted) return false;
         }
 

@@ -152,7 +152,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         {
             mock.Setup(ps =>
                     ps.IsPermittedAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<string>(),
-                        It.IsAny<Permissions>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                        It.IsAny<Permissions>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
         });
 
@@ -171,12 +171,10 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         {
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == clientId),
-                    It.Is<string>(s => s == "key1"), It.Is<Permissions>(p => p == Permissions.Write),
-                    It.Is<bool>(b => !b), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == "key1"), It.Is<Permissions>(p => p == Permissions.Write), It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == clientId),
-                    It.Is<string>(s => s == "key2"), It.Is<Permissions>(p => p == Permissions.Write),
-                    It.Is<bool>(b => !b), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == "key2"), It.Is<Permissions>(p => p == Permissions.Write), It.IsAny<CancellationToken>()), Times.Once);
         });
 
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>

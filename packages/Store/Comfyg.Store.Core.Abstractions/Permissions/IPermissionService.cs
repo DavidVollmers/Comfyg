@@ -3,7 +3,7 @@
 public interface IPermissionService
 {
     Task<bool> IsPermittedAsync<T>(string owner, string targetId, Contracts.Permissions permissions,
-        bool mustExist = true, CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default);
 
     IAsyncEnumerable<IPermission> GetPermissionsAsync<T>(string owner,
         Contracts.Permissions? requiredPermissions = null, CancellationToken cancellationToken = default);

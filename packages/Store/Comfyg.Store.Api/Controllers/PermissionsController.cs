@@ -77,10 +77,13 @@ public class PermissionsController : ControllerBase
         var clients = new List<string>();
         foreach (var permission in permissions)
         {
-            var isPermitted = await _permissionService
-                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, permission.Key, Permissions.Permit,
-                    cancellationToken: cancellationToken);
-            if (!isPermitted) return false;
+            if (!clientIdentity.IsSystemClient)
+            {
+                var isPermitted = await _permissionService
+                    .IsPermittedAsync<T>(clientIdentity.Client.ClientId, permission.Key, Permissions.Permit,
+                        cancellationToken: cancellationToken);
+                if (!isPermitted) return false;
+            }
 
             if (clients.Contains(permission.ClientId)) continue;
 
