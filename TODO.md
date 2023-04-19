@@ -2,7 +2,6 @@
 
 These are things which still need to be done.
 
-- Make creation of new values only available for system client (with opt-out)
 - Support E2EE on demand
 - Add option to use Azure KeyVault instead of system encryption
 - Add client side exception handling
