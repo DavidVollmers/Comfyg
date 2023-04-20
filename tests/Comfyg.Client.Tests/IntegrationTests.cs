@@ -7,6 +7,7 @@ using Comfyg.Store.Core.Abstractions.Permissions;
 using Comfyg.Tests.Common;
 using Comfyg.Tests.Common.Contracts;
 using Moq;
+using Range = Moq.Range;
 
 namespace Comfyg.Client.Tests;
 
@@ -65,8 +66,9 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
 
         _factory.Mock<IConfiguration>(mock =>
         {
-            mock.Verify(c => c["SystemClientId"], Times.AtLeast(2));
-            mock.Verify(c => c["SystemClientSecret"], Times.AtLeast(1));
+            // if the server is already started => 1 otherwise => 2
+            mock.Verify(c => c["SystemClientId"], Times.Between(1, 2, Range.Inclusive));
+            mock.Verify(c => c["SystemClientSecret"], Times.Between(1, 2, Range.Inclusive));
         });
 
         _factory.Mock<IClientService>(mock =>

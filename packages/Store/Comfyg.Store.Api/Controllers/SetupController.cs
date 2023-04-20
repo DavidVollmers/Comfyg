@@ -12,12 +12,10 @@ namespace Comfyg.Store.Api.Controllers;
 [Route("setup")]
 public class SetupController : ControllerBase
 {
-    private readonly IConfiguration _configuration;
     private readonly IClientService _clientService;
 
-    public SetupController(IConfiguration configuration, IClientService clientService)
+    public SetupController(IClientService clientService)
     {
-        _configuration = configuration;
         _clientService = clientService;
     }
 
@@ -25,10 +23,9 @@ public class SetupController : ControllerBase
     public async Task<ActionResult<ISetupClientResponse>> SetupClientAsync([FromBody] ISetupClientRequest request,
         CancellationToken cancellationToken = default)
     {
-        var systemClient = _configuration["SystemClientId"];
-        if (systemClient == null || User.Identity is not IClientIdentity identity) return BadRequest();
+        if (User.Identity is not IClientIdentity identity) return BadRequest();
 
-        if (identity.Client.ClientId != systemClient) return Forbid();
+        if (!identity.IsSystemClient) return Forbid();
 
         var existing = await _clientService.GetClientAsync(request.Client.ClientId, cancellationToken);
         if (existing != null) return BadRequest();
