@@ -6,18 +6,16 @@ namespace Comfyg.Store.Contracts.Requests;
 /// <summary>
 /// Request object used to setup a new Comfyg client.
 /// </summary>
-[JsonConverter(typeof(ContractConverter<ISetupClientRequest, Implementation>))]
-public interface ISetupClientRequest
+public interface ISetupClientRequest : IClient
 {
-    /// <summary>
-    /// The Comfyg client to register. 
-    /// </summary>
-    [Required]
-    IClient Client { get; }
-
-    // ReSharper disable once ClassNeverInstantiated.Local
-    private class Implementation : ISetupClientRequest
+    // Must be public to use with [FromForm]
+    // ReSharper disable once ClassNeverInstantiated.Global
+    public sealed class Form : ISetupClientRequest
     {
-        public IClient Client { get; init; } = null!;
+        public string ClientId { get; init; } = null!;
+
+        public string ClientSecret => null!;
+
+        public string FriendlyName { get; init; } = null!;
     }
 }
