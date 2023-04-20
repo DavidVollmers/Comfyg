@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Comfyg.Store.Contracts.Requests;
 
@@ -8,6 +7,8 @@ namespace Comfyg.Store.Contracts.Requests;
 /// </summary>
 public interface ISetupClientRequest : IClient
 {
+    public IFormFile? ClientSecretPublicKey { get; }
+    
     // Must be public to use with [FromForm]
     // ReSharper disable once ClassNeverInstantiated.Global
     public sealed class Form : ISetupClientRequest
@@ -17,5 +18,7 @@ public interface ISetupClientRequest : IClient
         public string ClientSecret => null!;
 
         public string FriendlyName { get; init; } = null!;
+        
+        public IFormFile? ClientSecretPublicKey { get; init; } 
     }
 }

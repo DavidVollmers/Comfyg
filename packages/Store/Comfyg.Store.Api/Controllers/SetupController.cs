@@ -31,11 +31,17 @@ public class SetupController : ControllerBase
         var existing = await _clientService.GetClientAsync(request.ClientId, cancellationToken);
         if (existing != null) return BadRequest();
 
-        var client = await _clientService.CreateClientAsync(request, cancellationToken);
+        if (request.ClientSecretPublicKey == null)
+        {
+            var client = await _clientService.CreateClientAsync(request, cancellationToken);
 
-        var clientSecret =
-            await _clientService.ReceiveClientSecretAsync(client, cancellationToken);
+            var clientSecret =
+                await _clientService.ReceiveClientSecretAsync(client, cancellationToken);
 
-        return Ok(new SetupClientResponse(client, clientSecret));
+            return Ok(new SetupClientResponse(client, clientSecret));
+        }
+
+        //TODO store public key as client secret and use for JWT signature verification...
+        throw new NotImplementedException();
     }
 }
