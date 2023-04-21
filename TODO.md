@@ -10,3 +10,4 @@ These are things which still need to be done.
 - Add convert command to convert value types
 - Add option to delete values
 - Make systemId configurable
+- Add end-2-end encryption
