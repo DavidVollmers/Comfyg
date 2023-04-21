@@ -40,11 +40,21 @@ internal class ClientService : IClientService
 
         var protectedSecret = await _secretService.ProtectSecretValueAsync(clientSecret, cancellationToken);
 
+        return await InternalCreateClientAsync(client, protectedSecret, cancellationToken);
+    }
+
+    public Task<IClient> CreateAsymmetricClientAsync(IClient client, X509Certificate certificate,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    private async Task<IClient> InternalCreateClientAsync(IClient client, string secretReference,
+        CancellationToken cancellationToken)
+    {
         var clientEntity = new ClientEntity
         {
-            ClientId = client.ClientId,
-            FriendlyName = client.FriendlyName,
-            ClientSecret = protectedSecret
+            ClientId = client.ClientId, FriendlyName = client.FriendlyName, ClientSecret = secretReference
         };
 
         await _clients.CreateTableIfNotExistsAsync(cancellationToken);
@@ -52,11 +62,5 @@ internal class ClientService : IClientService
         await _clients.AddAsync(clientEntity, cancellationToken);
 
         return clientEntity;
-    }
-
-    public Task<IClient> CreateAsymmetricClientAsync(IClient client, X509Certificate certificate,
-        CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
     }
 }
