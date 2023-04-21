@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Poco;
 using Comfyg.Store.Authentication.Abstractions;
@@ -33,7 +34,7 @@ internal class ClientService : IClientService
         return await _secretService.UnprotectSecretValueAsync(client.ClientSecret, cancellationToken);
     }
 
-    public async Task<IClient> CreateClientAsync(IClient client, CancellationToken cancellationToken = default)
+    public async Task<IClient> CreateSymmetricClientAsync(IClient client, CancellationToken cancellationToken = default)
     {
         var clientSecret = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 
@@ -51,5 +52,11 @@ internal class ClientService : IClientService
         await _clients.AddAsync(clientEntity, cancellationToken);
 
         return clientEntity;
+    }
+
+    public Task<IClient> CreateAsymmetricClientAsync(IClient client, X509Certificate certificate,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 }

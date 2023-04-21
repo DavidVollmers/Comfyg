@@ -7,11 +7,11 @@ internal class SetupClientResponse : ISetupClientResponse
 {
     public IClient Client { get; }
 
-    public string ClientSecret { get; }
+    public string? ClientSecret { get; }
 
-    public SetupClientResponse(IClient client, string clientSecret)
+    public SetupClientResponse(IClient client, string? clientSecret = null)
     {
         Client = client ?? throw new ArgumentNullException(nameof(client));
-        ClientSecret = clientSecret ?? throw new ArgumentNullException(nameof(clientSecret));
+        ClientSecret = clientSecret;
     }
 }

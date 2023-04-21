@@ -14,15 +14,15 @@ public interface ISetupClientResponse
     IClient Client { get; }
 
     /// <summary>
-    /// The generated client secret of the registered Comfyg client.
+    /// The generated client secret of the registered Comfyg client. If an asymmetric client secret is used this will always return `null`.
     /// </summary>
-    string ClientSecret { get; }
+    string? ClientSecret { get; }
 
     // ReSharper disable once ClassNeverInstantiated.Local
     private class Implementation : ISetupClientResponse
     {
         public IClient Client { get; init; } = null!;
 
-        public string ClientSecret { get; init; } = null!;
+        public string? ClientSecret { get; init; }
     }
 }

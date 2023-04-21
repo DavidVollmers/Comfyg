@@ -49,7 +49,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
 
         _factory.Mock<IClientService>(mock =>
         {
-            mock.Setup(cs => cs.CreateClientAsync(It.IsAny<IClient>(), It.IsAny<CancellationToken>()))
+            mock.Setup(cs => cs.CreateSymmetricClientAsync(It.IsAny<IClient>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(client);
             mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(clientSecret);
@@ -77,7 +77,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
                 cs => cs.GetClientAsync(It.Is<string>(s => s == client.ClientId), It.IsAny<CancellationToken>()),
                 Times.Once);
             mock.Verify(
-                cs => cs.CreateClientAsync(It.Is<IClient>(c => c.ClientId == client.ClientId),
+                cs => cs.CreateSymmetricClientAsync(It.Is<IClient>(c => c.ClientId == client.ClientId),
                     It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(
                 cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == client.ClientId),

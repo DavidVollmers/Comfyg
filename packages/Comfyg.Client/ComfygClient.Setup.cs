@@ -11,11 +11,12 @@ public partial class ComfygClient
     /// Registers a new client on the connected Comfyg store. 
     /// </summary>
     /// <param name="client"><see cref="IClient"/></param>
+    /// <param name="publicKey">Can be used for asymmetric client secrets. Must contain the public key portion of the client secret.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
     /// <returns><see cref="ISetupClientResponse"/></returns>
     /// <exception cref="ArgumentNullException"><paramref name="client"/> is null.</exception>
     /// <exception cref="HttpRequestException">Invalid status code is returned.</exception>
-    public async Task<ISetupClientResponse> SetupClientAsync(IClient client,
+    public async Task<ISetupClientResponse> SetupClientAsync(IClient client, Stream? publicKey = null,
         CancellationToken cancellationToken = default)
     {
         if (client == null) throw new ArgumentNullException(nameof(client));
@@ -25,6 +26,12 @@ public partial class ComfygClient
             $"{nameof(ISetupClientRequest)}.{nameof(ISetupClientRequest.ClientId)}");
         formData.Add(new StringContent(client.FriendlyName),
             $"{nameof(ISetupClientRequest)}.{nameof(ISetupClientRequest.FriendlyName)}");
+
+        if (publicKey != null)
+        {
+            formData.Add(new StreamContent(publicKey),
+                $"{nameof(ISetupClientRequest)}.{nameof(ISetupClientRequest.ClientSecretPublicKey)}");
+        }
 
         var response =
             await SendRequestAsync(

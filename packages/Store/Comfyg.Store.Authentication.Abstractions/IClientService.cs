@@ -1,4 +1,5 @@
-﻿using Comfyg.Store.Contracts;
+﻿using System.Security.Cryptography.X509Certificates;
+using Comfyg.Store.Contracts;
 
 namespace Comfyg.Store.Authentication.Abstractions;
 
@@ -8,5 +9,8 @@ public interface IClientService
 
     Task<string> ReceiveClientSecretAsync(IClient client, CancellationToken cancellationToken = default);
 
-    Task<IClient> CreateClientAsync(IClient client, CancellationToken cancellationToken = default);
+    Task<IClient> CreateSymmetricClientAsync(IClient client, CancellationToken cancellationToken = default);
+
+    Task<IClient> CreateAsymmetricClientAsync(IClient client, X509Certificate certificate,
+        CancellationToken cancellationToken = default);
 }
