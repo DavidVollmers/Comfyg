@@ -17,6 +17,7 @@ public sealed partial class ComfygClient : IDisposable
     private readonly HttpClient _httpClient;
     private readonly string _clientId;
     private readonly byte[] _clientSecret;
+    private readonly SecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
 
     private SecurityToken? _token;
 
@@ -136,11 +137,9 @@ public sealed partial class ComfygClient : IDisposable
 
     private string CreateToken()
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
-
         if (_token != null && _token.ValidTo > DateTimeOffset.UtcNow.AddMinutes(5))
         {
-            return tokenHandler.WriteToken(_token);
+            return _tokenHandler.WriteToken(_token);
         }
 
         var securityKey = new SymmetricSecurityKey(_clientSecret);
@@ -155,8 +154,8 @@ public sealed partial class ComfygClient : IDisposable
             SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature)
         };
 
-        _token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(_token);
+        _token = _tokenHandler.CreateToken(tokenDescriptor);
+        return _tokenHandler.WriteToken(_token);
     }
 
     /// <summary>
