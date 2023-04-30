@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Requests;
 using Comfyg.Store.Contracts.Responses;
@@ -21,20 +22,19 @@ public partial class ComfygClient
     {
         if (client == null) throw new ArgumentNullException(nameof(client));
 
-        var formData = new MultipartFormDataContent();
-        formData.Add(new StringContent(client.ClientId),
-            $"{nameof(ISetupClientRequest)}.{nameof(ISetupClientRequest.ClientId)}");
-        formData.Add(new StringContent(client.FriendlyName),
-            $"{nameof(ISetupClientRequest)}.{nameof(ISetupClientRequest.FriendlyName)}");
+        using var formData = new MultipartFormDataContent();
+        formData.Add(new StringContent(client.ClientId), nameof(ISetupClientRequest.ClientId));
+        formData.Add(new StringContent(client.FriendlyName), nameof(ISetupClientRequest.FriendlyName));
 
         if (publicKey != null)
         {
-            formData.Add(new StreamContent(publicKey),
-                $"{nameof(ISetupClientRequest)}.{nameof(ISetupClientRequest.ClientSecretPublicKey)}");
+            formData.Add(new StreamContent(publicKey), nameof(ISetupClientRequest.ClientSecretPublicKey),
+                nameof(ISetupClientRequest.ClientSecretPublicKey));
         }
 
         var response =
             await SendRequestAsync(
+                // ReSharper disable once AccessToDisposedClosure
                 () => new HttpRequestMessage(HttpMethod.Post, "setup/client") { Content = formData },
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 

@@ -12,6 +12,7 @@ public sealed class Client : IClient
     /// </summary>
     /// <param name="clientId">The client ID.</param>
     /// <param name="friendlyName">The user friendly display name of the client.</param>
+    /// <param name="isAsymmetric">Specifies if the client uses an asymmetric client secret.</param>
     /// <exception cref="ArgumentNullException"><paramref name="clientId"/> or <paramref name="friendlyName"/> is null.</exception>
     public Client(string clientId, string friendlyName, bool isAsymmetric)
     {

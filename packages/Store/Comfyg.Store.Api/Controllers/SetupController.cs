@@ -22,9 +22,8 @@ public class SetupController : ControllerBase
     }
 
     [HttpPost("client")]
-    public async Task<ActionResult<ISetupClientResponse>> SetupClientAsync(
-        [FromForm(Name = nameof(ISetupClientRequest))]
-        ISetupClientRequest.Form request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<ISetupClientResponse>> SetupClientAsync([FromForm] ISetupClientRequest.Form request,
+        CancellationToken cancellationToken = default)
     {
         if (User.Identity is not IClientIdentity identity) return BadRequest();
 
