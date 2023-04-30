@@ -164,7 +164,8 @@ public sealed partial class ComfygClient : IDisposable
             Expires = DateTime.UtcNow.AddDays(1).AddMinutes(5),
             Issuer = _clientId,
             Audience = _clientId,
-            SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature)
+            SigningCredentials = new SigningCredentials(securityKey,
+                !_isAsymmetric ? SecurityAlgorithms.HmacSha512Signature : SecurityAlgorithms.RsaSha512Signature)
         };
 
         _token = _tokenHandler.CreateToken(tokenDescriptor);

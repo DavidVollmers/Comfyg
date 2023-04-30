@@ -45,7 +45,7 @@ internal class SetupClientCommand : Command
                 throw new FileNotFoundException("Could not find provided public key file.", publicKeyOption.FullName);
 
             var pemContent = await File.ReadAllTextAsync(publicKeyOption.FullName, cancellationToken);
-            
+
             using var rsa = RSA.Create();
             rsa.ImportFromPem(pemContent);
             publicKey = new MemoryStream(rsa.ExportRSAPublicKey());
@@ -65,7 +65,9 @@ internal class SetupClientCommand : Command
         AnsiConsole.MarkupLine("[bold yellow]Make sure to copy the client secret before closing the terminal![/]");
 
         AnsiConsole.WriteLine("You can connect with this client using the following connection string:");
+
+        var clientSecret = !result.Client.IsAsymmetric ? result.ClientSecret : "PATH_TO_PRIVATE_KEY";
         AnsiConsole.MarkupLine(
-            $"[bold]Endpoint={client.EndpointUrl};ClientId={result.Client.ClientId};ClientSecret={result.ClientSecret};[/]");
+            $"[bold]Endpoint={client.EndpointUrl};ClientId={result.Client.ClientId};ClientSecret={clientSecret};[/]");
     }
 }

@@ -46,6 +46,50 @@ public partial class E2ETests
         });
     }
 
+    [Fact]
+    public async Task Test_Connect_AsymmetricKey()
+    {
+        var clientId = Guid.NewGuid().ToString();
+        var assemblyPath = new FileInfo(Assembly.GetAssembly(typeof(E2ETests))!.Location).Directory!.FullName;
+        var publicKeyPath = Path.Join(assemblyPath, "public.pem");
+        var privateKeyPath = Path.Join(assemblyPath, "test.pem");
+        const string friendlyName = "Test Client";
+        var client = new TestClient { ClientId = clientId, FriendlyName = friendlyName, IsAsymmetric = true};
+
+        using var rsa = RSA.Create();
+        rsa.ImportFromPem(await File.ReadAllTextAsync(publicKeyPath));
+        var publicKey = rsa.ExportRSAPublicKey();
+        
+        using var httpClient = _factory.CreateClient();
+        var expectedOutput = @"Successfully connected to " + httpClient.BaseAddress;
+
+        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={privateKeyPath}";
+
+        _factory.Mock<IClientService>(mock =>
+        {
+            mock.Setup(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(client);
+            mock.Setup(cs =>
+                    cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId),
+                        It.IsAny<CancellationToken>()))
+                .ReturnsAsync(publicKey);
+        });
+
+        var result = await TestCli.ExecuteAsync($"connect \"{connectionString}\"");
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.StartsWith(expectedOutput, result.Output);
+
+        _factory.Mock<IClientService>(mock =>
+        {
+            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()),
+                Times.Once);
+            mock.Verify(
+                cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId),
+                    It.IsAny<CancellationToken>()), Times.Once);
+        });
+    }
+
     private async Task<IClient> ConnectAsSystemAsync()
     {
         var systemClientId = Guid.NewGuid().ToString();
