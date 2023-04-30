@@ -20,6 +20,7 @@ internal static class ComfygStoreApiExtensions
         builder.Services.AddComfygAuthentication(options =>
         {
             options.UseAzureTableStorage(builder.Configuration["AuthenticationAzureTableStorageConnectionString"]);
+            options.UseAzureBlobStorage(builder.Configuration["AuthenticationAzureBlobStorageConnectionString"]);
 
             var encryptionKey = builder.Configuration["AuthenticationEncryptionKey"];
             if (encryptionKey != null) options.UseEncryption(encryptionKey);

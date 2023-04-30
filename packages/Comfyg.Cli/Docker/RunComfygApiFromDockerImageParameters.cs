@@ -15,4 +15,6 @@ internal class RunComfygApiFromDockerImageParameters
     public string AuthenticationEncryptionKey { get; set; } = null!;
 
     public string AuthenticationAzureTableStorageConnectionString { get; set; } = null!;
+
+    public string AuthenticationAzureBlobStorageConnectionString { get; set; } = null!;
 }

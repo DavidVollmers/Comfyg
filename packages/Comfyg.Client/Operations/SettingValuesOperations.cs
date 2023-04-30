@@ -58,7 +58,8 @@ internal class SettingValuesOperations : IComfygValueOperations<ISettingValue>
             throw new HttpRequestException("Invalid status code when trying to get setting value.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<ISettingValue>(cancellationToken: cancellationToken))!;
+        return (await response.Content.ReadFromJsonAsync<ISettingValue>(cancellationToken: cancellationToken)
+            .ConfigureAwait(false))!;
     }
 
     public async Task AddValuesAsync(IEnumerable<ISettingValue> values, CancellationToken cancellationToken = default)
@@ -95,7 +96,8 @@ internal class SettingValuesOperations : IComfygValueOperations<ISettingValue>
             throw new HttpRequestException("Invalid status code when trying to tag setting value.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<ISettingValue>(cancellationToken: cancellationToken))!;
+        return (await response.Content.ReadFromJsonAsync<ISettingValue>(cancellationToken: cancellationToken)
+            .ConfigureAwait(false))!;
     }
 
     public void Dispose()

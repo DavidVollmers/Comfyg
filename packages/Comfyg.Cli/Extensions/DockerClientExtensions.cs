@@ -25,7 +25,8 @@ internal static class DockerClientExtensions
             $"COMFYG_SystemEncryptionKey={parameters.SystemEncryptionKey}",
             $"COMFYG_SystemAzureTableStorageConnectionString={parameters.SystemAzureTableStorageConnectionString}",
             $"COMFYG_AuthenticationEncryptionKey={parameters.AuthenticationEncryptionKey}",
-            $"COMFYG_AuthenticationAzureTableStorageConnectionString={parameters.AuthenticationAzureTableStorageConnectionString}"
+            $"COMFYG_AuthenticationAzureTableStorageConnectionString={parameters.AuthenticationAzureTableStorageConnectionString}",
+            $"COMFYG_AuthenticationAzureBlobStorageConnectionString={parameters.AuthenticationAzureBlobStorageConnectionString}"
         };
 
 #if DEBUG

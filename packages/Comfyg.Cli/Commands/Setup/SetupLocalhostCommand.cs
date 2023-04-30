@@ -2,6 +2,7 @@
 using System.CommandLine.Invocation;
 using System.Security.Cryptography;
 using Azure.Data.Tables;
+using Azure.Storage.Blobs;
 using Comfyg.Cli.Docker;
 using Comfyg.Cli.Extensions;
 using Docker.DotNet;
@@ -23,65 +24,52 @@ internal class SetupLocalhostCommand : Command
     private readonly Option<string> _systemAzureTableStorageConnectionStringOption;
     private readonly Option<string> _authenticationEncryptionKeyOption;
     private readonly Option<string> _authenticationAzureTableStorageConnectionStringOption;
+    private readonly Option<string> _authenticationAzureBlobStorageConnectionStringOption;
     private readonly Option<string> _versionOption;
 
     public SetupLocalhostCommand() : base("localhost", "Sets up a new Comfyg store on your local machine.")
     {
-        _dockerFileOption = new Option<FileInfo?>(new[]
-        {
-            "-df",
-            "--docker-file"
-        }, "The Dockerfile used to build the container from. This can be used for local development of the Comfyg store API or when testing your own Comfyg store API implementation.");
+        _dockerFileOption = new Option<FileInfo?>(new[] { "-df", "--docker-file" },
+            "The Dockerfile used to build the container from. This can be used for local development of the Comfyg store API or when testing your own Comfyg store API implementation.");
         AddOption(_dockerFileOption);
 
-        _dockerSocketOption = new Option<Uri?>(new[]
-        {
-            "-ds",
-            "--docker-socket"
-        }, "The docker socket to use for creating and running the docker container.");
+        _dockerSocketOption = new Option<Uri?>(new[] { "-ds", "--docker-socket" },
+            "The docker socket to use for creating and running the docker container.");
         AddOption(_dockerSocketOption);
 
-        _systemClientIdOption = new Option<string>(new[]
-        {
-            "--system-client-id"
-        }, "The client ID of the Comfyg system client.");
+        _systemClientIdOption =
+            new Option<string>(new[] { "--system-client-id" }, "The client ID of the Comfyg system client.");
         AddOption(_systemClientIdOption);
 
-        _systemClientSecretOption = new Option<string>(new[]
-        {
-            "--system-client-secret"
-        }, "The client secret of the Comfyg system client.");
+        _systemClientSecretOption = new Option<string>(new[] { "--system-client-secret" },
+            "The client secret of the Comfyg system client.");
         AddOption(_systemClientSecretOption);
 
-        _systemEncryptionKeyOption = new Option<string>(new[]
-        {
-            "--system-encryption-key"
-        }, "The base64 encoded key used to encrypt all Comfyg secret values.");
+        _systemEncryptionKeyOption = new Option<string>(new[] { "--system-encryption-key" },
+            "The base64 encoded key used to encrypt all Comfyg secret values.");
         AddOption(_systemEncryptionKeyOption);
 
-        _systemAzureTableStorageConnectionStringOption = new Option<string>(new[]
-        {
-            "--system-azure-table-storage-connection-string"
-        }, "A connection string to connect to the Azure Storage Account used to store all Comfyg values.");
+        _systemAzureTableStorageConnectionStringOption = new Option<string>(
+            new[] { "--system-azure-table-storage-connection-string" },
+            "A connection string to connect to the Azure Storage Account used to store all Comfyg values.");
         AddOption(_systemAzureTableStorageConnectionStringOption);
 
-        _authenticationEncryptionKeyOption = new Option<string>(new[]
-        {
-            "--authentication-encryption-key"
-        }, "The base64 encoded key used to encrypt all authentication related secrets.");
+        _authenticationEncryptionKeyOption = new Option<string>(new[] { "--authentication-encryption-key" },
+            "The base64 encoded key used to encrypt all authentication related secrets.");
         AddOption(_authenticationEncryptionKeyOption);
 
-        _authenticationAzureTableStorageConnectionStringOption = new Option<string>(new[]
-        {
-            "--authentication-azure-table-storage-connection-string"
-        }, "A connection string to connect to the Azure Storage Account used to store all authentication related values.");
+        _authenticationAzureTableStorageConnectionStringOption = new Option<string>(
+            new[] { "--authentication-azure-table-storage-connection-string" },
+            "A connection string to connect to the Azure Storage Account used to store all authentication related values.");
         AddOption(_authenticationAzureTableStorageConnectionStringOption);
 
-        _versionOption = new Option<string>(new[]
-        {
-            "-v",
-            "--version"
-        }, "The version of the Docker Image to used. Defaults to `latest`.");
+        _authenticationAzureBlobStorageConnectionStringOption = new Option<string>(
+            new[] { "--authentication-azure-blob-storage-connection-string" },
+            "A connection string to connect to the Azure Storage Account used to store all authentication related blobs.");
+        AddOption(_authenticationAzureBlobStorageConnectionStringOption);
+
+        _versionOption = new Option<string>(new[] { "-v", "--version" },
+            "The version of the Docker Image to used. Defaults to `latest`.");
         _versionOption.SetDefaultValue("latest");
         AddOption(_versionOption);
 
@@ -101,6 +89,8 @@ internal class SetupLocalhostCommand : Command
             context.ParseResult.GetValueForOption(_authenticationEncryptionKeyOption);
         var authenticationAzureTableStorageConnectionStringOption =
             context.ParseResult.GetValueForOption(_authenticationAzureTableStorageConnectionStringOption);
+        var authenticationAzureBlobStorageConnectionStringOption =
+            context.ParseResult.GetValueForOption(_authenticationAzureBlobStorageConnectionStringOption);
         var versionOption = context.ParseResult.GetValueForOption(_versionOption);
 
         var cancellationToken = context.GetCancellationToken();
@@ -112,7 +102,9 @@ internal class SetupLocalhostCommand : Command
             SystemEncryptionKey = systemEncryptionKeyOption!,
             SystemAzureTableStorageConnectionString = systemAzureTableStorageConnectionStringOption!,
             AuthenticationEncryptionKey = authenticationEncryptionKeyOption!,
-            AuthenticationAzureTableStorageConnectionString = authenticationAzureTableStorageConnectionStringOption!
+            AuthenticationAzureTableStorageConnectionString =
+                authenticationAzureTableStorageConnectionStringOption!,
+            AuthenticationAzureBlobStorageConnectionString = authenticationAzureBlobStorageConnectionStringOption!
         };
 
         await PromptMissingParametersAsync(parameters, cancellationToken);
@@ -180,8 +172,8 @@ internal class SetupLocalhostCommand : Command
                     .RunComfygApiFromDockerImageAsync(parameters, MessageHandler, cancellationToken);
 
                 var containers = await State.User
-                    .ReadAsync<List<string>>(nameof(Docker), "Containers", cancellationToken)
-                     ?? new List<string>();
+                                     .ReadAsync<List<string>>(nameof(Docker), "Containers", cancellationToken)
+                                 ?? new List<string>();
                 containers.Add(result.ContainerId);
 
                 await State.User.StoreAsync(nameof(Docker), "Containers", containers, cancellationToken);
@@ -250,6 +242,14 @@ internal class SetupLocalhostCommand : Command
             parameters.AuthenticationAzureTableStorageConnectionString =
                 AnsiConsole.Ask<string>("[bold]Authentication Azure Table Storage[/]:");
         }
+
+        while (!await ValidateAzureBlobStorageConnectionStringAsync(
+                   parameters.AuthenticationAzureBlobStorageConnectionString, cancellationToken))
+        {
+            parameters.AuthenticationAzureBlobStorageConnectionString =
+                AnsiConsole.Ask("[bold]Authentication Azure Blob Storage[/]:",
+                    parameters.AuthenticationAzureTableStorageConnectionString);
+        }
     }
 
     private static bool ValidateSecurityValue(string? value, string name)
@@ -292,6 +292,29 @@ internal class SetupLocalhostCommand : Command
         {
             AnsiConsole.MarkupLine(
                 "[bold red]Could not connect to Azure Table Storage. Please make sure that the connection string is valid.[/]");
+
+            return false;
+        }
+    }
+
+    private static async Task<bool> ValidateAzureBlobStorageConnectionStringAsync(string connectionString,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(connectionString)) return false;
+
+
+        try
+        {
+            var blobServiceClient = new BlobServiceClient(connectionString);
+
+            await blobServiceClient.GetPropertiesAsync(cancellationToken);
+            
+            return true;
+        }
+        catch
+        {
+            AnsiConsole.MarkupLine(
+                "[bold red]Could not connect to Azure Blob Storage. Please make sure that the connection string is valid.[/]");
 
             return false;
         }

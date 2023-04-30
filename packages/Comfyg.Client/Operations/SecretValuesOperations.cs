@@ -58,7 +58,8 @@ internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
             throw new HttpRequestException("Invalid status code when trying to get secret value.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<ISecretValue>(cancellationToken: cancellationToken))!;
+        return (await response.Content.ReadFromJsonAsync<ISecretValue>(cancellationToken: cancellationToken)
+            .ConfigureAwait(false))!;
     }
 
     public async Task AddValuesAsync(IEnumerable<ISecretValue> values, CancellationToken cancellationToken = default)
@@ -95,7 +96,8 @@ internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
             throw new HttpRequestException("Invalid status code when trying to tag secret value.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<ISecretValue>(cancellationToken: cancellationToken))!;
+        return (await response.Content.ReadFromJsonAsync<ISecretValue>(cancellationToken: cancellationToken)
+            .ConfigureAwait(false))!;
     }
 
     public void Dispose()

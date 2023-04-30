@@ -58,7 +58,8 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
             throw new HttpRequestException("Invalid status code when trying to get configuration value.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<IConfigurationValue>(cancellationToken: cancellationToken))!;
+        return (await response.Content.ReadFromJsonAsync<IConfigurationValue>(cancellationToken: cancellationToken)
+            .ConfigureAwait(false))!;
     }
 
     public async Task AddValuesAsync(IEnumerable<IConfigurationValue> values,
@@ -96,7 +97,8 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
             throw new HttpRequestException("Invalid status code when trying to tag configuration value.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<IConfigurationValue>(cancellationToken: cancellationToken))!;
+        return (await response.Content.ReadFromJsonAsync<IConfigurationValue>(cancellationToken: cancellationToken)
+            .ConfigureAwait(false))!;
     }
 
     public void Dispose()

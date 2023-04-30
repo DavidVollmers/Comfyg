@@ -6,6 +6,8 @@ public sealed class ComfygAuthenticationOptions
         "Cannot use encryption and Azure Key Vault. Use either ComfygAuthenticationOptions.UseEncryption or ComfygAuthenticationOptions.UseKeyVault to configure secret handling.";
 
     internal string? AzureTableStorageConnectionString { get; private set; }
+    
+    internal string? AzureBlobStorageConnectionString { get; private set; }
 
     internal string? EncryptionKey { get; private set; }
 
@@ -18,6 +20,13 @@ public sealed class ComfygAuthenticationOptions
     public ComfygAuthenticationOptions UseAzureTableStorage(string connectionString)
     {
         AzureTableStorageConnectionString =
+            connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+        return this;
+    }
+
+    public ComfygAuthenticationOptions UseAzureBlobStorage(string connectionString)
+    {
+        AzureBlobStorageConnectionString =
             connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         return this;
     }

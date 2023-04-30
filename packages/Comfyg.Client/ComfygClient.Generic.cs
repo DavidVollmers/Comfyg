@@ -31,7 +31,7 @@ public partial class ComfygClient
     public async IAsyncEnumerable<T> GetValuesAsync<T>(DateTimeOffset? since = null, IEnumerable<string>? tags = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default) where T : IComfygValue
     {
-        var values = Operations<T>().GetValuesAsync(since, tags, cancellationToken);
+        var values = Operations<T>().GetValuesAsync(since, tags, cancellationToken).ConfigureAwait(false);
 
         await foreach (var value in values.WithCancellation(cancellationToken).ConfigureAwait(false))
             yield return value;
@@ -48,7 +48,7 @@ public partial class ComfygClient
     public async Task<T> GetValueAsync<T>(string key, string? version = null,
         CancellationToken cancellationToken = default) where T : IComfygValue
     {
-        return await Operations<T>().GetValueAsync(key, version, cancellationToken);
+        return await Operations<T>().GetValueAsync(key, version, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
