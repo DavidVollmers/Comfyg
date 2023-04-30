@@ -32,7 +32,7 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
             { "key1", "value1" },
             { "key2", new Dictionary<string, object> { { "", "value2" }, { "key3", "value3" } } }
         };
-        var importFile = Path.GetTempPath() + Guid.NewGuid();
+        var importFile = Path.GetTempFileName();
         await File.WriteAllTextAsync(importFile, JsonSerializer.Serialize(json));
         const string expectedOutput = "Successfully imported 3 values";
 

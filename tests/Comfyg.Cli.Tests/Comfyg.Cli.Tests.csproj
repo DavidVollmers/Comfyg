@@ -28,4 +28,13 @@
     <ProjectReference Include="..\Comfyg.Tests.Common\Comfyg.Tests.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="public.pem">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="test.pem">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
