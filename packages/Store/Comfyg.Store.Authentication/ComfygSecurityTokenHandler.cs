@@ -59,7 +59,7 @@ internal class ComfygSecurityTokenHandler : JwtSecurityTokenHandler
     {
         if (!client.IsAsymmetric) return new SymmetricSecurityKey(clientSecret);
 
-        using var rsa = RSA.Create();
+        var rsa = RSA.Create();
         rsa.ImportRSAPublicKey(clientSecret, out _);
         return new RsaSecurityKey(rsa);
     }

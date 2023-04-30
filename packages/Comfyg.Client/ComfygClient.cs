@@ -176,7 +176,7 @@ public sealed partial class ComfygClient : IDisposable
     {
         if (!_isAsymmetric) return new SymmetricSecurityKey(_clientSecret);
 
-        using var rsa = RSA.Create();
+        var rsa = RSA.Create();
         rsa.ImportRSAPrivateKey(_clientSecret, out _);
         return new RsaSecurityKey(rsa);
     }
