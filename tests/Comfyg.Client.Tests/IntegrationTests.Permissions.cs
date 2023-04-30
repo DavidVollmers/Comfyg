@@ -14,7 +14,7 @@ public partial class IntegrationTests
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         const string friendlyName = "Test Client";
-        var client = new TestClient { ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName };
+        var client = new TestClient { ClientId = clientId, FriendlyName = friendlyName };
         var configurationValueKey1 = Guid.NewGuid().ToString();
         var configurationValuePermissions =
             new IPermission[] { new TestPermission { TargetId = configurationValueKey1 } };
@@ -28,7 +28,7 @@ public partial class IntegrationTests
         
         using var httpClient = _factory.CreateClient();
 
-        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={clientSecret}";
+        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={Convert.ToBase64String(clientSecret)}";
         using var comfygClient = new ComfygClient(connectionString, httpClient);
 
         _factory.Mock<IClientService>(mock =>

@@ -225,9 +225,9 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
         });
     }
 
-    private static string CreateClientSecret()
+    private static byte[] CreateClientSecret()
     {
-        return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+        return Guid.NewGuid().ToByteArray();
     }
 
     private async Task<IClient> ConnectAsync()
@@ -235,12 +235,12 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         const string friendlyName = "Test Client";
-        var client = new TestClient { ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName };
+        var client = new TestClient { ClientId = clientId, FriendlyName = friendlyName };
 
         using var httpClient = _factory.CreateClient();
         var expectedOutput = @"Successfully connected to " + httpClient.BaseAddress;
 
-        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={clientSecret}";
+        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={Convert.ToBase64String(clientSecret)}";
 
         _factory.Mock<IClientService>(mock =>
         {

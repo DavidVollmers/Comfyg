@@ -22,16 +22,16 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         _factory.ResetMocks();
     }
 
-    private static string CreateClientSecret()
+    private static byte[] CreateClientSecret()
     {
-        return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+        return Guid.NewGuid().ToByteArray();
     }
 
     [Fact]
     public async Task Test_SetupClientAsync()
     {
         var systemClientId = Guid.NewGuid().ToString();
-        var systemClientSecret = CreateClientSecret();
+        var systemClientSecret = Convert.ToBase64String(CreateClientSecret());
         var client = new TestClient { ClientId = Guid.NewGuid().ToString(), FriendlyName = "New Client" };
         var clientSecret = CreateClientSecret();
 
@@ -62,7 +62,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         Assert.Equal(client.ClientId, response.Client.ClientId);
         Assert.Equal(client.FriendlyName, response.Client.FriendlyName);
         Assert.Null(response.Client.ClientSecret);
-        Assert.Equal(clientSecret, response.ClientSecret);
+        Assert.Equal(Convert.ToBase64String(clientSecret), response.ClientSecret);
 
         _factory.Mock<IConfiguration>(mock =>
         {
@@ -92,11 +92,11 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         const string friendlyName = "Test Client";
-        var client = new TestClient { ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName };
+        var client = new TestClient { ClientId = clientId, FriendlyName = friendlyName };
 
         using var httpClient = _factory.CreateClient();
 
-        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={clientSecret}";
+        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={Convert.ToBase64String(clientSecret)}";
         using var comfygClient = new ComfygClient(connectionString, httpClient);
 
         _factory.Mock<IClientService>(mock =>
@@ -130,7 +130,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         const string friendlyName = "Test Client";
-        var client = new TestClient { ClientId = clientId, ClientSecret = clientSecret, FriendlyName = friendlyName };
+        var client = new TestClient { ClientId = clientId, FriendlyName = friendlyName };
         var configurationValues = new[]
         {
             new ConfigurationValue("key1", "value1"), new ConfigurationValue("key2", "value2")
@@ -140,7 +140,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
 
         using var httpClient = _factory.CreateClient();
 
-        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={clientSecret}";
+        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={Convert.ToBase64String(clientSecret)}";
         using var comfygClient = new ComfygClient(connectionString, httpClient);
 
         _factory.Mock<IClientService>(mock =>

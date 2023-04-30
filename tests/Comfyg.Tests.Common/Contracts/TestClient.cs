@@ -9,4 +9,6 @@ public class TestClient : IClient
     public string ClientSecret { get; set; } = null!;
 
     public string FriendlyName { get; set; } = null!;
+    
+    public bool IsAsymmetric { get; set; }
 }
