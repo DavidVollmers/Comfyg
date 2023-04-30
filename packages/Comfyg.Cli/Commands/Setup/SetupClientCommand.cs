@@ -52,8 +52,8 @@ internal class SetupClientCommand : Command
 
         using var client = await State.User.RequireClientAsync(cancellationToken);
 
-        var result = await client.SetupClientAsync(new Client.Client(clientIdArgument, friendlyNameArgument),
-            publicKey, cancellationToken);
+        var result = await client.SetupClientAsync(
+            new Client.Client(clientIdArgument, friendlyNameArgument, publicKey != null), publicKey, cancellationToken);
 
         if (publicKey != null) await publicKey.DisposeAsync();
 

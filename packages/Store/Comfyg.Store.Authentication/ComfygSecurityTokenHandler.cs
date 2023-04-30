@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts;
 using Microsoft.Extensions.Configuration;
@@ -27,12 +28,12 @@ internal class ComfygSecurityTokenHandler : JwtSecurityTokenHandler
         var jwt = ReadJwtToken(token);
 
         IClient? client = null;
-        string clientSecret = null!;
+        byte[] clientSecret = null!;
 
         var systemClient = new SystemClient(_configuration);
         if (systemClient.IsConfigured && jwt.Issuer == systemClient.ClientId)
         {
-            clientSecret = systemClient.ClientSecret;
+            clientSecret = Convert.FromBase64String(systemClient.ClientSecret);
             client = systemClient;
         }
 
@@ -46,7 +47,9 @@ internal class ComfygSecurityTokenHandler : JwtSecurityTokenHandler
 
         if (clientSecret == null) throw new SecurityTokenInvalidSigningKeyException("Missing client secret.");
 
-        validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(clientSecret));
+        validationParameters.IssuerSigningKey = !client.IsAsymmetric
+            ? new SymmetricSecurityKey(clientSecret)
+            : new X509SecurityKey(new X509Certificate2(clientSecret));
 
         var principal = base.ValidateToken(token, validationParameters, out validatedToken);
 

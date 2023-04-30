@@ -13,10 +13,11 @@ public sealed class Client : IClient
     /// <param name="clientId">The client ID.</param>
     /// <param name="friendlyName">The user friendly display name of the client.</param>
     /// <exception cref="ArgumentNullException"><paramref name="clientId"/> or <paramref name="friendlyName"/> is null.</exception>
-    public Client(string clientId, string friendlyName)
+    public Client(string clientId, string friendlyName, bool isAsymmetric)
     {
         ClientId = clientId ?? throw new ArgumentNullException(nameof(clientId));
         FriendlyName = friendlyName ?? throw new ArgumentNullException(nameof(friendlyName));
+        IsAsymmetric = isAsymmetric;
     }
 
     /// <summary>
@@ -33,4 +34,9 @@ public sealed class Client : IClient
     /// The user friendly display name of the client.
     /// </summary>
     public string FriendlyName { get; }
+
+    /// <summary>
+    /// Specifies if the client uses an asymmetric client secret.
+    /// </summary>
+    public bool IsAsymmetric { get; }
 }

@@ -32,6 +32,11 @@ public interface IClient
     [MaxLength(256)]
     string FriendlyName { get; }
 
+    /// <summary>
+    /// Specifies if the client uses an asymmetric client secret.
+    /// </summary>
+    bool IsAsymmetric { get; }
+
     // ReSharper disable once ClassNeverInstantiated.Local
     private class Implementation : IClient
     {
@@ -40,5 +45,7 @@ public interface IClient
         public string ClientSecret { get; init; } = null!;
 
         public string FriendlyName { get; init; } = null!;
+
+        public bool IsAsymmetric { get; init; }
     }
 }

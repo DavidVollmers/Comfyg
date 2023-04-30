@@ -10,4 +10,6 @@ internal class ClientEntity : IClient
     public string ClientSecret { get; init; } = null!;
 
     public string FriendlyName { get; init; } = null!;
+    
+    public bool IsAsymmetric { get; init; }
 }

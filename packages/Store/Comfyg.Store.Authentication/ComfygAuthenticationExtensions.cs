@@ -1,6 +1,7 @@
 ﻿using Azure.Data.Tables;
 using Azure.Security.KeyVault.Secrets;
 using Comfyg.Store.Authentication.Abstractions;
+using Comfyg.Store.Core.Abstractions;
 using Comfyg.Store.Core.Abstractions.Secrets;
 using Comfyg.Store.Core.Secrets;
 using Microsoft.AspNetCore.Authentication;
@@ -51,8 +52,13 @@ public static class ComfygAuthenticationExtensions
                 provider.GetRequiredService<SecretClient>());
         }
 
+        IBlobService BlobServiceProvider(IServiceProvider provider)
+        {
+        }
+
         serviceCollection.AddSingleton<IClientService, ClientService>(provider =>
-            new ClientService(TableServiceClientProvider(), SecretServiceProvider(provider)));
+            new ClientService(TableServiceClientProvider(), SecretServiceProvider(provider),
+                BlobServiceProvider(provider)));
 
         serviceCollection.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, ComfygJwtBearerOptions>();
         serviceCollection.AddSingleton<ComfygSecurityTokenHandler>();
@@ -63,8 +69,7 @@ public static class ComfygAuthenticationExtensions
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateAudience = false,
-                    ValidateIssuer = false
+                    ValidateAudience = false, ValidateIssuer = false
                 };
             });
     }

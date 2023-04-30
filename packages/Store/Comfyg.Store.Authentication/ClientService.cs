@@ -4,20 +4,25 @@ using Azure.Data.Tables;
 using Azure.Data.Tables.Poco;
 using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts;
+using Comfyg.Store.Core.Abstractions;
 using Comfyg.Store.Core.Abstractions.Secrets;
 
 namespace Comfyg.Store.Authentication;
 
 internal class ClientService : IClientService
 {
+    private const string ClientSecretBlobPrefix = "blob:";
+
     private readonly TypedTableClient<ClientEntity> _clients;
     private readonly ISecretService _secretService;
+    private readonly IBlobService _blobService;
 
-    public ClientService(TableServiceClient tableServiceClient, ISecretService secretService)
+    public ClientService(TableServiceClient tableServiceClient, ISecretService secretService, IBlobService blobService)
     {
         if (tableServiceClient == null) throw new ArgumentNullException(nameof(tableServiceClient));
 
         _secretService = secretService ?? throw new ArgumentNullException(nameof(secretService));
+        _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
 
         _clients = tableServiceClient.GetTableClient<ClientEntity>();
     }
@@ -29,9 +34,21 @@ internal class ClientService : IClientService
         return await _clients.GetIfExistsAsync(clientId, clientId, cancellationToken: cancellationToken);
     }
 
-    public async Task<string> ReceiveClientSecretAsync(IClient client, CancellationToken cancellationToken = default)
+    public async Task<byte[]> ReceiveClientSecretAsync(IClient client, CancellationToken cancellationToken = default)
     {
-        return await _secretService.UnprotectSecretValueAsync(client.ClientSecret, cancellationToken);
+        if (client.ClientSecret.StartsWith(ClientSecretBlobPrefix))
+        {
+            var blob = await _blobService.DownloadBlobAsync(client.ClientSecret[ClientSecretBlobPrefix.Length..],
+                cancellationToken);
+
+            using var stream = new MemoryStream();
+            await blob.CopyToAsync(stream, cancellationToken);
+
+            return stream.ToArray();
+        }
+
+        var clientSecret = await _secretService.UnprotectSecretValueAsync(client.ClientSecret, cancellationToken);
+        return Convert.FromBase64String(clientSecret);
     }
 
     public async Task<IClient> CreateSymmetricClientAsync(IClient client, CancellationToken cancellationToken = default)
@@ -43,10 +60,15 @@ internal class ClientService : IClientService
         return await InternalCreateClientAsync(client, protectedSecret, cancellationToken);
     }
 
-    public Task<IClient> CreateAsymmetricClientAsync(IClient client, X509Certificate certificate,
+    public async Task<IClient> CreateAsymmetricClientAsync(IClient client, X509Certificate certificate,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var blobId = $"{client.ClientId}.crt";
+        using var blob = new MemoryStream(certificate.Export(X509ContentType.Cert));
+
+        await _blobService.UploadBlobAsync(blobId, blob, cancellationToken: cancellationToken);
+
+        return await InternalCreateClientAsync(client, $"{ClientSecretBlobPrefix}{blobId}", cancellationToken);
     }
 
     private async Task<IClient> InternalCreateClientAsync(IClient client, string secretReference,

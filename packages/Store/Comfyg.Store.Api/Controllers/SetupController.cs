@@ -39,7 +39,7 @@ public class SetupController : ControllerBase
             var clientSecret =
                 await _clientService.ReceiveClientSecretAsync(symmetricClient, cancellationToken);
 
-            return Ok(new SetupClientResponse(symmetricClient, clientSecret));
+            return Ok(new SetupClientResponse(symmetricClient, Convert.ToBase64String(clientSecret)));
         }
 
         using var stream = new MemoryStream();

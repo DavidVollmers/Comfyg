@@ -7,7 +7,7 @@ public interface IClientService
 {
     Task<IClient?> GetClientAsync(string clientId, CancellationToken cancellationToken = default);
 
-    Task<string> ReceiveClientSecretAsync(IClient client, CancellationToken cancellationToken = default);
+    Task<byte[]> ReceiveClientSecretAsync(IClient client, CancellationToken cancellationToken = default);
 
     Task<IClient> CreateSymmetricClientAsync(IClient client, CancellationToken cancellationToken = default);
 

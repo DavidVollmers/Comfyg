@@ -18,7 +18,9 @@ public interface ISetupClientRequest : IClient
         public string ClientSecret => null!;
 
         public string FriendlyName { get; init; } = null!;
-        
+
+        public bool IsAsymmetric => false;
+
         public IFormFile? ClientSecretPublicKey { get; init; } 
     }
 }

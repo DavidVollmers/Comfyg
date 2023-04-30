@@ -20,6 +20,8 @@ internal class SystemClient : IClient
 
     public string FriendlyName { get; }
 
+    public bool IsAsymmetric => false;
+
     // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
     public bool IsConfigured => ClientId != null && ClientSecret != null;
     // ReSharper enable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
