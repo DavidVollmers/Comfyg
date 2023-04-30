@@ -12,7 +12,7 @@ public partial class E2ETests
     public async Task Test_SetupClient_AsymmetricKey()
     {
         var clientId = Guid.NewGuid().ToString();
-        var friendlyName = "Asymmetric Test Client";
+        const string friendlyName = "Asymmetric Test Client";
         var publicKeyPath = Path.Join(new FileInfo(Assembly.GetAssembly(typeof(E2ETests))!.Location).Directory!.FullName, "public.pem");
         //TODO more accuracy
         const string expectedOutput = $"Successfully created a client for ";

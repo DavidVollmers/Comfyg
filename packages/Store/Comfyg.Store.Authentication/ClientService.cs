@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Poco;
 using Comfyg.Store.Authentication.Abstractions;
@@ -60,11 +59,11 @@ internal class ClientService : IClientService
         return await InternalCreateClientAsync(client, protectedSecret, cancellationToken);
     }
 
-    public async Task<IClient> CreateAsymmetricClientAsync(IClient client, X509Certificate certificate,
+    public async Task<IClient> CreateAsymmetricClientAsync(IClient client, RSA rsa,
         CancellationToken cancellationToken = default)
     {
         var blobId = $"{client.ClientId}.crt";
-        using var blob = new MemoryStream(certificate.Export(X509ContentType.Cert));
+        using var blob = new MemoryStream(rsa.ExportRSAPublicKey());
 
         await _blobService.UploadBlobAsync(blobId, blob, cancellationToken: cancellationToken);
 

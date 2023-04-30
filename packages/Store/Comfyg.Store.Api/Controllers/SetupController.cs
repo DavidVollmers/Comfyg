@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using Comfyg.Store.Api.Responses;
 using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts.Requests;
@@ -32,7 +33,7 @@ public class SetupController : ControllerBase
         var existing = await _clientService.GetClientAsync(request.ClientId, cancellationToken);
         if (existing != null) return BadRequest();
 
-        if (request.ClientSecretPublicKey == null)
+        if (!request.IsAsymmetric)
         {
             var symmetricClient = await _clientService.CreateSymmetricClientAsync(request, cancellationToken);
 
@@ -43,14 +44,15 @@ public class SetupController : ControllerBase
         }
 
         using var stream = new MemoryStream();
-        await request.ClientSecretPublicKey.CopyToAsync(stream, cancellationToken);
+        await request.ClientSecretPublicKey!.CopyToAsync(stream, cancellationToken);
 
         stream.Position = 0;
 
-        var certificate = new X509Certificate2(stream.ToArray());
+        using var rsa = RSA.Create();
+        rsa.ImportRSAPublicKey(stream.ToArray(), out _);
 
         var asymmetricClient =
-            await _clientService.CreateAsymmetricClientAsync(request, certificate, cancellationToken);
+            await _clientService.CreateAsymmetricClientAsync(request, rsa, cancellationToken);
 
         return Ok(new SetupClientResponse(asymmetricClient));
     }
