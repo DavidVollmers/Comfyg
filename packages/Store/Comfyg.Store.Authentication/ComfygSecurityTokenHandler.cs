@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts;
@@ -47,12 +48,19 @@ internal class ComfygSecurityTokenHandler : JwtSecurityTokenHandler
 
         if (clientSecret == null) throw new SecurityTokenInvalidSigningKeyException("Missing client secret.");
 
-        validationParameters.IssuerSigningKey = !client.IsAsymmetric
-            ? new SymmetricSecurityKey(clientSecret)
-            : new X509SecurityKey(new X509Certificate2(clientSecret));
+        validationParameters.IssuerSigningKey = CreateSecurityKey(client, clientSecret);
 
         var principal = base.ValidateToken(token, validationParameters, out validatedToken);
 
         return new ClaimsPrincipal(new ClientIdentity(client, principal.Identity!));
+    }
+
+    private static SecurityKey CreateSecurityKey(IClient client, byte[] clientSecret)
+    {
+        if (!client.IsAsymmetric) return new SymmetricSecurityKey(clientSecret);
+
+        using var rsa = RSA.Create();
+        rsa.ImportRSAPublicKey(clientSecret, out _);
+        return new RsaSecurityKey(rsa);
     }
 }

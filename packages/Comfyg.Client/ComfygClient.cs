@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using Comfyg.Client.Operations;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Responses;
@@ -18,6 +19,7 @@ public sealed partial class ComfygClient : IDisposable
     private readonly string _clientId;
     private readonly byte[] _clientSecret;
     private readonly SecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
+    private readonly bool _isAsymmetric;
 
     private SecurityToken? _token;
 
@@ -78,9 +80,20 @@ public sealed partial class ComfygClient : IDisposable
                 throw new Exception("Missing \"ClientSecret\" information.");
             var clientSecret = connectionInformation["ClientSecret"];
 
-            _clientSecret = Convert.FromBase64String(clientSecret);
-            if (_clientSecret.Length < 16)
-                throw new InvalidOperationException("Client secret must be at least 16 bytes long.");
+            if (File.Exists(clientSecret))
+            {
+                using var rsa = RSA.Create();
+                rsa.ImportFromPem(File.ReadAllText(clientSecret));
+                _clientSecret = rsa.ExportRSAPrivateKey();
+
+                _isAsymmetric = true;
+            }
+            else
+            {
+                _clientSecret = Convert.FromBase64String(clientSecret);
+                if (_clientSecret.Length < 16)
+                    throw new InvalidOperationException("Client secret must be at least 16 bytes long.");
+            }
         }
         catch (Exception exception)
         {
@@ -142,7 +155,7 @@ public sealed partial class ComfygClient : IDisposable
             return _tokenHandler.WriteToken(_token);
         }
 
-        var securityKey = new SymmetricSecurityKey(_clientSecret);
+        var securityKey = CreateSecurityKey();
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -156,6 +169,15 @@ public sealed partial class ComfygClient : IDisposable
 
         _token = _tokenHandler.CreateToken(tokenDescriptor);
         return _tokenHandler.WriteToken(_token);
+    }
+
+    private SecurityKey CreateSecurityKey()
+    {
+        if (!_isAsymmetric) return new SymmetricSecurityKey(_clientSecret);
+
+        using var rsa = RSA.Create();
+        rsa.ImportRSAPrivateKey(_clientSecret, out _);
+        return new RsaSecurityKey(rsa);
     }
 
     /// <summary>
