@@ -1,5 +1,5 @@
 import { ConnectionResponse } from './responses/connection-response.js'
-import fetch, { RequestInit, Response } from 'node-fetch'
+import fetch, { FormData, RequestInit, Response } from 'node-fetch'
 import jwt from 'jwt-simple'
 import { Client } from './client.js'
 import { SetupClientResponse } from './responses/setup-client-response.js'
@@ -30,6 +30,7 @@ export class ComfygClient {
     return this._settings
   }
 
+  //TODO support asymmetric clients
   public constructor(connectionString: string) {
     if (connectionString == null) throw new Error('Value cannot be null. Parameter name: connectionString')
     try {
@@ -76,16 +77,17 @@ export class ComfygClient {
     return <ConnectionResponse>json
   }
 
+  //TODO support asymmetric clients
   public async setupClient(client: Client, signal: AbortSignal | null = null): Promise<SetupClientResponse> {
     if (client == null) throw new Error('Value cannot be null. Parameter name: client')
+    const formData = new FormData()
+    formData.set('ClientId', client.clientId)
+    formData.set('FriendlyName', client.friendlyName)
     const response = await this.__sendRequest(
       '/setup/client',
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ client }),
+        body: formData,
       },
       signal,
     )
