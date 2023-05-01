@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using System.Text;
 using Comfyg.Store.Authentication.Abstractions;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Core.Abstractions;
@@ -96,7 +95,8 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
 
         using var httpClient = _factory.CreateClient();
 
-        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={Convert.ToBase64String(clientSecret)}";
+        var connectionString =
+            $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={Convert.ToBase64String(clientSecret)}";
         using var comfygClient = new ComfygClient(connectionString, httpClient);
 
         _factory.Mock<IClientService>(mock =>
@@ -140,7 +140,8 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
 
         using var httpClient = _factory.CreateClient();
 
-        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={Convert.ToBase64String(clientSecret)}";
+        var connectionString =
+            $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={Convert.ToBase64String(clientSecret)}";
         using var comfygClient = new ComfygClient(connectionString, httpClient);
 
         _factory.Mock<IClientService>(mock =>
@@ -154,7 +155,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         {
             mock.Setup(ps =>
                     ps.IsPermittedAsync<IConfigurationValue>(It.IsAny<string>(), It.IsAny<string>(),
-                        It.IsAny<Permissions>(), It.IsAny<CancellationToken>()))
+                        It.IsAny<Permissions>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
         });
 
@@ -173,10 +174,12 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         {
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == clientId),
-                    It.Is<string>(s => s == "key1"), It.Is<Permissions>(p => p == Permissions.Write), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == "key1"), It.Is<Permissions>(p => p == Permissions.Write),
+                    It.Is<bool>(b => b), It.IsAny<CancellationToken>()), Times.Once);
             mock.Verify(
                 ps => ps.IsPermittedAsync<IConfigurationValue>(It.Is<string>(s => s == clientId),
-                    It.Is<string>(s => s == "key2"), It.Is<Permissions>(p => p == Permissions.Write), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<string>(s => s == "key2"), It.Is<Permissions>(p => p == Permissions.Write),
+                    It.Is<bool>(b => b), It.IsAny<CancellationToken>()), Times.Once);
         });
 
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>

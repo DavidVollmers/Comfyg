@@ -103,7 +103,8 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
             if (clientIdentity.IsSystemClient) continue;
 
             var isPermitted = await _permissionService
-                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, Permissions.Write, cancellationToken);
+                .IsPermittedAsync<T>(clientIdentity.Client.ClientId, value.Key, Permissions.Write, true,
+                    cancellationToken);
             if (!isPermitted) return false;
         }
 
