@@ -38,7 +38,7 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
 
         var values =
             JsonSerializer.DeserializeAsyncEnumerable<IConfigurationValue>(stream,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
+                new JsonSerializerOptions {PropertyNameCaseInsensitive = true}, cancellationToken);
 
         await foreach (var value in values.WithCancellation(cancellationToken).ConfigureAwait(false))
             yield return value!;
@@ -69,7 +69,8 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
 
         if (_client.IsE2EeEnabled)
         {
-            values = await _client.EncryptAsync(values, cancellationToken);
+            values = await _client.EncryptAsync<IConfigurationValue, ConfigurationValue.Initializer>(values,
+                cancellationToken);
         }
 
         var response = await _client

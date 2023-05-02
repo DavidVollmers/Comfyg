@@ -7,32 +7,45 @@ namespace Comfyg.Client;
 public partial class ComfygClient
 {
     private byte[]? _e2EeKey;
-    
-    internal async Task<IEnumerable<T>> EncryptAsync<T>(IEnumerable<T> rawValues, CancellationToken cancellationToken)
-        where T : IComfygValue
+    private byte[]? _e2EeIv;
+
+    internal async Task<IEnumerable<TEncrypted>> EncryptAsync<TRaw, TEncrypted>(IEnumerable<TRaw> rawValues,
+        CancellationToken cancellationToken)
+        where TRaw : IComfygValue
+        where TEncrypted : class, TRaw, IComfygValueInitializer, new()
     {
         if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
 
-        var e2EeKey = await GetEncryptionKeyAsync(cancellationToken);
+        var (e2EeKey, e2EeIv) = await GetEncryptionKeyAsync(cancellationToken);
         if (e2EeKey == null)
         {
             //TODO create E2EE key
         }
 
-        //TODO encrypt values using E2EE key
+        using var aes = Aes.Create();
+        using var encryptor = aes.CreateEncryptor(e2EeKey!, e2EeIv!);
+
+        var results = new List<TEncrypted>();
+        foreach (var rawValue in rawValues)
+        {
+            var encryptedValue = await EncryptValueAsync(encryptor, rawValue.Value);
+            results.Add(new TEncrypted {Value = encryptedValue, Key = rawValue.Key});
+        }
+
+        return results;
     }
 
-    private async Task<byte[]?> GetEncryptionKeyAsync(CancellationToken cancellationToken)
+    private async Task<(byte[]?, byte[]?)> GetEncryptionKeyAsync(CancellationToken cancellationToken)
     {
-        if (_e2EeKey != null) return _e2EeKey;
-        
+        if (_e2EeKey != null && _e2EeIv != null) return (_e2EeKey, _e2EeIv);
+
         var response = await SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "encryption/key"),
             cancellationToken: cancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
-            if (response.StatusCode == HttpStatusCode.NotFound) return null;
-            
+            if (response.StatusCode == HttpStatusCode.NotFound) return (null, null);
+
             throw new HttpRequestException("Invalid status code when trying to get encryption key.", null,
                 response.StatusCode);
         }
@@ -40,15 +53,31 @@ public partial class ComfygClient
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 
         using var aes = Aes.Create();
-        //TODO set Initialization Vector
         using var decryptor = aes.CreateDecryptor(_e2EeSecret!, _e2EeSecretIv!);
-        
+
         await using var crypto = new CryptoStream(stream, decryptor, CryptoStreamMode.Read);
-        using var memoryStream = new MemoryStream();
-        await crypto.CopyToAsync(memoryStream, cancellationToken);
+        using var reader = new StreamReader(crypto);
+        // ReSharper disable once MethodSupportsCancellation
+#pragma warning disable CA2016
+        var e2EeKey = await reader.ReadToEndAsync();
+#pragma warning restore CA2016
+        
+        var parts = e2EeKey.Split(IvDelimiter);
+        _e2EeKey = Convert.FromBase64String(parts[0]);
+        _e2EeIv = Convert.FromBase64String(parts[1]);
 
-        memoryStream.Position = 0;
+        return (_e2EeKey, _e2EeIv);
+    }
 
-        return _e2EeKey = memoryStream.ToArray();
+    private static async Task<string> EncryptValueAsync(ICryptoTransform encryptor, string rawValue)
+    {
+        using var stream = new MemoryStream();
+        var crypto = new CryptoStream(stream, encryptor, CryptoStreamMode.Write);
+        var writer = new StreamWriter(crypto);
+        await writer.WriteAsync(rawValue);
+        await writer.DisposeAsync();
+        await crypto.DisposeAsync();
+
+        return Convert.ToBase64String(stream.ToArray());
     }
 }

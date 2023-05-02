@@ -1,4 +1,5 @@
 ﻿using Azure.Data.Tables.Poco;
+using Comfyg.Store.Contracts;
 
 namespace Comfyg.Store.Core;
 

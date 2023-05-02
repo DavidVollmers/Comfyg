@@ -1,8 +1,6 @@
-﻿using Comfyg.Store.Contracts;
+﻿namespace Comfyg.Store.Contracts;
 
-namespace Comfyg.Store.Core;
-
-internal interface IComfygValueInitializer : IComfygValue
+public interface IComfygValueInitializer : IComfygValue
 {
     new string Key { get; init; }
 

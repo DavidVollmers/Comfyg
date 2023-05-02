@@ -15,6 +15,7 @@ namespace Comfyg.Client;
 /// </summary>
 public sealed partial class ComfygClient : IDisposable
 {
+    private const string IvDelimiter = ".";
     private const string E2EeNotSupportedExceptionMessage =
         "End to end-encryption (E2EE) is only supported for asymmetric clients.";
     
@@ -24,6 +25,7 @@ public sealed partial class ComfygClient : IDisposable
     private readonly SecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
     private readonly bool _isAsymmetric;
     private readonly byte[]? _e2EeSecret;
+    private readonly byte[]? _e2EeSecretIv;
 
     private SecurityToken? _token;
 
@@ -105,9 +107,9 @@ public sealed partial class ComfygClient : IDisposable
             {
                 if (!_isAsymmetric) throw new Exception(E2EeNotSupportedExceptionMessage);
 
-                _e2EeSecret = Convert.FromBase64String(value);
-                if (_e2EeSecret.Length < 16)
-                    throw new InvalidOperationException("E2EE secret must be at least 16 bytes long.");
+                var parts = value.Split(IvDelimiter);
+                _e2EeSecret = Convert.FromBase64String(parts[0]);
+                _e2EeSecretIv = Convert.FromBase64String(parts[1]);
             }
         }
         catch (Exception exception)

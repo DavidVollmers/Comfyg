@@ -48,4 +48,19 @@ public sealed class ConfigurationValue : IConfigurationValue
     /// The parent version of the configuration value. Always returns `null`.
     /// </summary>
     public string? ParentVersion => null;
+
+    internal class Initializer : IConfigurationValue, IComfygValueInitializer
+    {
+        public string Key { get; init; } = null!;
+
+        public string Value { get; init; } = null!;
+
+        public string Version { get; init; } = null!;
+        
+        public DateTimeOffset CreatedAt { get; init; }
+
+        public string Hash { get; init; } = null!;
+        
+        public string? ParentVersion { get; init; }
+    }
 }
