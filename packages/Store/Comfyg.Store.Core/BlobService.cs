@@ -49,4 +49,17 @@ public sealed class BlobService : IBlobService
         var blob = await blobClient.DownloadAsync(cancellationToken);
         return blob.Value.Content;
     }
+
+    public async Task<bool> DoesBlobExistAsync(string blobId, CancellationToken cancellationToken = default)
+    {
+        if (blobId == null) throw new ArgumentNullException(nameof(blobId));
+        
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_container);
+
+        if (!await blobContainerClient.ExistsAsync(cancellationToken)) return false;
+
+        var blobClient = blobContainerClient.GetBlobClient(blobId);
+
+        return await blobClient.ExistsAsync(cancellationToken);
+    }
 }
