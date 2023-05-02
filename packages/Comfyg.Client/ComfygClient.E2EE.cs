@@ -19,11 +19,11 @@ public partial class ComfygClient
         var (e2EeKey, e2EeIv) = await GetEncryptionKeyAsync(cancellationToken);
         if (e2EeKey == null)
         {
-            //TODO create E2EE key
+            (e2EeKey, e2EeIv) = await CreateEncryptionKeyAsync(cancellationToken);
         }
 
         using var aes = Aes.Create();
-        using var encryptor = aes.CreateEncryptor(e2EeKey!, e2EeIv!);
+        using var encryptor = aes.CreateEncryptor(e2EeKey, e2EeIv!);
 
         var results = new List<TEncrypted>();
         foreach (var rawValue in rawValues)
@@ -33,6 +33,36 @@ public partial class ComfygClient
         }
 
         return results;
+    }
+
+    private async Task<(byte[], byte[])> CreateEncryptionKeyAsync(CancellationToken cancellationToken)
+    {
+        using var aes = Aes.Create();
+
+        _e2EeKey = aes.Key;
+        _e2EeIv = aes.IV;
+
+        using var encryptor = aes.CreateEncryptor(_e2EeSecret!, _e2EeSecretIv!);
+
+        using var stream = new MemoryStream();
+        var crypto = new CryptoStream(stream, encryptor, CryptoStreamMode.Write);
+        var writer = new StreamWriter(crypto);
+        await writer.WriteAsync($"{Convert.ToBase64String(_e2EeKey)}{IvDelimiter}{Convert.ToBase64String(_e2EeIv)}");
+        await writer.DisposeAsync();
+        await crypto.DisposeAsync();
+
+        var response =
+            await SendRequestAsync(
+                () => new HttpRequestMessage(HttpMethod.Post, "encryption/key") {Content = new StreamContent(stream)},
+                cancellationToken: cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException("Invalid status code when trying to set encryption key.", null,
+                response.StatusCode);
+        }
+
+        return (_e2EeKey, _e2EeIv);
     }
 
     private async Task<(byte[]?, byte[]?)> GetEncryptionKeyAsync(CancellationToken cancellationToken)
@@ -61,7 +91,7 @@ public partial class ComfygClient
 #pragma warning disable CA2016
         var e2EeKey = await reader.ReadToEndAsync();
 #pragma warning restore CA2016
-        
+
         var parts = e2EeKey.Split(IvDelimiter);
         _e2EeKey = Convert.FromBase64String(parts[0]);
         _e2EeIv = Convert.FromBase64String(parts[1]);

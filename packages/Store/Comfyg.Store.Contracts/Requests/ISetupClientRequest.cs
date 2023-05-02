@@ -21,6 +21,7 @@ public interface ISetupClientRequest : IClient
 
         public bool IsAsymmetric => ClientSecretPublicKey != null;
 
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public IFormFile? ClientSecretPublicKey { get; init; } 
     }
 }
