@@ -67,6 +67,11 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
     {
         if (values == null) throw new ArgumentNullException(nameof(values));
 
+        if (_client.IsE2EeEnabled)
+        {
+            values = await _client.EncryptAsync(values, cancellationToken);
+        }
+
         var response = await _client
             .SendRequestAsync(
                 () => new HttpRequestMessage(HttpMethod.Post, "configuration")
