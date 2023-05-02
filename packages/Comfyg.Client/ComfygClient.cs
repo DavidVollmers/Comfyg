@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using Comfyg.Client.Operations;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Responses;
@@ -25,7 +26,6 @@ public sealed partial class ComfygClient : IDisposable
     private readonly SecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
     private readonly bool _isAsymmetric;
     private readonly byte[]? _e2EeSecret;
-    private readonly byte[]? _e2EeSecretIv;
 
     private SecurityToken? _token;
 
@@ -103,13 +103,11 @@ public sealed partial class ComfygClient : IDisposable
                     throw new InvalidOperationException("Client secret must be at least 16 bytes long.");
             }
 
-            if (connectionInformation.TryGetValue("E2EE", out var value))
+            if (connectionInformation.TryGetValue("E2EEPassphrase", out var e2EePassphrase))
             {
                 if (!_isAsymmetric) throw new Exception(E2EeNotSupportedExceptionMessage);
 
-                var parts = value.Split(IvDelimiter);
-                _e2EeSecret = Convert.FromBase64String(parts[0]);
-                _e2EeSecretIv = Convert.FromBase64String(parts[1]);
+                _e2EeSecret = SHA512.HashData(Encoding.UTF8.GetBytes(e2EePassphrase));
             }
         }
         catch (Exception exception)
