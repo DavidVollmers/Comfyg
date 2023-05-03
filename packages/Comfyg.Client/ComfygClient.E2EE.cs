@@ -15,16 +15,37 @@ public partial class ComfygClient
     {
         if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
 
-        var (e2EeKey, e2EeIv) = await GetEncryptionKeyAsync(cancellationToken);
-        if (e2EeKey == null)
+        var encryptionKey = await GetEncryptionKeyAsync(cancellationToken);
+        if (encryptionKey == null)
         {
             throw new InvalidOperationException("End to end-encryption is not properly setup.");
         }
 
-        using var aes = Aes.Create();
-        using var decryptor = aes.CreateDecryptor(e2EeKey, e2EeIv);
+        if (!encryptedValue.IsEncrypted)
+            return new TDecrypted
+            {
+                Value = encryptedValue.Value,
+                Key = encryptedValue.Key,
+                Version = encryptedValue.Version,
+                ParentVersion = encryptedValue.ParentVersion,
+                CreatedAt = encryptedValue.CreatedAt,
+                Hash = encryptedValue.Hash,
+                IsEncrypted = false
+            };
 
-        //TODO decrypt value
+        using var aes = Aes.Create();
+
+        var decryptedValue = await DecryptValueAsync(aes, encryptedValue.Value, encryptionKey);
+        return new TDecrypted
+        {
+            Value = decryptedValue,
+            Key = encryptedValue.Key,
+            Version = encryptedValue.Version,
+            ParentVersion = encryptedValue.ParentVersion,
+            CreatedAt = encryptedValue.CreatedAt,
+            Hash = encryptedValue.Hash,
+            IsEncrypted = false
+        };
     }
 
     internal async Task<IEnumerable<TEncrypted>> EncryptAsync<TRaw, TEncrypted>(IEnumerable<TRaw> rawValues,
@@ -32,22 +53,45 @@ public partial class ComfygClient
         where TRaw : IComfygValue
         where TEncrypted : class, TRaw, IComfygValueInitializer, new()
     {
+        if (rawValues == null) throw new ArgumentNullException(nameof(rawValues));
+
         if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
 
-        var (e2EeKey, e2EeIv) = await GetEncryptionKeyAsync(cancellationToken);
-        if (e2EeKey == null)
-        {
-            (e2EeKey, e2EeIv) = await CreateEncryptionKeyAsync(cancellationToken);
-        }
+        var encryptionKey = await GetEncryptionKeyAsync(cancellationToken) ??
+                            await CreateEncryptionKeyAsync(cancellationToken);
 
         using var aes = Aes.Create();
-        using var encryptor = aes.CreateEncryptor(e2EeKey, e2EeIv);
+        using var encryptor = aes.CreateEncryptor(encryptionKey, aes.IV);
 
         var results = new List<TEncrypted>();
         foreach (var rawValue in rawValues)
         {
+            if (!rawValue.IsEncrypted)
+            {
+                results.Add(new TEncrypted
+                {
+                    Value = rawValue.Value,
+                    Key = rawValue.Key,
+                    Version = rawValue.Version,
+                    ParentVersion = rawValue.ParentVersion,
+                    CreatedAt = rawValue.CreatedAt,
+                    Hash = rawValue.Hash,
+                    IsEncrypted = true
+                });
+                continue;
+            }
+
             var encryptedValue = await EncryptValueAsync(encryptor, rawValue.Value);
-            results.Add(new TEncrypted {Value = encryptedValue, Key = rawValue.Key});
+            results.Add(new TEncrypted
+            {
+                Value = encryptedValue,
+                Key = rawValue.Key,
+                Version = rawValue.Version,
+                ParentVersion = rawValue.ParentVersion,
+                CreatedAt = rawValue.CreatedAt,
+                Hash = rawValue.Hash,
+                IsEncrypted = true
+            });
         }
 
         return results;
@@ -63,18 +107,15 @@ public partial class ComfygClient
         await crypto.WriteAsync(aes.Key, cancellationToken);
         await crypto.DisposeAsync();
 
-        var payload = $"{Convert.ToBase64String(stream.ToArray())}{IvDelimiter}{Convert.ToBase64String(aes.IV)}";
-        using var payloadStream = new MemoryStream();
-        var writer = new StreamWriter(payloadStream);
-        await writer.WriteAsync(payload);
+        stream.SetLength(0);
+        var content = $"{Convert.ToBase64String(stream.ToArray())}{IvDelimiter}{Convert.ToBase64String(aes.IV)}";
+        var writer = new StreamWriter(stream);
+        await writer.WriteAsync(content);
         await writer.DisposeAsync();
 
         var response =
             await SendRequestAsync(
-                () => new HttpRequestMessage(HttpMethod.Post, "encryption/key")
-                {
-                    Content = new StreamContent(payloadStream)
-                },
+                () => new HttpRequestMessage(HttpMethod.Post, "encryption/key") {Content = new StreamContent(stream)},
                 cancellationToken: cancellationToken);
 
         if (!response.IsSuccessStatusCode)
@@ -104,15 +145,16 @@ public partial class ComfygClient
         var payload = await response.Content.ReadAsStringAsync(cancellationToken);
 
         var parts = payload.Split(IvDelimiter);
-        
+
         using var aes = Aes.Create();
         using var decryptor = aes.CreateDecryptor(_e2EeSecret!, Convert.FromBase64String(parts[1]));
 
-        using var stream = new MemoryStream(Convert.FromBase64String(parts[0]));
-        await using var crypto = new CryptoStream(stream, decryptor, CryptoStreamMode.Read);
+        var encryptedKey = Convert.FromBase64String(parts[0]);
+        using var stream = new MemoryStream(encryptedKey);
+        var crypto = new CryptoStream(stream, decryptor, CryptoStreamMode.Read);
+        var length = await crypto.ReadAsync(encryptedKey, cancellationToken);
 
-        //TODO crypto => byte[]
-        return _encryptionKey;
+        return _encryptionKey = stream.ToArray().Take(length).ToArray();
     }
 
     private static async Task<string> EncryptValueAsync(ICryptoTransform encryptor, string rawValue)
@@ -125,5 +167,18 @@ public partial class ComfygClient
         await crypto.DisposeAsync();
 
         return Convert.ToBase64String(stream.ToArray());
+    }
+
+    private static async Task<string> DecryptValueAsync(SymmetricAlgorithm alg, string encryptedValue,
+        byte[] encryptionKey)
+    {
+        var parts = encryptedValue.Split(IvDelimiter);
+
+        using var decryptor = alg.CreateDecryptor(encryptionKey, Convert.FromBase64String(parts[1]));
+
+        using var stream = new MemoryStream(Convert.FromBase64String(parts[0]));
+        await using var crypto = new CryptoStream(stream, decryptor, CryptoStreamMode.Read);
+        using var reader = new StreamReader(crypto);
+        return await reader.ReadToEndAsync();
     }
 }

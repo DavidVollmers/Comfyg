@@ -28,6 +28,7 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         _values = tableServiceClient.GetTableClient<TEntity>().OverrideTableName($"{systemId}{typeof(TEntity).Name}");
     }
 
+    //TODO IsEncrypted
     public async Task AddValueAsync(string owner, string key, string value, string hash,
         CancellationToken cancellationToken = default)
     {
@@ -132,7 +133,8 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
             Value = original.Value,
             Version = taggedVersion,
             Hash = original.Hash,
-            ParentVersion = parentVersion
+            ParentVersion = parentVersion,
+            IsEncrypted = original.IsEncrypted
         };
 
         await _values.AddAsync(taggedValue, cancellationToken);
@@ -143,7 +145,8 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
                 Value = original.Value,
                 Version = $"{ComfygConstants.LatestVersion}-{tag}",
                 Hash = original.Hash,
-                ParentVersion = taggedVersion
+                ParentVersion = taggedVersion,
+                IsEncrypted = original.IsEncrypted
             },
             cancellationToken: cancellationToken);
 

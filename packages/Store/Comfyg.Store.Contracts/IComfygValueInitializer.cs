@@ -13,4 +13,6 @@ public interface IComfygValueInitializer : IComfygValue
     new string Hash { get; init; }
     
     new string? ParentVersion { get; init; }
+    
+    new bool IsEncrypted { get; init; }
 }

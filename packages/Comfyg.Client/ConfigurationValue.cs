@@ -49,6 +49,8 @@ public sealed class ConfigurationValue : IConfigurationValue
     /// </summary>
     public string? ParentVersion => null;
 
+    public bool IsEncrypted { get; } = false;
+
     internal class Initializer : IConfigurationValue, IComfygValueInitializer
     {
         public string Key { get; init; } = null!;
@@ -62,5 +64,7 @@ public sealed class ConfigurationValue : IConfigurationValue
         public string Hash { get; init; } = null!;
         
         public string? ParentVersion { get; init; }
+        
+        public bool IsEncrypted { get; init; }
     }
 }
