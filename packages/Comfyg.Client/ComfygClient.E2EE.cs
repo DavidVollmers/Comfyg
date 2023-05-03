@@ -17,7 +17,7 @@ public partial class ComfygClient
 
         if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
 
-        var encryptionKey = await GetEncryptionKeyAsync(cancellationToken);
+        var encryptionKey = await GetEncryptionKeyAsync(cancellationToken).ConfigureAwait(false);
         if (encryptionKey == null)
         {
             throw new InvalidOperationException("End to end-encryption is not properly setup.");
@@ -37,7 +37,7 @@ public partial class ComfygClient
 
         using var aes = Aes.Create();
 
-        var decryptedValue = await DecryptValueAsync(aes, encryptedValue.Value, encryptionKey);
+        var decryptedValue = await DecryptValueAsync(aes, encryptedValue.Value, encryptionKey).ConfigureAwait(false);
         return new TDecrypted
         {
             Value = decryptedValue,
@@ -59,8 +59,8 @@ public partial class ComfygClient
 
         if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
 
-        var encryptionKey = await GetEncryptionKeyAsync(cancellationToken) ??
-                            await CreateEncryptionKeyAsync(cancellationToken);
+        var encryptionKey = await GetEncryptionKeyAsync(cancellationToken).ConfigureAwait(false) ??
+                            await CreateEncryptionKeyAsync(cancellationToken).ConfigureAwait(false);
 
         using var aes = Aes.Create();
         using var encryptor = aes.CreateEncryptor(encryptionKey, aes.IV);
@@ -83,7 +83,7 @@ public partial class ComfygClient
                 continue;
             }
 
-            var encryptedValue = await EncryptValueAsync(encryptor, rawValue.Value);
+            var encryptedValue = await EncryptValueAsync(encryptor, rawValue.Value).ConfigureAwait(false);
             results.Add(new TEncrypted
             {
                 Value = encryptedValue,
@@ -102,23 +102,24 @@ public partial class ComfygClient
     private async Task<byte[]> CreateEncryptionKeyAsync(CancellationToken cancellationToken)
     {
         using var aes = Aes.Create();
-        using var encryptor = aes.CreateEncryptor(_e2EeSecret!, aes.IV);
+        using var encryptor = aes.CreateEncryptor(_encryptionSecret!, aes.IV);
 
         using var stream = new MemoryStream();
         var crypto = new CryptoStream(stream, encryptor, CryptoStreamMode.Write);
-        await crypto.WriteAsync(aes.Key, cancellationToken);
-        await crypto.DisposeAsync();
+        await crypto.WriteAsync(aes.Key, cancellationToken).ConfigureAwait(false);
+        await crypto.DisposeAsync().ConfigureAwait(false);
 
         stream.SetLength(0);
         var content = $"{Convert.ToBase64String(stream.ToArray())}{IvDelimiter}{Convert.ToBase64String(aes.IV)}";
         var writer = new StreamWriter(stream);
-        await writer.WriteAsync(content);
-        await writer.DisposeAsync();
+        await writer.WriteAsync(content).ConfigureAwait(false);
+        await writer.DisposeAsync().ConfigureAwait(false);
 
         var response =
             await SendRequestAsync(
+                // ReSharper disable once AccessToDisposedClosure
                 () => new HttpRequestMessage(HttpMethod.Post, "encryption/key") {Content = new StreamContent(stream)},
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -134,7 +135,7 @@ public partial class ComfygClient
         if (_encryptionKey != null) return _encryptionKey;
 
         var response = await SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "encryption/key"),
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -144,17 +145,17 @@ public partial class ComfygClient
                 response.StatusCode);
         }
 
-        var payload = await response.Content.ReadAsStringAsync(cancellationToken);
+        var payload = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
         var parts = payload.Split(IvDelimiter);
 
         using var aes = Aes.Create();
-        using var decryptor = aes.CreateDecryptor(_e2EeSecret!, Convert.FromBase64String(parts[1]));
+        using var decryptor = aes.CreateDecryptor(_encryptionSecret!, Convert.FromBase64String(parts[1]));
 
         var encryptedKey = Convert.FromBase64String(parts[0]);
         using var stream = new MemoryStream(encryptedKey);
         var crypto = new CryptoStream(stream, decryptor, CryptoStreamMode.Read);
-        var length = await crypto.ReadAsync(encryptedKey, cancellationToken);
+        var length = await crypto.ReadAsync(encryptedKey, cancellationToken).ConfigureAwait(false);
 
         return _encryptionKey = stream.ToArray().Take(length).ToArray();
     }
@@ -164,9 +165,9 @@ public partial class ComfygClient
         using var stream = new MemoryStream();
         var crypto = new CryptoStream(stream, encryptor, CryptoStreamMode.Write);
         var writer = new StreamWriter(crypto);
-        await writer.WriteAsync(rawValue);
-        await writer.DisposeAsync();
-        await crypto.DisposeAsync();
+        await writer.WriteAsync(rawValue).ConfigureAwait(false);
+        await writer.DisposeAsync().ConfigureAwait(false);
+        await crypto.DisposeAsync().ConfigureAwait(false);
 
         return Convert.ToBase64String(stream.ToArray());
     }
@@ -181,6 +182,6 @@ public partial class ComfygClient
         using var stream = new MemoryStream(Convert.FromBase64String(parts[0]));
         await using var crypto = new CryptoStream(stream, decryptor, CryptoStreamMode.Read);
         using var reader = new StreamReader(crypto);
-        return await reader.ReadToEndAsync();
+        return await reader.ReadToEndAsync().ConfigureAwait(false);
     }
 }

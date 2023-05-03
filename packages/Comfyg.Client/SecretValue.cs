@@ -50,4 +50,21 @@ public sealed class SecretValue : ISecretValue
     public string? ParentVersion => null;
 
     public bool IsEncrypted => false;
+
+    internal class Initializer : ISecretValue, IComfygValueInitializer
+    {
+        public string Key { get; init; } = null!;
+
+        public string Value { get; init; } = null!;
+
+        public string Version { get; init; } = null!;
+        
+        public DateTimeOffset CreatedAt { get; init; }
+
+        public string? Hash { get; init; }
+        
+        public string? ParentVersion { get; init; }
+        
+        public bool IsEncrypted { get; init; }
+    }
 }

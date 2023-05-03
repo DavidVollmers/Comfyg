@@ -38,10 +38,15 @@ internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
 
         var values =
             JsonSerializer.DeserializeAsyncEnumerable<ISecretValue>(stream,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
+                new JsonSerializerOptions {PropertyNameCaseInsensitive = true}, cancellationToken);
 
         await foreach (var value in values.WithCancellation(cancellationToken).ConfigureAwait(false))
-            yield return value!;
+        {
+            if (!_client.IsEncryptionEnabled) yield return value!;
+
+            yield return await _client.DecryptAsync<ISecretValue, SecretValue.Initializer>(value!, cancellationToken)
+                .ConfigureAwait(false);
+        }
     }
 
     public async Task<ISecretValue> GetValueAsync(string key, string? version = null,
@@ -58,13 +63,24 @@ internal class SecretValuesOperations : IComfygValueOperations<ISecretValue>
             throw new HttpRequestException("Invalid status code when trying to get secret value.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<ISecretValue>(cancellationToken: cancellationToken)
+        var value = (await response.Content.ReadFromJsonAsync<ISecretValue>(cancellationToken: cancellationToken)
             .ConfigureAwait(false))!;
+
+        return !_client.IsEncryptionEnabled
+            ? value
+            : await _client.DecryptAsync<ISecretValue, SecretValue.Initializer>(value, cancellationToken)
+                .ConfigureAwait(false);
     }
 
     public async Task AddValuesAsync(IEnumerable<ISecretValue> values, CancellationToken cancellationToken = default)
     {
         if (values == null) throw new ArgumentNullException(nameof(values));
+
+        if (_client.IsEncryptionEnabled)
+        {
+            values = await _client.EncryptAsync<ISecretValue, SecretValue.Initializer>(values, cancellationToken)
+                .ConfigureAwait(false);
+        }
 
         var response = await _client
             .SendRequestAsync(

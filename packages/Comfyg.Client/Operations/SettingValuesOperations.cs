@@ -38,10 +38,14 @@ internal class SettingValuesOperations : IComfygValueOperations<ISettingValue>
 
         var values =
             JsonSerializer.DeserializeAsyncEnumerable<SettingValue>(stream,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
+                new JsonSerializerOptions {PropertyNameCaseInsensitive = true}, cancellationToken);
 
         await foreach (var value in values.WithCancellation(cancellationToken).ConfigureAwait(false))
-            yield return value!;
+        {
+            if (!_client.IsEncryptionEnabled) yield return value!;
+
+            yield return await _client.DecryptAsync<ISettingValue, SettingValue.Initializer>(value!, cancellationToken);
+        }
     }
 
     public async Task<ISettingValue> GetValueAsync(string key, string? version = null,
@@ -58,13 +62,23 @@ internal class SettingValuesOperations : IComfygValueOperations<ISettingValue>
             throw new HttpRequestException("Invalid status code when trying to get setting value.", null,
                 response.StatusCode);
 
-        return (await response.Content.ReadFromJsonAsync<ISettingValue>(cancellationToken: cancellationToken)
+        var value = (await response.Content.ReadFromJsonAsync<ISettingValue>(cancellationToken: cancellationToken)
             .ConfigureAwait(false))!;
+
+        return !_client.IsEncryptionEnabled
+            ? value
+            : await _client.DecryptAsync<ISettingValue, SettingValue.Initializer>(value, cancellationToken);
     }
 
     public async Task AddValuesAsync(IEnumerable<ISettingValue> values, CancellationToken cancellationToken = default)
     {
         if (values == null) throw new ArgumentNullException(nameof(values));
+
+        if (_client.IsEncryptionEnabled)
+        {
+            values = await _client.EncryptAsync<ISettingValue, SettingValue.Initializer>(values, cancellationToken)
+                .ConfigureAwait(false);
+        }
 
         var response = await _client
             .SendRequestAsync(
