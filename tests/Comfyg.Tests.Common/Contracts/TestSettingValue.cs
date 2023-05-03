@@ -15,4 +15,6 @@ public class TestSettingValue : ISettingValue
     public string Hash { get; set; } = null!;
     
     public string? ParentVersion { get; set; }
+
+    public bool IsEncrypted { get; set; }
 }

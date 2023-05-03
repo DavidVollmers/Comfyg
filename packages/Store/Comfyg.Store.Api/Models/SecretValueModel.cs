@@ -16,6 +16,8 @@ internal class SecretValueModel : ISecretValue
 
     public string? ParentVersion { get; init; }
 
+    public bool IsEncrypted { get; init; }
+
     public SecretValueModel(IComfygValue value)
     {
         Key = value.Key;
@@ -24,5 +26,6 @@ internal class SecretValueModel : ISecretValue
         CreatedAt = value.CreatedAt;
         Hash = value.Hash;
         ParentVersion = value.ParentVersion;
+        IsEncrypted = value.IsEncrypted;
     }
 }

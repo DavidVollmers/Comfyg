@@ -48,4 +48,6 @@ public sealed class SecretValue : ISecretValue
     /// The parent version of the secret value. Always returns `null`.
     /// </summary>
     public string? ParentVersion => null;
+
+    public bool IsEncrypted => false;
 }

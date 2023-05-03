@@ -20,4 +20,6 @@ internal abstract class ComfygValueEntity : IComfygValueInitializer
     public string Hash { get; init; } = null!;
 
     public string? ParentVersion { get; init; }
+    
+    public bool IsEncrypted { get; init; }
 }

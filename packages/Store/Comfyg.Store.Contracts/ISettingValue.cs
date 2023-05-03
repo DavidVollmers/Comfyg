@@ -21,6 +21,8 @@ public interface ISettingValue : IComfygValue
 
         public string Hash { get; init; } = null!;
 
-        public string? ParentVersion { get; init; }
+        public string? ParentVersion { get; init; } = null;
+
+        public bool IsEncrypted { get; set; } = false;
     }
 }

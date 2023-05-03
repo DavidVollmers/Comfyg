@@ -48,4 +48,6 @@ public sealed class SettingValue : ISettingValue
     /// The parent version of the setting value. Always returns `null`.
     /// </summary>
     public string? ParentVersion => null;
+
+    public bool IsEncrypted => false;
 }
