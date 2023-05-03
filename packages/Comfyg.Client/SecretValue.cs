@@ -42,7 +42,7 @@ public sealed class SecretValue : ISecretValue
     /// <summary>
     /// A hash value to identity the secret value. Always returns `null`.
     /// </summary>
-    public string Hash => null!;
+    public string? Hash => null;
 
     /// <summary>
     /// The parent version of the secret value. Always returns `null`.

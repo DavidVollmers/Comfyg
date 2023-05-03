@@ -12,7 +12,7 @@ public class TestSecretValue : ISecretValue
 
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
-    public string Hash { get; set; } = null!;
+    public string? Hash { get; set; } = null;
     
     public string? ParentVersion { get; set; }
 

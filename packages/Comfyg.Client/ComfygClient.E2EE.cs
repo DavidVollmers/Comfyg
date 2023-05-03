@@ -13,6 +13,8 @@ public partial class ComfygClient
         where TEncrypted : IComfygValue
         where TDecrypted : class, TEncrypted, IComfygValueInitializer, new()
     {
+        if (encryptedValue == null) throw new ArgumentNullException(nameof(encryptedValue));
+
         if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
 
         var encryptionKey = await GetEncryptionKeyAsync(cancellationToken);

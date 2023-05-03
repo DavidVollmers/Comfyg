@@ -42,7 +42,7 @@ public sealed class ConfigurationValue : IConfigurationValue
     /// <summary>
     /// A hash value to identity the configuration value. Always returns `null`.
     /// </summary>
-    public string Hash => null!;
+    public string? Hash => null;
 
     /// <summary>
     /// The parent version of the configuration value. Always returns `null`.
@@ -61,7 +61,7 @@ public sealed class ConfigurationValue : IConfigurationValue
         
         public DateTimeOffset CreatedAt { get; init; }
 
-        public string Hash { get; init; } = null!;
+        public string? Hash { get; init; }
         
         public string? ParentVersion { get; init; }
         

@@ -12,7 +12,7 @@ internal class SecretValueModel : ISecretValue
 
     public DateTimeOffset CreatedAt { get; init; }
 
-    public string Hash { get; init; }
+    public string? Hash { get; init; }
 
     public string? ParentVersion { get; init; }
 

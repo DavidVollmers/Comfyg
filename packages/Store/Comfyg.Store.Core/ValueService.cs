@@ -28,25 +28,32 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
         _values = tableServiceClient.GetTableClient<TEntity>().OverrideTableName($"{systemId}{typeof(TEntity).Name}");
     }
 
-    //TODO IsEncrypted
-    public async Task AddValueAsync(string owner, string key, string value, string hash,
+    public async Task AddValueAsync(string owner, string key, string value, bool isEncrypted, string? hash,
         CancellationToken cancellationToken = default)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (value == null) throw new ArgumentNullException(nameof(value));
-        if (hash == null) throw new ArgumentNullException(nameof(hash));
+        if (!isEncrypted && hash == null)
+            throw new ArgumentNullException(nameof(hash), "Hash cannot be empty if no encryption is applied.");
 
         await _values.CreateTableIfNotExistsAsync(cancellationToken);
 
         var latest = await _values.GetIfExistsAsync(key.ToLower(), ComfygConstants.LatestVersion,
             cancellationToken: cancellationToken);
 
-        if (latest?.Hash == hash) return;
+        if (hash != null && latest?.Hash == hash) return;
 
         var version = (long.MaxValue - DateTimeOffset.UtcNow.Ticks).ToString();
         await _values.AddAsync(
-            new TEntity { Key = key, Value = value, Version = version, Hash = hash },
+            new TEntity
+            {
+                Key = key,
+                Value = value,
+                Version = version,
+                Hash = hash,
+                IsEncrypted = isEncrypted
+            },
             cancellationToken: cancellationToken);
         await _values.UpsertAsync(
             new TEntity
@@ -55,7 +62,8 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
                 Value = value,
                 Version = ComfygConstants.LatestVersion,
                 Hash = hash,
-                ParentVersion = version
+                ParentVersion = version,
+                IsEncrypted = isEncrypted
             },
             cancellationToken: cancellationToken);
 

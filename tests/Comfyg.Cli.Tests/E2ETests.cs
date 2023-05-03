@@ -71,16 +71,16 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
         _factory.Mock<IValueService<IConfigurationValue>>(mock =>
         {
             mock.Verify(cs => cs.AddValueAsync(It.Is<string>(s => s == client.ClientId),
-                    It.Is<string>(s => s == "key1"), It.Is<string>(s => s == "value1"), It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()),
+                    It.Is<string>(s => s == "key1"), It.Is<string>(s => s == "value1"), It.IsAny<bool>(),
+                    It.IsAny<string>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             mock.Verify(cs => cs.AddValueAsync(It.Is<string>(s => s == client.ClientId),
-                    It.Is<string>(s => s == "key2"), It.Is<string>(s => s == "value2"), It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()),
+                    It.Is<string>(s => s == "key2"), It.Is<string>(s => s == "value2"), It.IsAny<bool>(),
+                    It.IsAny<string>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             mock.Verify(cs => cs.AddValueAsync(It.Is<string>(s => s == client.ClientId),
-                    It.Is<string>(s => s == "key2:key3"), It.Is<string>(s => s == "value3"), It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()),
+                    It.Is<string>(s => s == "key2:key3"), It.Is<string>(s => s == "value3"), It.IsAny<bool>(),
+                    It.IsAny<string>(), It.IsAny<CancellationToken>()),
                 Times.Once);
         });
     }
@@ -223,7 +223,7 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
         _factory.Mock<IValueService<ISettingValue>>(mock =>
         {
             mock.Verify(vs => vs.AddValueAsync(It.Is<string>(s => s == client.ClientId), It.Is<string>(s => s == key),
-                    It.Is<string>(s => s == value), It.Is<string>(s => s == expectedHash),
+                    It.Is<string>(s => s == value), It.Is<bool>(b => !b), It.Is<string>(s => s == expectedHash),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
             mock.Verify(vs => vs.GetValueAsync(It.Is<string>(s => s == key),

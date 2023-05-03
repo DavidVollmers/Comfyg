@@ -42,7 +42,7 @@ public sealed class SettingValue : ISettingValue
     /// <summary>
     /// A hash value to identity the setting value. Always returns `null`.
     /// </summary>
-    public string Hash => null!;
+    public string? Hash => null;
 
     /// <summary>
     /// The parent version of the setting value. Always returns `null`.

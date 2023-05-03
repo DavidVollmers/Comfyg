@@ -114,11 +114,13 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
 
             if (convertedValue == null) continue;
 
-            var hash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(value.Value)));
+            var hash = !value.IsEncrypted
+                ? Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(value.Value)))
+                : null;
 
             await _valueService
                 .AddValueAsync(clientIdentity.Client.ClientId, convertedValue.Key, convertedValue.Value,
-                    hash, cancellationToken);
+                    value.IsEncrypted, hash, cancellationToken);
         }
 
         return true;

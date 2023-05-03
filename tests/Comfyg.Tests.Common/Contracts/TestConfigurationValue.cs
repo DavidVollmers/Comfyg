@@ -12,9 +12,9 @@ public class TestConfigurationValue : IConfigurationValue
 
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
-    public string Hash { get; set; } = null!;
-    
-    public string? ParentVersion { get; set; }
+    public string? Hash { get; set; } = null;
 
-    public bool IsEncrypted { get; set; }
+    public string? ParentVersion { get; set; } = null;
+
+    public bool IsEncrypted { get; set; } = false;
 }

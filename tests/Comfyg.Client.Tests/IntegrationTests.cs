@@ -186,11 +186,11 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         {
             mock.Verify(cs => cs.AddValueAsync(It.Is<string>(s => s == clientId),
                     It.Is<string>(s => s == "key1"), It.Is<string>(s => s == "value1"),
-                    It.Is<string>(s => s == expectedHash1), It.IsAny<CancellationToken>()),
+                    It.Is<bool>(b => !b), It.Is<string>(s => s == expectedHash1), It.IsAny<CancellationToken>()),
                 Times.Once);
             mock.Verify(cs => cs.AddValueAsync(It.Is<string>(s => s == clientId),
                     It.Is<string>(s => s == "key2"), It.Is<string>(s => s == "value2"),
-                    It.Is<string>(s => s == expectedHash2), It.IsAny<CancellationToken>()),
+                    It.Is<bool>(b => !b), It.Is<string>(s => s == expectedHash2), It.IsAny<CancellationToken>()),
                 Times.Once);
         });
     }

@@ -17,7 +17,7 @@ internal abstract class ComfygValueEntity : IComfygValueInitializer
 
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
 
-    public string Hash { get; init; } = null!;
+    public string? Hash { get; init; }
 
     public string? ParentVersion { get; init; }
     

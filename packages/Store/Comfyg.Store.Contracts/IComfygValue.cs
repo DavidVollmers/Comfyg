@@ -37,7 +37,7 @@ public interface IComfygValue
     /// A hash value to identity the Comfyg value.
     /// </summary>
     [JsonIgnore]
-    string Hash { get; }
+    string? Hash { get; }
 
     /// <summary>
     /// The parent version of the Comfyg value.
