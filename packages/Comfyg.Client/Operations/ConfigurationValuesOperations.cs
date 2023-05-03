@@ -42,7 +42,11 @@ internal class ConfigurationValuesOperations : IComfygValueOperations<IConfigura
 
         await foreach (var value in values.WithCancellation(cancellationToken).ConfigureAwait(false))
         {
-            if (!_client.IsEncryptionEnabled) yield return value!;
+            if (!_client.IsEncryptionEnabled)
+            {
+                yield return value!;
+                continue;
+            }
 
             yield return await _client
                 .DecryptAsync<IConfigurationValue, ConfigurationValue.Initializer>(value!, cancellationToken)
