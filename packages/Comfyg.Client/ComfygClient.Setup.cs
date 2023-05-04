@@ -40,7 +40,6 @@ public partial class ComfygClient
                 rawEncryptionKey = aes.Key;
             }
 
-            //TODO make sure private key is used
             var encryptedKey = keys.Encrypt(rawEncryptionKey, RSAEncryptionPadding.Pkcs1);
             var encryptionKey = new MemoryStream(encryptedKey);
             formData.Add(new StreamContent(encryptionKey), nameof(ISetupClientRequest.EncryptionKey),

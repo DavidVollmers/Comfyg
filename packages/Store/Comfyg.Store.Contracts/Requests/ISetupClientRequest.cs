@@ -7,8 +7,14 @@ namespace Comfyg.Store.Contracts.Requests;
 /// </summary>
 public interface ISetupClientRequest : IClient
 {
+    /// <summary>
+    /// Optional RSA public key to create an asymmetric client instead of a symmetric one.
+    /// </summary>
     public IFormFile? ClientSecretPublicKey { get; }
 
+    /// <summary>
+    /// Optional encryption key which will be used to de- and encrypt Comfyg values with the created client.
+    /// </summary>
     public IFormFile? EncryptionKey { get; }
     
     // Must be public to use with [FromForm]

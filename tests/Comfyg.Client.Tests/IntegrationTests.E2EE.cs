@@ -34,8 +34,11 @@ public partial class IntegrationTests
         using var rsa = RSA.Create();
         rsa.ImportFromPem(await File.ReadAllTextAsync(keysPath));
         var publicKey = rsa.ExportRSAPublicKey();
+        var privateKey = rsa.ExportRSAPrivateKey();
 
-        var encryptedKey = rsa.Encrypt(aes.Key, RSAEncryptionPadding.Pkcs1);
+        using var privateRsaOnly = RSA.Create();
+        privateRsaOnly.ImportRSAPrivateKey(privateKey, out _);
+        var encryptedKey = privateRsaOnly.Encrypt(aes.Key, RSAEncryptionPadding.Pkcs1);
         var encryptedKeyStream = new MemoryStream(encryptedKey);
 
         using var httpClient = _factory.CreateClient();

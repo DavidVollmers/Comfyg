@@ -44,5 +44,8 @@ public interface IComfygValue
     /// </summary>
     string? ParentVersion { get; }
     
+    /// <summary>
+    /// Specifies if the Comfyg value is encrypted.
+    /// </summary>
     bool IsEncrypted { get; }
 }
