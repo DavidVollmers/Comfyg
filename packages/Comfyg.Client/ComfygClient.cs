@@ -16,7 +16,7 @@ namespace Comfyg.Client;
 public sealed partial class ComfygClient : IDisposable
 {
     private const string IvDelimiter = ".";
-    private const string E2EeNotSupportedExceptionMessage = "End to end-encryption is only supported for asymmetric clients.";
+    private const string E2EeNotSupportedExceptionMessage = "End-to-end encryption is only supported for asymmetric clients.";
 
     private readonly HttpClient _httpClient;
     private readonly string _clientId;

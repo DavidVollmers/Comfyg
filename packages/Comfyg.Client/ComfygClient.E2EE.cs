@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Net;
+using System.Security.Cryptography;
 using Comfyg.Store.Contracts;
 
 namespace Comfyg.Client;
@@ -95,6 +96,8 @@ public partial class ComfygClient
 
     private async Task<byte[]> GetEncryptionKeyAsync(CancellationToken cancellationToken)
     {
+        if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
+        
         if (_encryptionKey != null) return await UseEncryptionKeyAsync(cancellationToken);
         
         var response = await SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "encryption/key"),
@@ -113,7 +116,15 @@ public partial class ComfygClient
 
     private async Task<byte[]> UseEncryptionKeyAsync(CancellationToken cancellationToken)
     {
-        //TODO decrypt using private key
+        using var rsa = RSA.Create();
+        rsa.ImportRSAPrivateKey(_clientSecret, out _);
+
+        using var stream = new MemoryStream();
+        await _encryptionKey!.CopyToAsync(stream, cancellationToken);
+
+        stream.Position = 0;
+
+        return rsa.Decrypt(stream.ToArray(), RSAEncryptionPadding.Pkcs1);
     }
 
     private static async Task<string> EncryptValueAsync(ICryptoTransform encryptor, string rawValue)

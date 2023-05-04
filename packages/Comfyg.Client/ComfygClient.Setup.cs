@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using System.Security.Cryptography;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Requests;
 using Comfyg.Store.Contracts.Responses;
@@ -11,12 +12,12 @@ public partial class ComfygClient
     /// Registers a new client on the connected Comfyg store. 
     /// </summary>
     /// <param name="client"><see cref="IClient"/></param>
-    /// <param name="publicKey">Can be used for asymmetric client secrets. Must contain the public key portion of the client secret.</param>
+    /// <param name="keys">Can be used for asymmetric client secrets. Must contain the public key portion of the client secret and the private key portion for end-to-end encryption.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
     /// <returns><see cref="ISetupClientResponse"/></returns>
     /// <exception cref="ArgumentNullException"><paramref name="client"/> is null.</exception>
     /// <exception cref="HttpRequestException">Invalid status code is returned.</exception>
-    public async Task<ISetupClientResponse> SetupClientAsync(IClient client, Stream? publicKey = null,
+    public async Task<ISetupClientResponse> SetupClientAsync(IClient client, RSA? keys = null,
         CancellationToken cancellationToken = default)
     {
         if (client == null) throw new ArgumentNullException(nameof(client));
@@ -25,12 +26,19 @@ public partial class ComfygClient
         formData.Add(new StringContent(client.ClientId), nameof(ISetupClientRequest.ClientId));
         formData.Add(new StringContent(client.FriendlyName), nameof(ISetupClientRequest.FriendlyName));
 
-        if (publicKey != null)
+        if (keys != null)
         {
+            var publicKey = new MemoryStream(keys.ExportRSAPublicKey());
             formData.Add(new StreamContent(publicKey), nameof(ISetupClientRequest.ClientSecretPublicKey),
                 nameof(ISetupClientRequest.ClientSecretPublicKey));
 
-            //TODO add private key encrypted encryption key
+            var rawEncryptionKey = await GetEncryptionKeyAsync(cancellationToken);
+
+            //TODO make sure private key is used
+            var encryptedKey = keys.Encrypt(rawEncryptionKey, RSAEncryptionPadding.Pkcs1);
+            var encryptionKey = new MemoryStream(encryptedKey);
+            formData.Add(new StreamContent(encryptionKey), nameof(ISetupClientRequest.EncryptionKey),
+                nameof(ISetupClientRequest.EncryptionKey));
         }
 
         var response =
