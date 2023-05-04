@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using Comfyg.Store.Contracts;
 
 namespace Comfyg.Client;
@@ -17,12 +16,6 @@ public partial class ComfygClient
 
         if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
 
-        var encryptionKey = await GetEncryptionKeyAsync(cancellationToken).ConfigureAwait(false);
-        if (encryptionKey == null)
-        {
-            throw new InvalidOperationException("End to end-encryption is not properly setup.");
-        }
-
         if (!encryptedValue.IsEncrypted)
             return new TDecrypted
             {
@@ -34,6 +27,8 @@ public partial class ComfygClient
                 Hash = encryptedValue.Hash,
                 IsEncrypted = false
             };
+
+        var encryptionKey = await GetEncryptionKeyAsync(cancellationToken).ConfigureAwait(false);
 
         using var aes = Aes.Create();
 
@@ -59,8 +54,7 @@ public partial class ComfygClient
 
         if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
 
-        var encryptionKey = await GetEncryptionKeyAsync(cancellationToken).ConfigureAwait(false) ??
-                            await CreateEncryptionKeyAsync(cancellationToken).ConfigureAwait(false);
+        var encryptionKey = await GetEncryptionKeyAsync(cancellationToken);
 
         using var aes = Aes.Create();
         using var encryptor = aes.CreateEncryptor(encryptionKey, aes.IV);
@@ -99,73 +93,27 @@ public partial class ComfygClient
         return results;
     }
 
-    private async Task EnsureEncryptionKeyAsync()
+    private async Task<byte[]> GetEncryptionKeyAsync(CancellationToken cancellationToken)
     {
+        if (_encryptionKey != null) return await UseEncryptionKeyAsync(cancellationToken);
         
-    }
-    
-    private async Task<byte[]> CreateEncryptionKeyAsync(CancellationToken cancellationToken)
-    {
-        using var aes = Aes.Create();
-        using var encryptor = aes.CreateEncryptor(_encryptionSecret!, aes.IV);
-
-        using var stream = new MemoryStream();
-        var crypto = new CryptoStream(stream, encryptor, CryptoStreamMode.Write);
-        await crypto.WriteAsync(aes.Key, cancellationToken).ConfigureAwait(false);
-        await crypto.DisposeAsync().ConfigureAwait(false);
-
-        using var contentStream = new MemoryStream();
-        var content = $"{Convert.ToBase64String(stream.ToArray())}{IvDelimiter}{Convert.ToBase64String(aes.IV)}";
-        var writer = new StreamWriter(contentStream);
-        await writer.WriteAsync(content).ConfigureAwait(false);
-        await writer.DisposeAsync().ConfigureAwait(false);
-
-        var response =
-            await SendRequestAsync(
-                // ReSharper disable once AccessToDisposedClosure
-                () => new HttpRequestMessage(HttpMethod.Post, "encryption/key")
-                {
-                    Content = new StreamContent(contentStream)
-                },
-                cancellationToken: cancellationToken).ConfigureAwait(false);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new HttpRequestException("Invalid status code when trying to set encryption key.", null,
-                response.StatusCode);
-        }
-
-        return _encryptionKey = aes.Key;
-    }
-
-    private async Task<byte[]?> GetEncryptionKeyAsync(CancellationToken cancellationToken)
-    {
-        if (_encryptionKey != null) return _encryptionKey;
-
         var response = await SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "encryption/key"),
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
-            if (response.StatusCode == HttpStatusCode.NotFound) return null;
-
             throw new HttpRequestException("Invalid status code when trying to get encryption key.", null,
                 response.StatusCode);
         }
 
-        var payload = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        _encryptionKey = await response.Content.ReadAsStreamAsync(cancellationToken);
 
-        var parts = payload.Split(IvDelimiter);
+        return await UseEncryptionKeyAsync(cancellationToken);
+    }
 
-        using var aes = Aes.Create();
-        using var decryptor = aes.CreateDecryptor(_encryptionSecret!, Convert.FromBase64String(parts[1]));
-
-        var encryptedKey = Convert.FromBase64String(parts[0]);
-        using var stream = new MemoryStream(encryptedKey);
-        var crypto = new CryptoStream(stream, decryptor, CryptoStreamMode.Read);
-        var length = await crypto.ReadAsync(encryptedKey, cancellationToken).ConfigureAwait(false);
-
-        return _encryptionKey = stream.ToArray().Take(length).ToArray();
+    private async Task<byte[]> UseEncryptionKeyAsync(CancellationToken cancellationToken)
+    {
+        //TODO decrypt using private key
     }
 
     private static async Task<string> EncryptValueAsync(ICryptoTransform encryptor, string rawValue)

@@ -3,7 +3,6 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using Comfyg.Client.Operations;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Responses;
@@ -17,9 +16,8 @@ namespace Comfyg.Client;
 public sealed partial class ComfygClient : IDisposable
 {
     private const string IvDelimiter = ".";
-    private const string E2EeNotSupportedExceptionMessage =
-        "End to end-encryption (E2EE) is only supported for asymmetric clients.";
-    
+    private const string E2EeNotSupportedExceptionMessage = "End to end-encryption is only supported for asymmetric clients.";
+
     private readonly HttpClient _httpClient;
     private readonly string _clientId;
     private readonly byte[] _clientSecret;
@@ -28,7 +26,7 @@ public sealed partial class ComfygClient : IDisposable
 
     private SecurityToken? _token;
 
-    internal bool IsEncryptionEnabled => _isAsymmetric;
+    internal bool IsEncryptionEnabled { get; }
 
     /// <summary>
     /// The endpoint URI of the connected Comfyg store.
@@ -101,6 +99,14 @@ public sealed partial class ComfygClient : IDisposable
                 if (_clientSecret.Length < 16)
                     throw new InvalidOperationException("Client secret must be at least 16 bytes long.");
             }
+
+            if (connectionInformation.TryGetValue("Encryption", out var encryption))
+            {
+                IsEncryptionEnabled = bool.Parse(encryption);
+
+                if (IsEncryptionEnabled && !_isAsymmetric)
+                    throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
+            }
         }
         catch (Exception exception)
         {
@@ -166,7 +172,7 @@ public sealed partial class ComfygClient : IDisposable
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, _clientId) }),
+            Subject = new ClaimsIdentity(new[] {new Claim(ClaimTypes.NameIdentifier, _clientId)}),
             //TODO adjustable
             Expires = DateTime.UtcNow.AddDays(1).AddMinutes(5),
             Issuer = _clientId,

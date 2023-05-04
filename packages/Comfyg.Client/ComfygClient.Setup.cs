@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Requests;
 using Comfyg.Store.Contracts.Responses;
@@ -30,12 +29,14 @@ public partial class ComfygClient
         {
             formData.Add(new StreamContent(publicKey), nameof(ISetupClientRequest.ClientSecretPublicKey),
                 nameof(ISetupClientRequest.ClientSecretPublicKey));
+
+            //TODO add private key encrypted encryption key
         }
 
         var response =
             await SendRequestAsync(
                 // ReSharper disable once AccessToDisposedClosure
-                () => new HttpRequestMessage(HttpMethod.Post, "setup/client") { Content = formData },
+                () => new HttpRequestMessage(HttpMethod.Post, "setup/client") {Content = formData},
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
