@@ -59,15 +59,36 @@ internal class ClientService : IClientService
         return await InternalCreateClientAsync(client, protectedSecret, cancellationToken);
     }
 
-    public async Task<IClient> CreateAsymmetricClientAsync(IClient client, RSA rsa,
+    public async Task<IClient> CreateAsymmetricClientAsync(IClient client, RSA publicKey,
         CancellationToken cancellationToken = default)
     {
-        var blobId = $"{client.ClientId}.crt";
-        using var blob = new MemoryStream(rsa.ExportRSAPublicKey());
+        var blobId = $"{client.ClientId}.public.key";
+        using var blob = new MemoryStream(publicKey.ExportRSAPublicKey());
 
         await _blobService.UploadBlobAsync(blobId, blob, cancellationToken: cancellationToken);
 
         return await InternalCreateClientAsync(client, $"{ClientSecretBlobPrefix}{blobId}", cancellationToken);
+    }
+
+    public async Task<Stream?> GetEncryptionKeyAsync(IClient client, CancellationToken cancellationToken = default)
+    {
+        var blobId = $"{client.ClientId}.encryption.key";
+        
+        var doesExist = await _blobService.DoesBlobExistAsync(blobId, cancellationToken);
+        if (!doesExist) return null;
+
+        return await _blobService.DownloadBlobAsync(blobId, cancellationToken);
+    }
+
+    public async Task SetEncryptionKeyAsync(IClient client, Stream stream, CancellationToken cancellationToken = default)
+    {
+        var blobId = $"{client.ClientId}.encryption.key";
+        
+        var doesExist = await _blobService.DoesBlobExistAsync(blobId, cancellationToken);
+        if (doesExist)
+            throw new InvalidOperationException("Cannot overwrite encryption key for client: " + client.ClientId);
+
+        await _blobService.UploadBlobAsync(blobId, stream, cancellationToken: cancellationToken);
     }
 
     private async Task<IClient> InternalCreateClientAsync(IClient client, string secretReference,

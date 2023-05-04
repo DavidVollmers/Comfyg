@@ -11,5 +11,9 @@ public interface IClientService
 
     Task<IClient> CreateSymmetricClientAsync(IClient client, CancellationToken cancellationToken = default);
 
-    Task<IClient> CreateAsymmetricClientAsync(IClient client, RSA rsa, CancellationToken cancellationToken = default);
+    Task<IClient> CreateAsymmetricClientAsync(IClient client, RSA publicKey, CancellationToken cancellationToken = default);
+
+    Task<Stream?> GetEncryptionKeyAsync(IClient client, CancellationToken cancellationToken = default);
+
+    Task SetEncryptionKeyAsync(IClient client, Stream stream, CancellationToken cancellationToken = default);
 }

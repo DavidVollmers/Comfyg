@@ -42,17 +42,30 @@ public class SetupController : ControllerBase
             return Ok(new SetupClientResponse(symmetricClient, Convert.ToBase64String(clientSecret)));
         }
 
+        using var rsa = await CreatePublicKeyAsync(request.ClientSecretPublicKey!, cancellationToken);
+
+        var asymmetricClient = await _clientService.CreateAsymmetricClientAsync(request, rsa, cancellationToken);
+
+        if (request.EncryptionKey != null)
+        {
+            using var stream = new MemoryStream();
+            await request.EncryptionKey!.CopyToAsync(stream, cancellationToken);
+
+            await _clientService.SetEncryptionKeyAsync(asymmetricClient, stream, cancellationToken);
+        }
+
+        return Ok(new SetupClientResponse(asymmetricClient));
+    }
+
+    private static async Task<RSA> CreatePublicKeyAsync(IFormFile request, CancellationToken cancellationToken)
+    {
         using var stream = new MemoryStream();
-        await request.ClientSecretPublicKey!.CopyToAsync(stream, cancellationToken);
+        await request.CopyToAsync(stream, cancellationToken);
 
         stream.Position = 0;
 
-        using var rsa = RSA.Create();
+        var rsa = RSA.Create();
         rsa.ImportRSAPublicKey(stream.ToArray(), out _);
-
-        var asymmetricClient =
-            await _clientService.CreateAsymmetricClientAsync(request, rsa, cancellationToken);
-
-        return Ok(new SetupClientResponse(asymmetricClient));
+        return rsa;
     }
 }

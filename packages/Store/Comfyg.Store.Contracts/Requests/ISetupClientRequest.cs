@@ -8,6 +8,8 @@ namespace Comfyg.Store.Contracts.Requests;
 public interface ISetupClientRequest : IClient
 {
     public IFormFile? ClientSecretPublicKey { get; }
+
+    public IFormFile? EncryptionKey { get; }
     
     // Must be public to use with [FromForm]
     // ReSharper disable once ClassNeverInstantiated.Global
@@ -21,7 +23,8 @@ public interface ISetupClientRequest : IClient
 
         public bool IsAsymmetric => ClientSecretPublicKey != null;
 
-        // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public IFormFile? ClientSecretPublicKey { get; init; } 
+        public IFormFile? ClientSecretPublicKey { get; init; } = null;
+
+        public IFormFile? EncryptionKey { get; init; } = null;
     }
 }

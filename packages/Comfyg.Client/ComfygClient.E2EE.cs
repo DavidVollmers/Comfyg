@@ -6,7 +6,7 @@ namespace Comfyg.Client;
 
 public partial class ComfygClient
 {
-    private byte[]? _encryptionKey;
+    private Stream? _encryptionKey;
 
     internal async Task<TDecrypted> DecryptAsync<TEncrypted, TDecrypted>(TEncrypted encryptedValue,
         CancellationToken cancellationToken)
@@ -99,6 +99,11 @@ public partial class ComfygClient
         return results;
     }
 
+    private async Task EnsureEncryptionKeyAsync()
+    {
+        
+    }
+    
     private async Task<byte[]> CreateEncryptionKeyAsync(CancellationToken cancellationToken)
     {
         using var aes = Aes.Create();

@@ -11,44 +11,22 @@ namespace Comfyg.Store.Api.Controllers;
 [Route("encryption")]
 public class EncryptionController : ControllerBase
 {
-    private const string EncryptionKeyBlobId = "e2ee.key";
+    private readonly IClientService _clientService;
 
-    private readonly IBlobService _blobService;
-
-    public EncryptionController(IBlobService blobService)
+    public EncryptionController(IClientService clientService)
     {
-        _blobService = blobService;
+        _clientService = clientService;
     }
 
     [HttpGet("key")]
     public async Task<IActionResult> GetEncryptionKeyAsync(CancellationToken cancellationToken = default)
     {
-        if (User.Identity is not IClientIdentity {Client.IsAsymmetric: true}) return Forbid();
+        if (User.Identity is not IClientIdentity {Client.IsAsymmetric: true} clientIdentity) return Forbid();
 
-        var doesExist = await _blobService.DoesBlobExistAsync(EncryptionKeyBlobId, cancellationToken);
-        if (!doesExist) return NotFound();
+        var encryptionKey = await _clientService.GetEncryptionKeyAsync(clientIdentity.Client, cancellationToken);
 
-        var encryptionKey = await _blobService.DownloadBlobAsync(EncryptionKeyBlobId, cancellationToken);
-
+        if (encryptionKey == null) return NotFound();
+        
         return File(encryptionKey, "application/octet-stream");
-    }
-
-    [HttpPost("key")]
-    public async Task<IActionResult> SetEncryptionKeyAsync([FromForm] ISetEncryptionKeyRequest.Form request,
-        CancellationToken cancellationToken = default)
-    {
-        if (User.Identity is not IClientIdentity {Client.IsAsymmetric: true}) return Forbid();
-
-        var doesExist = await _blobService.DoesBlobExistAsync(EncryptionKeyBlobId, cancellationToken);
-        if (doesExist) return Forbid();
-
-        using var stream = new MemoryStream();
-        await request.EncryptionKey.CopyToAsync(stream, cancellationToken);
-
-        stream.Position = 0;
-
-        await _blobService.UploadBlobAsync(EncryptionKeyBlobId, stream, cancellationToken: cancellationToken);
-
-        return Ok();
     }
 }

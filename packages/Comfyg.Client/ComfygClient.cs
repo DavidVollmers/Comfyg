@@ -25,11 +25,10 @@ public sealed partial class ComfygClient : IDisposable
     private readonly byte[] _clientSecret;
     private readonly SecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
     private readonly bool _isAsymmetric;
-    private readonly byte[]? _encryptionSecret;
 
     private SecurityToken? _token;
 
-    internal bool IsEncryptionEnabled => _encryptionSecret != null;
+    internal bool IsEncryptionEnabled => _isAsymmetric;
 
     /// <summary>
     /// The endpoint URI of the connected Comfyg store.
@@ -101,13 +100,6 @@ public sealed partial class ComfygClient : IDisposable
                 _clientSecret = Convert.FromBase64String(clientSecret);
                 if (_clientSecret.Length < 16)
                     throw new InvalidOperationException("Client secret must be at least 16 bytes long.");
-            }
-
-            if (connectionInformation.TryGetValue("EncryptionPassphrase", out var encryptionPassphrase))
-            {
-                if (!_isAsymmetric) throw new Exception(E2EeNotSupportedExceptionMessage);
-
-                _encryptionSecret = SHA256.HashData(Encoding.UTF8.GetBytes(encryptionPassphrase));
             }
         }
         catch (Exception exception)
@@ -202,5 +194,6 @@ public sealed partial class ComfygClient : IDisposable
     public void Dispose()
     {
         _httpClient.Dispose();
+        _encryptionKey?.Dispose();
     }
 }
