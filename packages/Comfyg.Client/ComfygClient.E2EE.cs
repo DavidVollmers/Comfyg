@@ -109,16 +109,19 @@ public partial class ComfygClient
         await crypto.WriteAsync(aes.Key, cancellationToken).ConfigureAwait(false);
         await crypto.DisposeAsync().ConfigureAwait(false);
 
-        stream.SetLength(0);
+        using var contentStream = new MemoryStream();
         var content = $"{Convert.ToBase64String(stream.ToArray())}{IvDelimiter}{Convert.ToBase64String(aes.IV)}";
-        var writer = new StreamWriter(stream);
+        var writer = new StreamWriter(contentStream);
         await writer.WriteAsync(content).ConfigureAwait(false);
         await writer.DisposeAsync().ConfigureAwait(false);
 
         var response =
             await SendRequestAsync(
                 // ReSharper disable once AccessToDisposedClosure
-                () => new HttpRequestMessage(HttpMethod.Post, "encryption/key") {Content = new StreamContent(stream)},
+                () => new HttpRequestMessage(HttpMethod.Post, "encryption/key")
+                {
+                    Content = new StreamContent(contentStream)
+                },
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)

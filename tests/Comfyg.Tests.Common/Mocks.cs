@@ -46,5 +46,6 @@ internal class Mocks : IMocks
             GetMock<IValueService<IConfigurationValue>>().Object);
         services.AddSingleton<IValueService<ISettingValue>>(_ => GetMock<IValueService<ISettingValue>>().Object);
         services.AddSingleton<IValueService<ISecretValue>>(_ => GetMock<IValueService<ISecretValue>>().Object);
+        services.AddSingleton<IBlobService>(_ => GetMock<IBlobService>().Object);
     }
 }

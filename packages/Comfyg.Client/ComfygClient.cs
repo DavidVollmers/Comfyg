@@ -107,7 +107,7 @@ public sealed partial class ComfygClient : IDisposable
             {
                 if (!_isAsymmetric) throw new Exception(E2EeNotSupportedExceptionMessage);
 
-                _encryptionSecret = SHA512.HashData(Encoding.UTF8.GetBytes(encryptionPassphrase));
+                _encryptionSecret = SHA256.HashData(Encoding.UTF8.GetBytes(encryptionPassphrase));
             }
         }
         catch (Exception exception)
