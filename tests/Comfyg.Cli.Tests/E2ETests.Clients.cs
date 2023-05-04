@@ -19,8 +19,8 @@ public partial class E2ETests
         {
             ClientId = clientId, FriendlyName = friendlyName, IsAsymmetric = true
         };
-        var publicKeyPath =
-            Path.Join(new FileInfo(Assembly.GetAssembly(typeof(E2ETests))!.Location).Directory!.FullName, "public.pem");
+        var keysPath =
+            Path.Join(new FileInfo(Assembly.GetAssembly(typeof(E2ETests))!.Location).Directory!.FullName, "test.pem");
         //TODO more accuracy
         const string expectedOutput = $"Successfully created a client for ";
 
@@ -33,7 +33,7 @@ public partial class E2ETests
                 .ReturnsAsync(client);
         });
 
-        var result = await TestCli.ExecuteAsync($"setup client {clientId} \"{friendlyName}\" -pk \"{publicKeyPath}\"");
+        var result = await TestCli.ExecuteAsync($"setup client {clientId} \"{friendlyName}\" -k \"{keysPath}\"");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
@@ -51,19 +51,18 @@ public partial class E2ETests
     {
         var clientId = Guid.NewGuid().ToString();
         var assemblyPath = new FileInfo(Assembly.GetAssembly(typeof(E2ETests))!.Location).Directory!.FullName;
-        var publicKeyPath = Path.Join(assemblyPath, "public.pem");
-        var privateKeyPath = Path.Join(assemblyPath, "test.pem");
+        var keysPath = Path.Join(assemblyPath, "test.pem");
         const string friendlyName = "Test Client";
         var client = new TestClient { ClientId = clientId, FriendlyName = friendlyName, IsAsymmetric = true};
 
         using var rsa = RSA.Create();
-        rsa.ImportFromPem(await File.ReadAllTextAsync(publicKeyPath));
+        rsa.ImportFromPem(await File.ReadAllTextAsync(keysPath));
         var publicKey = rsa.ExportRSAPublicKey();
         
         using var httpClient = _factory.CreateClient();
         var expectedOutput = @"Successfully connected to " + httpClient.BaseAddress;
 
-        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={privateKeyPath}";
+        var connectionString = $"Endpoint={httpClient.BaseAddress};ClientId={clientId};ClientSecret={keysPath}";
 
         _factory.Mock<IClientService>(mock =>
         {

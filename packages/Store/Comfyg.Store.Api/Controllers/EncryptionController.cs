@@ -1,6 +1,4 @@
 ﻿using Comfyg.Store.Authentication.Abstractions;
-using Comfyg.Store.Contracts.Requests;
-using Comfyg.Store.Core.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,11 +19,10 @@ public class EncryptionController : ControllerBase
     [HttpGet("key")]
     public async Task<IActionResult> GetEncryptionKeyAsync(CancellationToken cancellationToken = default)
     {
-        if (User.Identity is not IClientIdentity
-            {
-                IsSystemClient: false, Client.IsAsymmetric: false
-            } clientIdentity) return Forbid();
+        if (User.Identity is not IClientIdentity clientIdentity) return Forbid();
 
+        if (clientIdentity is {IsSystemClient: false, Client.IsAsymmetric: false}) return Forbid();
+        
         var encryptionKey = await _clientService.GetEncryptionKeyAsync(clientIdentity.Client, cancellationToken);
 
         if (encryptionKey == null) return NotFound();
