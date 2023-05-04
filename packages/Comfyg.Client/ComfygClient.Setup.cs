@@ -34,6 +34,12 @@ public partial class ComfygClient
 
             var rawEncryptionKey = await GetEncryptionKeyAsync(cancellationToken);
 
+            if (rawEncryptionKey == null)
+            {
+                using var aes = Aes.Create();
+                rawEncryptionKey = aes.Key;
+            }
+
             //TODO make sure private key is used
             var encryptedKey = keys.Encrypt(rawEncryptionKey, RSAEncryptionPadding.Pkcs1);
             var encryptionKey = new MemoryStream(encryptedKey);

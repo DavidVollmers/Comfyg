@@ -31,6 +31,8 @@ public partial class ComfygClient
 
         var encryptionKey = await GetEncryptionKeyAsync(cancellationToken).ConfigureAwait(false);
 
+        if (encryptionKey == null) throw new InvalidOperationException("Missing encryption key.");
+
         using var aes = Aes.Create();
 
         var decryptedValue = await DecryptValueAsync(aes, encryptedValue.Value, encryptionKey).ConfigureAwait(false);
@@ -55,8 +57,10 @@ public partial class ComfygClient
 
         if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
 
-        var encryptionKey = await GetEncryptionKeyAsync(cancellationToken);
+        var encryptionKey = await GetEncryptionKeyAsync(cancellationToken).ConfigureAwait(false);
 
+        if (encryptionKey == null) throw new InvalidOperationException("Missing encryption key.");
+        
         using var aes = Aes.Create();
         using var encryptor = aes.CreateEncryptor(encryptionKey, aes.IV);
 
@@ -94,10 +98,8 @@ public partial class ComfygClient
         return results;
     }
 
-    private async Task<byte[]> GetEncryptionKeyAsync(CancellationToken cancellationToken)
+    private async Task<byte[]?> GetEncryptionKeyAsync(CancellationToken cancellationToken)
     {
-        if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
-        
         if (_encryptionKey != null) return await UseEncryptionKeyAsync(cancellationToken);
         
         var response = await SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "encryption/key"),
@@ -105,13 +107,15 @@ public partial class ComfygClient
 
         if (!response.IsSuccessStatusCode)
         {
+            if (response.StatusCode == HttpStatusCode.NotFound) return null;
+            
             throw new HttpRequestException("Invalid status code when trying to get encryption key.", null,
                 response.StatusCode);
         }
 
-        _encryptionKey = await response.Content.ReadAsStreamAsync(cancellationToken);
+        _encryptionKey = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
-        return await UseEncryptionKeyAsync(cancellationToken);
+        return await UseEncryptionKeyAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<byte[]> UseEncryptionKeyAsync(CancellationToken cancellationToken)
@@ -120,7 +124,7 @@ public partial class ComfygClient
         rsa.ImportRSAPrivateKey(_clientSecret, out _);
 
         using var stream = new MemoryStream();
-        await _encryptionKey!.CopyToAsync(stream, cancellationToken);
+        await _encryptionKey!.CopyToAsync(stream, cancellationToken).ConfigureAwait(false);
 
         stream.Position = 0;
 
