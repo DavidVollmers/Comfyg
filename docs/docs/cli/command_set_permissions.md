@@ -37,7 +37,7 @@ permitted key-value pairs.
 > [!NOTE]
 > You can only set permissions on key-value pairs for which the currently connected client has the `permit` permission.
 >
-> You can read more about connections & security [here](../TODO.md).
+> You can read more about this [here](../security.md#permissions).
 
 ## Arguments
 

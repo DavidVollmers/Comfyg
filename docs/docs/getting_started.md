@@ -42,7 +42,7 @@ Endpoint=http://localhost:32771;ClientId=system;ClientSecret=cbO+N4fgq7mOB813KuO
 
 The last line contains the connection string to your local Comfyg store using the configured system client. Copy this value so you can use it in the next step. If you loose your connection string you can always just setup a new Comfyg store using the CLI.
 
-You can read more about connections & security [here](TODO.md).
+You can read more about security [here](security.md).
 
 ## Create your Comfyg
 
@@ -134,7 +134,7 @@ builder.Configuration.AddComfyg(options => {
 });
 ```
 
-You can read more about all options [here](TODO.md).
+You can read more about all options [here](xref:Comfyg.ComfygOptions).
 
 ## What's next?
 
@@ -150,4 +150,4 @@ comfyg import config "path/to/appsettings.json"
 
 You can read more about all Comfyg CLI capabilities [here](cli/index.md#usage).
 
-Last but not least you should also think about security and data separation concerns. You can read more about connections & security [here](TODO.md).
+Last but not least you should also think about security and data separation concerns. You can read more about security [here](security.md).

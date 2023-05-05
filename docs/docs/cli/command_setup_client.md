@@ -6,7 +6,7 @@
 > [!NOTE]
 > This command requires a connection with the Comfyg store system client.
 > 
-> You can read more about the system client [here](../TODO.md)
+> You can read more about the system client [here](../security.md#system-client)
 
 ## Name
 

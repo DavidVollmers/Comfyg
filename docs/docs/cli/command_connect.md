@@ -25,7 +25,7 @@ Endpoint=http://localhost:32771;ClientId=system;ClientSecret=cbO+N4fgq7mOB813KuO
 It contains the `Endpoint` where the Comfyg store is located and also the `ClientId` and `ClientSecret` of the client to use for authentication.
 Depending on the client you choose for connection, you will have different privileges and permissions on the values stored in the Comfyg store.
 
-You can read more about this [here](../TODO.md).
+You can read more about this [here](../security.md#permissions).
 
 If the connection succeeds, the CLI will print out the information of the client used for the connection.
 Also the CLI will store the connection string in your user profile so that the connection can be used for other CLI commands.
