@@ -60,7 +60,7 @@ public partial class ComfygClient
         var encryptionKey = await GetEncryptionKeyAsync(cancellationToken).ConfigureAwait(false);
 
         if (encryptionKey == null) throw new InvalidOperationException("Missing encryption key.");
-        
+
         using var aes = Aes.Create();
         using var encryptor = aes.CreateEncryptor(encryptionKey, aes.IV);
 
@@ -101,14 +101,16 @@ public partial class ComfygClient
     private async Task<byte[]?> GetEncryptionKeyAsync(CancellationToken cancellationToken)
     {
         if (_encryptionKey != null) return await UseEncryptionKeyAsync(cancellationToken);
-        
+
         var response = await SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "encryption/key"),
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
             if (response.StatusCode == HttpStatusCode.NotFound) return null;
-            
+
+            if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
+
             throw new HttpRequestException("Invalid status code when trying to get encryption key.", null,
                 response.StatusCode);
         }
