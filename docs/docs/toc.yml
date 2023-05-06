@@ -2,5 +2,7 @@
   href: ../index.md
 - name: Getting Started
   href: getting_started.md
+- name: Security
+  href: security.md
 - name: Command-Line Interface (CLI)
   href: cli/toc.yml
