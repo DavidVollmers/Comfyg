@@ -58,7 +58,7 @@ internal abstract class ExportValuesCommandBase<T> : Command where T : IComfygVa
             ++count;
         }
 
-        await using var stream = fileArgument.OpenWrite();
+        await using var stream = fileArgument.Create();
         await JsonSerializer.SerializeAsync(stream, json, new JsonSerializerOptions { WriteIndented = true },
             cancellationToken);
 
