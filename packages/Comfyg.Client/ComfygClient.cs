@@ -200,6 +200,5 @@ public sealed partial class ComfygClient : IDisposable
     public void Dispose()
     {
         _httpClient.Dispose();
-        _encryptionKey?.Dispose();
     }
 }

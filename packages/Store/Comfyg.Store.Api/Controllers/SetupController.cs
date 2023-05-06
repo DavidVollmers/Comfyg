@@ -27,7 +27,8 @@ public class SetupController : ControllerBase
     {
         if (User.Identity is not IClientIdentity identity) return BadRequest();
 
-        if (!identity.IsSystemClient) return Forbid();
+        if (identity is { IsSystemClient: false, Client.IsAsymmetric: false } ||
+            identity.Client.IsAsymmetric && !request.IsAsymmetric) return Forbid();
 
         var existing = await _clientService.GetClientAsync(request.ClientId, cancellationToken);
         if (existing != null) return BadRequest();

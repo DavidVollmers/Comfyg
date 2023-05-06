@@ -24,8 +24,8 @@ variables is not set correctly the system client cannot be used.
 | `COMFYG_SystemClientSecret` | The client secret of the system client. |
 
 > [!IMPORTANT]
-> The system client can always access, edit and delete all values of the Comfyg store. It should only be used for the
-> initial setup and in emergency cases.
+> The system client can always access, edit and delete all values of the Comfyg store. It should only be used for client
+> setup and in emergency cases.
 
 You can create new clients using the `comfyg setup client` command. You can read more about
 it [here](cli/command_setup_client.md).
@@ -37,6 +37,9 @@ Comfyg store will automatically generate a 64 bytes long secret for the client.
 
 The term "symmetric" is used here because both sides of the connection (the client and the Comfyg store) know this
 secret.
+
+> [!NOTE]
+> Symmetric clients can only be created by the system client.
 
 ## Asymmetric Clients
 

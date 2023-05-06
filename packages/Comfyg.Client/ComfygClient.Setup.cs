@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using System.Security.Cryptography;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Requests;
@@ -49,12 +50,24 @@ public partial class ComfygClient
         var response =
             await SendRequestAsync(
                 // ReSharper disable once AccessToDisposedClosure
-                () => new HttpRequestMessage(HttpMethod.Post, "setup/client") {Content = formData},
+                () => new HttpRequestMessage(HttpMethod.Post, "setup/client") { Content = formData },
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
+        {
+            if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                if (keys == null)
+                    throw new InvalidOperationException(
+                        "Only the system client can be used to create symmetric clients.");
+
+                throw new InvalidOperationException(
+                    "Only the system client or other asymmetric clients can be used to create asymmetric clients.");
+            }
+
             throw new HttpRequestException("Invalid status code when trying to setup client.", null,
                 response.StatusCode);
+        }
 
         return (await response.Content.ReadFromJsonAsync<ISetupClientResponse>(cancellationToken: cancellationToken)
             .ConfigureAwait(false))!;

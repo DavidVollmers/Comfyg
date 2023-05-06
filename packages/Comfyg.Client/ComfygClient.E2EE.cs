@@ -6,7 +6,7 @@ namespace Comfyg.Client;
 
 public partial class ComfygClient
 {
-    private Stream? _encryptionKey;
+    private byte[]? _encryptionKey;
 
     internal async Task<TDecrypted> DecryptAsync<TEncrypted, TDecrypted>(TEncrypted encryptedValue,
         CancellationToken cancellationToken)
@@ -35,17 +35,27 @@ public partial class ComfygClient
 
         using var aes = Aes.Create();
 
-        var decryptedValue = await DecryptValueAsync(aes, encryptedValue.Value, encryptionKey).ConfigureAwait(false);
-        return new TDecrypted
+        try
         {
-            Value = decryptedValue,
-            Key = encryptedValue.Key,
-            Version = encryptedValue.Version,
-            ParentVersion = encryptedValue.ParentVersion,
-            CreatedAt = encryptedValue.CreatedAt,
-            Hash = encryptedValue.Hash,
-            IsEncrypted = false
-        };
+            var decryptedValue =
+                await DecryptValueAsync(aes, encryptedValue.Value, encryptionKey).ConfigureAwait(false);
+            return new TDecrypted
+            {
+                Value = decryptedValue,
+                Key = encryptedValue.Key,
+                Version = encryptedValue.Version,
+                ParentVersion = encryptedValue.ParentVersion,
+                CreatedAt = encryptedValue.CreatedAt,
+                Hash = encryptedValue.Hash,
+                IsEncrypted = false
+            };
+        }
+        catch (CryptographicException exception)
+        {
+            throw new InvalidOperationException(
+                "Cannot decrypt value. This could be the case because a different encryption key was used to encrypt it.",
+                exception);
+        }
     }
 
     internal async Task<IEnumerable<TEncrypted>> EncryptAsync<TRaw, TEncrypted>(IEnumerable<TRaw> rawValues,
@@ -64,10 +74,12 @@ public partial class ComfygClient
         using var aes = Aes.Create();
         using var encryptor = aes.CreateEncryptor(encryptionKey, aes.IV);
 
+        var base64Iv = Convert.ToBase64String(aes.IV);
+
         var results = new List<TEncrypted>();
         foreach (var rawValue in rawValues)
         {
-            if (!rawValue.IsEncrypted)
+            if (rawValue.IsEncrypted)
             {
                 results.Add(new TEncrypted
                 {
@@ -85,7 +97,7 @@ public partial class ComfygClient
             var encryptedValue = await EncryptValueAsync(encryptor, rawValue.Value).ConfigureAwait(false);
             results.Add(new TEncrypted
             {
-                Value = encryptedValue,
+                Value = $"{encryptedValue}{IvDelimiter}{base64Iv}",
                 Key = rawValue.Key,
                 Version = rawValue.Version,
                 ParentVersion = rawValue.ParentVersion,
@@ -100,7 +112,7 @@ public partial class ComfygClient
 
     private async Task<byte[]?> GetEncryptionKeyAsync(CancellationToken cancellationToken)
     {
-        if (_encryptionKey != null) return await UseEncryptionKeyAsync(cancellationToken);
+        if (_encryptionKey != null) return UseEncryptionKey();
 
         var response = await SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "encryption/key"),
             cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -116,22 +128,22 @@ public partial class ComfygClient
                 response.StatusCode);
         }
 
-        _encryptionKey = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        await using var responseStream =
+            await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
-        return await UseEncryptionKeyAsync(cancellationToken).ConfigureAwait(false);
+        using var stream = new MemoryStream();
+        await responseStream.CopyToAsync(stream, cancellationToken).ConfigureAwait(false);
+        _encryptionKey = stream.ToArray();
+
+        return UseEncryptionKey();
     }
 
-    private async Task<byte[]> UseEncryptionKeyAsync(CancellationToken cancellationToken)
+    private byte[] UseEncryptionKey()
     {
         using var rsa = RSA.Create();
         rsa.ImportRSAPrivateKey(_clientSecret, out _);
 
-        using var stream = new MemoryStream();
-        await _encryptionKey!.CopyToAsync(stream, cancellationToken).ConfigureAwait(false);
-
-        stream.Position = 0;
-
-        return rsa.Decrypt(stream.ToArray(), RSAEncryptionPadding.Pkcs1);
+        return rsa.Decrypt(_encryptionKey!, RSAEncryptionPadding.Pkcs1);
     }
 
     private static async Task<string> EncryptValueAsync(ICryptoTransform encryptor, string rawValue)
