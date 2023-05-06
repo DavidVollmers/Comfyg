@@ -51,6 +51,8 @@ public class SetupController : ControllerBase
             using var stream = new MemoryStream();
             await request.EncryptionKey!.CopyToAsync(stream, cancellationToken);
 
+            stream.Position = 0;
+
             await _clientService.SetEncryptionKeyAsync(asymmetricClient, stream, cancellationToken);
         }
 

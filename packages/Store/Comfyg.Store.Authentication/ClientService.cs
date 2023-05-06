@@ -73,17 +73,18 @@ internal class ClientService : IClientService
     public async Task<Stream?> GetEncryptionKeyAsync(IClient client, CancellationToken cancellationToken = default)
     {
         var blobId = $"{client.ClientId}.encryption.key";
-        
+
         var doesExist = await _blobService.DoesBlobExistAsync(blobId, cancellationToken);
         if (!doesExist) return null;
 
         return await _blobService.DownloadBlobAsync(blobId, cancellationToken);
     }
 
-    public async Task SetEncryptionKeyAsync(IClient client, Stream stream, CancellationToken cancellationToken = default)
+    public async Task SetEncryptionKeyAsync(IClient client, Stream stream,
+        CancellationToken cancellationToken = default)
     {
         var blobId = $"{client.ClientId}.encryption.key";
-        
+
         var doesExist = await _blobService.DoesBlobExistAsync(blobId, cancellationToken);
         if (doesExist)
             throw new InvalidOperationException("Cannot overwrite encryption key for client: " + client.ClientId);
@@ -96,7 +97,10 @@ internal class ClientService : IClientService
     {
         var clientEntity = new ClientEntity
         {
-            ClientId = client.ClientId, FriendlyName = client.FriendlyName, ClientSecret = secretReference
+            ClientId = client.ClientId,
+            FriendlyName = client.FriendlyName,
+            ClientSecret = secretReference,
+            IsAsymmetric = secretReference.StartsWith(ClientSecretBlobPrefix)
         };
 
         await _clients.CreateTableIfNotExistsAsync(cancellationToken);

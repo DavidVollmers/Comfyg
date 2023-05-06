@@ -109,7 +109,8 @@ public partial class ComfygClient
         {
             if (response.StatusCode == HttpStatusCode.NotFound) return null;
 
-            if (!_isAsymmetric) throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
+            if (!_isAsymmetric && response.StatusCode == HttpStatusCode.Forbidden)
+                throw new InvalidOperationException(E2EeNotSupportedExceptionMessage);
 
             throw new HttpRequestException("Invalid status code when trying to get encryption key.", null,
                 response.StatusCode);

@@ -42,7 +42,7 @@ public static class ComfygAuthenticationExtensions
             var options = OptionsProvider();
             if (options.AzureBlobStorageConnectionString == null)
                 throw new InvalidOperationException("Missing AzureBlobStorageConnectionString option.");
-            return new BlobService(nameof(Comfyg) + nameof(Authentication),
+            return new BlobService((nameof(Comfyg) + nameof(Authentication)).ToLower(),
                 new BlobServiceClient(options.AzureBlobStorageConnectionString));
         }
 
