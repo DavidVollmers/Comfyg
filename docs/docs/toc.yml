@@ -2,6 +2,8 @@
   href: ../index.md
 - name: Getting Started
   href: getting_started.md
+- name: Hosting
+  href: hosting.md
 - name: Security
   href: security.md
 - name: Command-Line Interface (CLI)

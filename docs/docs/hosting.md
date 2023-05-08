@@ -1,4 +1,4 @@
-﻿# Hosting the Comfyg Store
+﻿# Hosting
 
 After trying out the Comfyg store on your local machine using the `comfyg setup localhost` (Read more about
 it [here](cli/command_setup_localhost.md)) command you will eventually come to the point where you want to host an
