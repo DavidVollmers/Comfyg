@@ -78,7 +78,7 @@ Last but not least of course the most important part: Secrets. These values, as 
 comfyg add secret "SQLConnectionString" "Server=MySQLServer;Database=MyDatabase;User Id=sa;Password=Password!;"
 ```
 
-You can read more about how secrets are secured in [here](TODO.md).
+You can read more about how secrets are secured in [here](security.md#encryption).
 
 ## Use your Comfyg
 
@@ -140,7 +140,7 @@ You can read more about all options [here](xref:Comfyg.ComfygOptions).
 
 After you played around with your local Comfyg store it will be time to move to production, won't it?
 
-First thing you want to do is to setup your Comfyg store in your own Azure Tenant. You can read more about this [here](TODO.md).
+First thing you want to do is to setup your Comfyg store in your own hosting environment. You can read more about this [here](hosting.md).
 
 You also will probably want to import existing configuration, settings and secrets you have into your API. You can do this using the Comfyg CLI:
 

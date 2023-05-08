@@ -72,9 +72,9 @@ internal static class ComfygStoreApiExtensions
                 $"Endpoint={app.Urls.First()};ClientId={systemClientId};ClientSecret={systemClientSecret};");
         }
 
-        await app.CheckAuthenticationHealthAsync();
-
         await app.CheckSystemHealthAsync();
+
+        await app.CheckAuthenticationHealthAsync();
     }
 
     private static Task CheckAuthenticationHealthAsync(this WebApplication app)

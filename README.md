@@ -14,9 +14,17 @@ Comfyg is the answer to the questions *"Where do I store my configuration? Where
 want to change at runtime?"*.
 
 It is similar to [Azure App Configuration](https://learn.microsoft.com/en-us/azure/azure-app-configuration/overview),
-but also supports secrets and change detection. 
+but also supports secrets, change detection and
+multiple [layers of security](https://docs.comfyg.com/docs/security.html).
 
-And most importantly it is open-source and free to use!
+And most importantly it is open-source and free to [use](https://docs.comfyg.com/docs/hosting.html)!
+
+## Features
+
+- Easy [local setup](https://docs.comfyg.com/docs/getting_started.html)
+- Powerful [Command-Line Interface](https://www.nuget.org/packages/Comfyg.Cli)
+- [Security](https://docs.comfyg.com/docs/security.html) as a core principal
+- Flexible [hosting](https://docs.comfyg.com/docs/hosting.html)
 
 ## Documentation
 

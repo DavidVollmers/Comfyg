@@ -23,6 +23,8 @@ variables is not set correctly the system client cannot be used.
 | `COMFYG_SystemClientId`     | The client ID of the system client.     |
 | `COMFYG_SystemClientSecret` | The client secret of the system client. |
 
+You can read more about all supported environment variables [here](hosting.md#environment-variables).
+
 > [!IMPORTANT]
 > The system client can always access, edit and delete all values of the Comfyg store. It should only be used for client
 > setup and in emergency cases.
@@ -44,7 +46,7 @@ secret.
 ## Asymmetric Clients
 
 An option to keep the secret of a client only on the client side is to create it as an asymmetric client. This can be
-done by generating a cryptographic kay pair on the client side where only the public key will be uploaded to the Comfyg
+done by generating a cryptographic key pair on the client side where only the public key will be uploaded to the Comfyg
 store for verification purposes.
 
 You can generate this cryptographic key pair using the tool [OpenSSL](https://www.openssl.org):
@@ -85,6 +87,18 @@ be controlled in the creation process of the client:
 - Whenever an asymmetric client is created using the system client a new encryption key will be generated.
 - If an asymmetric client is used to create another asymmetric client it will share its encryption key.
 - Symmetric clients cannot be used to create an asymmetric client since they have no own encryption key.
+
+## Encryption
+
+The Comfyg store encrypts all secret values (either values added with the `comfyg add secret` command or symmetric
+client secrets) before storing them.
+
+This is done using the encryption keys provided by the initial setup of the Comfyg store. You can read more about
+this [here](hosting.md#environment-variables).
+
+> [!NOTE]
+> This is no end-to-end encryption and is only used as another security layer for sensitive information. End-to-end
+> encryption is only supported by asymmetric clients.
 
 ## Permissions
 
