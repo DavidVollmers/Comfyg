@@ -18,10 +18,7 @@ app.UseAuthorization();
 
 await app.StartAsync();
 
-if (app.Environment.IsDevelopment())
-{
-    app.LogConnectionHint();
-}
+await app.CheckHealthAsync();
 
 await app.WaitForShutdownAsync();
 

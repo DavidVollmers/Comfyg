@@ -11,7 +11,7 @@ public sealed class ComfygAuthenticationOptions
 
     internal string? EncryptionKey { get; private set; }
 
-    internal bool UseKeyVault { get; private set; }
+    internal Uri? KeyVaultUri { get; private set; }
 
     internal ComfygAuthenticationOptions()
     {
@@ -33,16 +33,16 @@ public sealed class ComfygAuthenticationOptions
 
     public ComfygAuthenticationOptions UseEncryption(string encryptionKey)
     {
-        if (UseKeyVault) throw new InvalidOperationException(UseEitherEncryptionOrKeyVaultExceptionMessage);
+        if (KeyVaultUri != null) throw new InvalidOperationException(UseEitherEncryptionOrKeyVaultExceptionMessage);
         EncryptionKey = encryptionKey ?? throw new ArgumentNullException(nameof(encryptionKey));
         return this;
     }
 
-    //TODO support provide SecretClient option
-    public ComfygAuthenticationOptions UseAzureKeyVault()
+    public ComfygAuthenticationOptions UseAzureKeyVault(string vaultUri)
     {
         if (EncryptionKey != null) throw new InvalidOperationException(UseEitherEncryptionOrKeyVaultExceptionMessage);
-        UseKeyVault = true;
+        if (vaultUri == null) throw new ArgumentNullException(nameof(vaultUri));
+        KeyVaultUri = new Uri(vaultUri);
         return this;
     }
 }

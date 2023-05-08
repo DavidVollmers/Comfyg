@@ -1,4 +1,5 @@
 ﻿using Azure.Data.Tables;
+using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Storage.Blobs;
 using Comfyg.Store.Authentication.Abstractions;
@@ -55,12 +56,14 @@ public static class ComfygAuthenticationExtensions
                 return new EncryptionBasedSecretService(options.EncryptionKey);
             }
 
-            if (!options.UseKeyVault)
+            if (options.KeyVaultUri == null)
                 throw new InvalidOperationException(
                     "Neither encryption nor Azure Key Vault is configured. Use either AuthenticationOptions.UseEncryption or AuthenticationOptions.UseKeyVault to configure secret handling.");
 
-            return new KeyVaultSecretService(nameof(Comfyg) + nameof(Authentication),
-                provider.GetRequiredService<SecretClient>());
+            //TODO make Azure Credentials configurable
+            var secretClient = new SecretClient(options.KeyVaultUri, new DefaultAzureCredential());
+
+            return new KeyVaultSecretService(nameof(Comfyg) + nameof(Authentication), secretClient);
         }
 
         serviceCollection.AddSingleton<IClientService, ClientService>(provider =>
