@@ -47,6 +47,8 @@ environment variables.
 > You can also disable all health checks on startup by setting the environment variable `COMFYG_DoHealthCheckOnStartup`
 > to `false`.
 
+You can read more about the `docker run` command and how to supply environment variables [here](https://docs.docker.com/engine/reference/commandline/run/).
+
 ## Environment Variables
 
 To properly configure your Comfyg store system you can use the following environment variables:
