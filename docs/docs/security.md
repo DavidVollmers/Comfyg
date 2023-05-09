@@ -73,8 +73,10 @@ To enable en- and decryption of Comfyg values you must add the `Encryption=true`
 client:
 
 ```
-"Endpoint=...;ClientId=myclient;ClientSecret=path/to/keys.pem;Encryption=true;"
+Endpoint=...;ClientId=myclient;ClientSecret=path/to/keys.pem;Encryption=true;
 ```
+
+You can read more about connection strings [here](connections.md).
 
 #### Sharing encrypted Values
 

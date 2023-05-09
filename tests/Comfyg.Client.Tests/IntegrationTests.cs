@@ -125,6 +125,49 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
     }
 
     [Fact]
+    public async Task Test_EstablishConnectionAsync_WithEnvironmentVariables()
+    {
+        var clientId = Guid.NewGuid().ToString();
+        var clientSecret = CreateClientSecret();
+        const string friendlyName = "Test Client";
+        var client = new TestClient { ClientId = clientId, FriendlyName = friendlyName };
+        var envVar1 = Guid.NewGuid().ToString("N");
+        Environment.SetEnvironmentVariable(envVar1, clientId);
+
+        using var httpClient = _factory.CreateClient();
+
+        var connectionString =
+            $"Endpoint={httpClient.BaseAddress};ClientId=${envVar1};ClientSecret={Convert.ToBase64String(clientSecret)}";
+        using var comfygClient = new ComfygClient(connectionString, httpClient);
+
+        _factory.Mock<IClientService>(mock =>
+        {
+            mock.Setup(cs => cs.GetClientAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(client);
+            mock.Setup(cs => cs.ReceiveClientSecretAsync(It.IsAny<IClient>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(clientSecret);
+        });
+
+        var response = await comfygClient.EstablishConnectionAsync();
+
+        Assert.NotNull(response);
+        Assert.NotNull(response.Client);
+        Assert.Equal(clientId, response.Client.ClientId);
+        Assert.Equal(friendlyName, response.Client.FriendlyName);
+        Assert.Null(response.Client.ClientSecret);
+
+        _factory.Mock<IClientService>(mock =>
+        {
+            mock.Verify(cs => cs.GetClientAsync(It.Is<string>(s => s == clientId), It.IsAny<CancellationToken>()),
+                Times.Once);
+            mock.Verify(
+                cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId),
+                    It.IsAny<CancellationToken>()), Times.Once);
+        });
+        
+        Environment.SetEnvironmentVariable(envVar1, null);
+    }
+
+    [Fact]
     public async Task Test_AddConfigurationAsync()
     {
         var clientId = Guid.NewGuid().ToString();

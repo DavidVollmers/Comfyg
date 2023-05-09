@@ -13,7 +13,8 @@ which will be used to store all Comfyg values.
 
 ## Installation
 
-First we want to install the Comfyg Command-Line Interface (CLI). We can do this using the [.NET CLI](https://learn.microsoft.com/de-de/dotnet/core/tools/):
+First we want to install the Comfyg Command-Line Interface (CLI). We can do this using
+the [.NET CLI](https://learn.microsoft.com/de-de/dotnet/core/tools/):
 
 ```shell
 dotnet tool install --global Comfyg.Cli
@@ -26,7 +27,8 @@ You can read more about the Comfyg CLI [here](cli/index.md).
 
 ## Setup & Configure your Comfyg Store
 
-For local setup of the Comfyg store you can use the CLI. Just execute the below command and it will guide you through the setup process.
+For local setup of the Comfyg store you can use the CLI. Just execute the below command and it will guide you through
+the setup process.
 
 ```shell
 comfyg setup localhost
@@ -40,9 +42,11 @@ You can connect to your local Comfyg store using the following connection string
 Endpoint=http://localhost:32771;ClientId=system;ClientSecret=cbO+N4fgq7mOB813KuOfow0nfKFW+VyS3k4boosUzozn9vmOqvk32QCpxO1eQfxMxKcItHkYX7YUT9uSbP/84g==;
 ```
 
-The last line contains the connection string to your local Comfyg store using the configured system client. Copy this value so you can use it in the next step. If you loose your connection string you can always just setup a new Comfyg store using the CLI.
+The last line contains the connection string to your local Comfyg store using the configured system client. Copy this
+value so you can use it in the next step. If you loose your connection string you can always just setup a new Comfyg
+store using the CLI.
 
-You can read more about security [here](security.md).
+You can read more about connection strings [here](connections.md).
 
 ## Create your Comfyg
 
@@ -56,7 +60,8 @@ After this you can start adding your Comfyg values using the `comfyg add` comman
 
 ### Configuration Values
 
-Configuration values are the most basic things for your program to work. Values which in most cases only need to be retrieved on startup. For example the lifespan of issued tokens:
+Configuration values are the most basic things for your program to work. Values which in most cases only need to be
+retrieved on startup. For example the lifespan of issued tokens:
 
 ```shell
 comfyg add config "TokenLifespanInHours" "24"
@@ -64,7 +69,8 @@ comfyg add config "TokenLifespanInHours" "24"
 
 ### Setting Values
 
-Settings are like configuration values but expected to be able to change at runtime. For example a maintenance mode which can be toggled on demand:
+Settings are like configuration values but expected to be able to change at runtime. For example a maintenance mode
+which can be toggled on demand:
 
 ```shell
 comfyg add setting "MaintenanceMode" "true"
@@ -72,7 +78,8 @@ comfyg add setting "MaintenanceMode" "true"
 
 ### Secret Values
 
-Last but not least of course the most important part: Secrets. These values, as they imply, are usually security sensitive values which should be handled carefully. For example the connection string to your SQL database:
+Last but not least of course the most important part: Secrets. These values, as they imply, are usually security
+sensitive values which should be handled carefully. For example the connection string to your SQL database:
 
 ```shell
 comfyg add secret "SQLConnectionString" "Server=MySQLServer;Database=MyDatabase;User Id=sa;Password=Password!;"
@@ -103,13 +110,16 @@ builder.Configuration.AddComfyg(options => { options.Connect("YOUR_CONNECTION_ST
 ```
 
 > [!IMPORTANT]
-> The connection string should be stored as a [user secret](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) or environment variable and never be committed to your repository.
+> The connection string should be stored as
+> a [user secret](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) or environment variable and never be
+> committed to your repository.
 
 You can also have a look at our example projects [here](https://github.com/DavidVollmers/Comfyg/tree/main/examples).
 
 ### Access your Comfyg values
 
-To access your Comfyg values you can simply use the `IConfiguration` object in your program like you do with every other configuration provider:
+To access your Comfyg values you can simply use the `IConfiguration` object in your program like you do with every other
+configuration provider:
 
 ```csharp
 var tokenLifespanInHours = configuration.GetValue<int>("TokenLifespanInHours");
@@ -123,7 +133,8 @@ var sqlConnectionString = configuration["SQLConnectionString"];
 
 Per default the Comfyg configuration provider will detect changes only on setting values every 5 minutes.
 
-You can however configure change detection for all three types of comfyg values by configuring the `AddComfyg` method call:
+You can however configure change detection for all three types of comfyg values by configuring the `AddComfyg` method
+call:
 
 ```csharp 
 builder.Configuration.AddComfyg(options => { 
@@ -140,9 +151,11 @@ You can read more about all options [here](xref:Comfyg.ComfygOptions).
 
 After you played around with your local Comfyg store it will be time to move to production, won't it?
 
-First thing you want to do is to setup your Comfyg store in your own hosting environment. You can read more about this [here](hosting.md).
+First thing you want to do is to setup your Comfyg store in your own hosting environment. You can read more about
+this [here](hosting.md).
 
-You also will probably want to import existing configuration, settings and secrets you have into your API. You can do this using the Comfyg CLI:
+You also will probably want to import existing configuration, settings and secrets you have into your API. You can do
+this using the Comfyg CLI:
 
 ```shell
 comfyg import config "path/to/appsettings.json"
@@ -150,4 +163,5 @@ comfyg import config "path/to/appsettings.json"
 
 You can read more about all Comfyg CLI capabilities [here](cli/index.md#usage).
 
-Last but not least you should also think about security and data separation concerns. You can read more about security [here](security.md).
+Last but not least you should also think about security and data separation. You can read more about
+this [here](security.md).

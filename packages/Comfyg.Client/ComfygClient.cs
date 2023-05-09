@@ -16,6 +16,7 @@ namespace Comfyg.Client;
 public sealed partial class ComfygClient : IDisposable
 {
     private const string IvDelimiter = ".";
+    private const string EnvironmentVariablePrefix = "$";
     private const string E2EeNotSupportedExceptionMessage = "End-to-end encryption is only supported for asymmetric clients.";
 
     private readonly HttpClient _httpClient;
@@ -75,15 +76,15 @@ public sealed partial class ComfygClient : IDisposable
 
             if (!connectionInformation.ContainsKey("Endpoint"))
                 throw new Exception("Missing \"Endpoint\" information.");
-            _httpClient.BaseAddress = new Uri(connectionInformation["Endpoint"]);
+            _httpClient.BaseAddress = new Uri(GetConnectionStringValue(connectionInformation["Endpoint"]));
 
             if (!connectionInformation.ContainsKey("ClientId"))
                 throw new Exception("Missing \"ClientId\" information.");
-            _clientId = connectionInformation["ClientId"];
+            _clientId = GetConnectionStringValue(connectionInformation["ClientId"]);
 
             if (!connectionInformation.ContainsKey("ClientSecret"))
                 throw new Exception("Missing \"ClientSecret\" information.");
-            var clientSecret = connectionInformation["ClientSecret"];
+            var clientSecret = GetConnectionStringValue(connectionInformation["ClientSecret"]);
 
             if (File.Exists(clientSecret))
             {
@@ -102,6 +103,8 @@ public sealed partial class ComfygClient : IDisposable
 
             if (connectionInformation.TryGetValue("Encryption", out var encryption))
             {
+                encryption = GetConnectionStringValue(encryption);
+                
                 IsEncryptionEnabled = bool.Parse(encryption);
 
                 if (IsEncryptionEnabled && !_isAsymmetric)
@@ -200,5 +203,17 @@ public sealed partial class ComfygClient : IDisposable
     public void Dispose()
     {
         _httpClient.Dispose();
+    }
+
+    private static string GetConnectionStringValue(string value)
+    {
+        if (!value.StartsWith(EnvironmentVariablePrefix)) return value;
+        
+        var environmentVariable = value[EnvironmentVariablePrefix.Length..];
+        value = Environment.GetEnvironmentVariable(environmentVariable)!;
+        if (value == null)
+            throw new Exception("Environment variable does not exist: " + environmentVariable);
+
+        return value;
     }
 }

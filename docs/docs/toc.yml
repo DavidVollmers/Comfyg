@@ -4,6 +4,8 @@
   href: getting_started.md
 - name: Hosting
   href: hosting.md
+- name: Connections
+  href: connections.md
 - name: Security
   href: security.md
 - name: Command-Line Interface (CLI)
