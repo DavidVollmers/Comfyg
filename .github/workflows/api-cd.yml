@@ -39,3 +39,12 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/comfyg:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/comfyg:${{ env.VERSION }}
+      - uses: docker/build-push-action@v4
+        with:
+          context: packages/Store/Comfyg.Store.Api
+          file: packages/Store/Comfyg.Store.Api/azurite.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/comfyg:azurite
+            ${{ secrets.DOCKERHUB_USERNAME }}/comfyg:azurite-${{ env.VERSION }}
