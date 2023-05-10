@@ -5,4 +5,4 @@ EXPOSE 80
 
 COPY bin/Release/net6.0/publish/ .
 
-ENTRYPOINT ["dotnet", "Comfyg.Store.Api.dll"]
+CMD dotnet Comfyg.Store.Api.dll
