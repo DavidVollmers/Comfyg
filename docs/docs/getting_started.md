@@ -7,10 +7,6 @@ To try out Comfyg as fast and quick as possible you can follow this guide to set
 - [Docker](https://docs.docker.com/get-docker)
 - [.NET SDK](https://dotnet.microsoft.com/en-us/download/dotnet) version 6.0 or higher
 
-You will also need to setup at least
-one [Azure Table Storage account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal)
-which will be used to store all Comfyg values.
-
 ## Installation
 
 First we want to install the Comfyg Command-Line Interface (CLI). We can do this using
@@ -33,6 +29,11 @@ the setup process.
 ```shell
 comfyg setup localhost
 ```
+
+> [!NOTE]
+> During the setup the CLI will prompt you for keys and connection strings. In all cases you can just press enter to generate new keys and use the built-in development storage.
+> 
+> This is recommended if you just want to get started with Comfyg.
 
 Once you have setup your local Comfyg store you will receive a connection string from the CLI:
 
