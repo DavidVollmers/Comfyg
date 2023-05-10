@@ -15,6 +15,7 @@ internal class SetupLocalhostCommand : Command
 {
     private const string DockerImageLocalBuildTag = "comfyg-local-build";
     private const string DockerImagePublic = "dvol/comfyg";
+    private const string AzuriteConnectionString = "UseDevelopmentStorage=true";
 
     private readonly Option<FileInfo?> _dockerFileOption;
     private readonly Option<Uri?> _dockerSocketOption;
@@ -69,8 +70,8 @@ internal class SetupLocalhostCommand : Command
         AddOption(_authenticationAzureBlobStorageConnectionStringOption);
 
         _versionOption = new Option<string>(new[] { "-v", "--version" },
-            "The version of the Docker Image to used. Defaults to `latest`.");
-        _versionOption.SetDefaultValue("latest");
+            "The version of the Docker Image to used. Defaults to `azurite`.");
+        _versionOption.SetDefaultValue("azurite");
         AddOption(_versionOption);
 
         this.SetHandler(HandleCommandAsync);
@@ -222,7 +223,7 @@ internal class SetupLocalhostCommand : Command
                    parameters.SystemAzureTableStorageConnectionString, cancellationToken))
         {
             parameters.SystemAzureTableStorageConnectionString =
-                AnsiConsole.Ask<string>("[bold]System Azure Table Storage[/]:");
+                AnsiConsole.Ask<string>("[bold]System Azure Table Storage[/]:", AzuriteConnectionString);
         }
 
         while (!ValidateSecurityValue(parameters.AuthenticationEncryptionKey, "Encryption key"))
@@ -240,7 +241,7 @@ internal class SetupLocalhostCommand : Command
                    parameters.AuthenticationAzureTableStorageConnectionString, cancellationToken))
         {
             parameters.AuthenticationAzureTableStorageConnectionString =
-                AnsiConsole.Ask<string>("[bold]Authentication Azure Table Storage[/]:");
+                AnsiConsole.Ask<string>("[bold]Authentication Azure Table Storage[/]:", AzuriteConnectionString);
         }
 
         while (!await ValidateAzureBlobStorageConnectionStringAsync(
@@ -280,6 +281,8 @@ internal class SetupLocalhostCommand : Command
     {
         if (string.IsNullOrWhiteSpace(connectionString)) return false;
 
+        if (connectionString == AzuriteConnectionString) return true;
+
         try
         {
             var serviceClient = new TableServiceClient(connectionString);
@@ -302,13 +305,14 @@ internal class SetupLocalhostCommand : Command
     {
         if (string.IsNullOrWhiteSpace(connectionString)) return false;
 
+        if (connectionString == AzuriteConnectionString) return true;
 
         try
         {
             var blobServiceClient = new BlobServiceClient(connectionString);
 
             await blobServiceClient.GetPropertiesAsync(cancellationToken);
-            
+
             return true;
         }
         catch

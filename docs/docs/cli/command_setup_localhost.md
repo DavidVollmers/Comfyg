@@ -64,7 +64,7 @@ The setup, if not specified otherwise, will use the latest version of the [Comfy
 
 - `-v|--version`
 
-  The version of the Docker Image to used. Defaults to `latest`.
+  The version of the Docker Image to used. Defaults to `azurite`.
 
 ## Examples
 
