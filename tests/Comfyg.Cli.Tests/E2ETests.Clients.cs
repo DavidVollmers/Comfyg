@@ -33,7 +33,7 @@ public partial class E2ETests
                 .ReturnsAsync(client);
         });
 
-        var result = await TestCli.ExecuteAsync($"setup client {clientId} \"{friendlyName}\" -k \"{keysPath}\"");
+        var result = await TestCli.ExecuteAsync($"--nocheck setup client {clientId} \"{friendlyName}\" -k \"{keysPath}\"");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
@@ -74,7 +74,7 @@ public partial class E2ETests
                 .ReturnsAsync(publicKey);
         });
 
-        var result = await TestCli.ExecuteAsync($"connect \"{connectionString}\"");
+        var result = await TestCli.ExecuteAsync($"--nocheck connect \"{connectionString}\"");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
@@ -106,7 +106,7 @@ public partial class E2ETests
             mock.Setup(c => c["SystemClientSecret"]).Returns(systemClientSecret);
         });
 
-        var result = await TestCli.ExecuteAsync($"connect \"{connectionString}\"");
+        var result = await TestCli.ExecuteAsync($"--nocheck connect \"{connectionString}\"");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);

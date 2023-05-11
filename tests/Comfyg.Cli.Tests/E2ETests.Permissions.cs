@@ -48,7 +48,7 @@ public partial class E2ETests
 
         var client = await ConnectAsync();
 
-        var result = await TestCli.ExecuteAsync($"set permissions {targetClientId}");
+        var result = await TestCli.ExecuteAsync($"--nocheck set permissions {targetClientId}");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
@@ -129,7 +129,7 @@ public partial class E2ETests
 
         var client = await ConnectAsync();
 
-        var result = await TestCli.ExecuteAsync($"set permissions {targetClientId} -p read write");
+        var result = await TestCli.ExecuteAsync($"--nocheck set permissions {targetClientId} -p read write");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
@@ -191,7 +191,7 @@ public partial class E2ETests
 
         var client = await ConnectAsync();
 
-        var result = await TestCli.ExecuteAsync($"set permissions config {targetClientId} {key}");
+        var result = await TestCli.ExecuteAsync($"--nocheck set permissions config {targetClientId} {key}");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);

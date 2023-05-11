@@ -22,6 +22,8 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
         _factory.TestOutputHelper = testOutputHelper;
 
         _factory.ResetMocks();
+
+        ClearCliState();
     }
 
     [Fact]
@@ -46,7 +48,7 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
 
         var client = await ConnectAsync();
 
-        var result = await TestCli.ExecuteAsync($"import config \"{importFile}\"");
+        var result = await TestCli.ExecuteAsync($"--nocheck import config \"{importFile}\"");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
@@ -105,7 +107,7 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
 
         var client = await ConnectAsync();
 
-        var result = await TestCli.ExecuteAsync($"export config \"{exportFile}\"");
+        var result = await TestCli.ExecuteAsync($"--nocheck export config \"{exportFile}\"");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
@@ -161,7 +163,7 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
                 It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(taggedValue);
         });
 
-        var result = await TestCli.ExecuteAsync($"tag config {key} {tag}");
+        var result = await TestCli.ExecuteAsync($"--nocheck tag config {key} {tag}");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
@@ -205,7 +207,7 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
                 .ReturnsAsync(settingValue);
         });
 
-        var result = await TestCli.ExecuteAsync($"add setting {key} {value}");
+        var result = await TestCli.ExecuteAsync($"--nocheck add setting {key} {value}");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
@@ -259,7 +261,7 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
                 .ReturnsAsync(clientSecret);
         });
 
-        var result = await TestCli.ExecuteAsync($"connect \"{connectionString}\"");
+        var result = await TestCli.ExecuteAsync($"--nocheck connect \"{connectionString}\"");
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(expectedOutput, result.Output);
@@ -274,5 +276,11 @@ public partial class E2ETests : IClassFixture<E2ETestWebApplicationFactory<Progr
         });
 
         return client;
+    }
+
+    private static void ClearCliState()
+    {
+        var directory = new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".comfyg"));
+        if (directory.Exists) directory.Delete(true);
     }
 }
