@@ -28,6 +28,8 @@ internal class ClientService : IClientService
 
     public async Task<IClient?> GetClientAsync(string clientId, CancellationToken cancellationToken = default)
     {
+        if (clientId == null) throw new ArgumentNullException(nameof(clientId));
+
         await _clients.CreateTableIfNotExistsAsync(cancellationToken);
 
         return await _clients.GetIfExistsAsync(clientId, clientId, cancellationToken: cancellationToken);
@@ -35,6 +37,8 @@ internal class ClientService : IClientService
 
     public async Task<byte[]> ReceiveClientSecretAsync(IClient client, CancellationToken cancellationToken = default)
     {
+        if (client == null) throw new ArgumentNullException(nameof(client));
+        
         if (client.ClientSecret.StartsWith(ClientSecretBlobPrefix))
         {
             var blob = await _blobService.DownloadBlobAsync(client.ClientSecret[ClientSecretBlobPrefix.Length..],
@@ -52,6 +56,8 @@ internal class ClientService : IClientService
 
     public async Task<IClient> CreateSymmetricClientAsync(IClient client, CancellationToken cancellationToken = default)
     {
+        if (client == null) throw new ArgumentNullException(nameof(client));
+        
         var clientSecret = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 
         var protectedSecret = await _secretService.ProtectSecretValueAsync(clientSecret, cancellationToken);
@@ -62,6 +68,9 @@ internal class ClientService : IClientService
     public async Task<IClient> CreateAsymmetricClientAsync(IClient client, RSA publicKey,
         CancellationToken cancellationToken = default)
     {
+        if (client == null) throw new ArgumentNullException(nameof(client));
+        if (publicKey == null) throw new ArgumentNullException(nameof(publicKey));
+        
         var blobId = $"{client.ClientId}.public.key";
         using var blob = new MemoryStream(publicKey.ExportRSAPublicKey());
 
@@ -72,6 +81,8 @@ internal class ClientService : IClientService
 
     public async Task<Stream?> GetEncryptionKeyAsync(IClient client, CancellationToken cancellationToken = default)
     {
+        if (client == null) throw new ArgumentNullException(nameof(client));
+        
         var blobId = $"{client.ClientId}.encryption.key";
 
         var doesExist = await _blobService.DoesBlobExistAsync(blobId, cancellationToken);
@@ -83,6 +94,9 @@ internal class ClientService : IClientService
     public async Task SetEncryptionKeyAsync(IClient client, Stream stream,
         CancellationToken cancellationToken = default)
     {
+        if (client == null) throw new ArgumentNullException(nameof(client));
+        if (stream == null) throw new ArgumentNullException(nameof(stream));
+        
         var blobId = $"{client.ClientId}.encryption.key";
 
         var doesExist = await _blobService.DoesBlobExistAsync(blobId, cancellationToken);
