@@ -24,6 +24,8 @@ jobs:
           dotnet-version: 6.0.x
       - run: |
           dotnet publish -c Release packages/Store/Comfyg.Store.Api/Comfyg.Store.Api.csproj
+      - run: |
+          chmod +x packages/Store/Comfyg.Store.Api/azurite.Dockerfile.sh
       - uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
