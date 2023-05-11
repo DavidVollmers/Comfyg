@@ -140,7 +140,16 @@ internal class SetupLocalhostCommand : Command
                         ctx.UpdateTarget(new Markup(
                             $"[bold yellow]Removing existing Comfyg store Container: {existingContainerId}[/]"));
 
-                        await dockerClient.TryKillAndRemoveDockerContainerAsync(existingContainerId, cancellationToken);
+                        try
+                        {
+                            await dockerClient.TryKillAndRemoveDockerContainerAsync(existingContainerId,
+                                cancellationToken);
+                        }
+                        catch (DockerContainerNotFoundException)
+                        {
+                            ctx.UpdateTarget(new Markup($"[bold]Container not found: {existingContainerId}[/]"));
+                            continue;
+                        }
 
                         ctx.UpdateTarget(
                             new Markup($"Removed existing Comfyg store Container: [bold]{existingContainerId}[/]"));

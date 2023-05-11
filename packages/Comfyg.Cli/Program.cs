@@ -24,6 +24,16 @@ if (args.Length == 0)
     AnsiConsole.Write(new FigletText(nameof(Comfyg)).Color(CliConstants.PrimaryColor));
 }
 
+try
+{
+    await Cli.CheckForUpdateAsync();
+}
+catch (Exception e)
+{
+    AnsiConsole.MarkupLine("[bold red]Could not check for updates:[/]");
+    AnsiConsole.WriteException(e, ExceptionFormats.ShortenEverything);
+}
+
 var parser = new CommandLineBuilder(rootCommand)
     .UseDefaults()
     .UseExceptionHandler((e, context) =>
