@@ -19,6 +19,8 @@ public sealed partial class ComfygClient : IDisposable
     private const string EnvironmentVariablePrefix = "$";
     private const string E2EeNotSupportedExceptionMessage = "End-to-end encryption is only supported for asymmetric clients.";
 
+    private static readonly byte[] BeginPrivateKeyMark = "-----BEGIN PRIVATE KEY-----"u8.ToArray();
+
     private readonly HttpClient _httpClient;
     private readonly string _clientId;
     private readonly byte[] _clientSecret;
@@ -96,7 +98,10 @@ public sealed partial class ComfygClient : IDisposable
             }
             else
             {
-                _clientSecret = Convert.FromBase64String(clientSecret);
+                var clientSecretBytes = Convert.FromBase64String(clientSecret);
+                
+                if (clientSecretBytes.)
+                
                 if (_clientSecret.Length < 16)
                     throw new InvalidOperationException("Client secret must be at least 16 bytes long.");
             }
