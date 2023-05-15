@@ -88,7 +88,6 @@ public static class ComfygCoreExtensions
                 throw new InvalidOperationException(
                     "Neither encryption nor Azure Key Vault is configured. Use either ComfygOptions.UseEncryption or ComfygOptions.UseKeyVault to configure secret handling.");
 
-            //TODO make Azure Credentials configurable
             var secretClient = new SecretClient(options.KeyVaultUri, new DefaultAzureCredential());
 
             //TODO make systemId configurable

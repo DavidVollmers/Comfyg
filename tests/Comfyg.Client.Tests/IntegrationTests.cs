@@ -32,7 +32,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
     {
         var systemClientId = Guid.NewGuid().ToString();
         var systemClientSecret = Convert.ToBase64String(CreateClientSecret());
-        var client = new TestClient { ClientId = Guid.NewGuid().ToString(), FriendlyName = "New Client" };
+        var client = new TestClient {ClientId = Guid.NewGuid().ToString(), FriendlyName = "New Client"};
         var clientSecret = CreateClientSecret();
 
         using var httpClient = _factory.CreateClient();
@@ -92,7 +92,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         const string friendlyName = "Test Client";
-        var client = new TestClient { ClientId = clientId, FriendlyName = friendlyName };
+        var client = new TestClient {ClientId = clientId, FriendlyName = friendlyName};
 
         using var httpClient = _factory.CreateClient();
 
@@ -131,7 +131,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         const string friendlyName = "Test Client";
-        var client = new TestClient { ClientId = clientId, FriendlyName = friendlyName };
+        var client = new TestClient {ClientId = clientId, FriendlyName = friendlyName};
         var envVar1 = Guid.NewGuid().ToString("N");
         Environment.SetEnvironmentVariable(envVar1, clientId);
 
@@ -164,7 +164,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
                 cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId),
                     It.IsAny<CancellationToken>()), Times.Once);
         });
-        
+
         Environment.SetEnvironmentVariable(envVar1, null);
     }
 
@@ -176,18 +176,12 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         var keysPath = Path.Join(assemblyPath, "test.pem");
         var clientSecret = await File.ReadAllBytesAsync(keysPath);
         const string friendlyName = "Test Client";
-        var client = new TestClient { ClientId = clientId, FriendlyName = friendlyName };
-        
+        var client = new TestClient {ClientId = clientId, FriendlyName = friendlyName, IsAsymmetric = true};
+
         using var rsa = RSA.Create();
         rsa.ImportFromPem(await File.ReadAllTextAsync(keysPath));
         var publicKey = rsa.ExportRSAPublicKey();
         var privateKey = rsa.ExportRSAPrivateKey();
-
-        using var aes = Aes.Create();
-        using var privateRsaOnly = RSA.Create();
-        privateRsaOnly.ImportRSAPrivateKey(privateKey, out _);
-        var encryptedKey = privateRsaOnly.Encrypt(aes.Key, RSAEncryptionPadding.Pkcs1);
-        var encryptedKeyStream = new MemoryStream(encryptedKey);
 
         using var httpClient = _factory.CreateClient();
 
@@ -202,8 +196,6 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
                     cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId),
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(publicKey);
-            mock.Setup(cs => cs.GetEncryptionKeyAsync(It.IsAny<IClient>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(encryptedKeyStream);
         });
 
         var response = await comfygClient.EstablishConnectionAsync();
@@ -220,11 +212,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
                 Times.Once);
             mock.Verify(
                 cs => cs.ReceiveClientSecretAsync(It.Is<IClient>(c => c.ClientId == clientId),
-                    It.IsAny<CancellationToken>()), Times.Exactly(2));
-            mock.Verify(cs =>
-                    cs.GetEncryptionKeyAsync(It.Is<IClient>(c => c.ClientId == clientId),
-                        It.IsAny<CancellationToken>()),
-                Times.Once);
+                    It.IsAny<CancellationToken>()), Times.Once());
         });
     }
 
@@ -234,7 +222,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestWebApplicat
         var clientId = Guid.NewGuid().ToString();
         var clientSecret = CreateClientSecret();
         const string friendlyName = "Test Client";
-        var client = new TestClient { ClientId = clientId, FriendlyName = friendlyName };
+        var client = new TestClient {ClientId = clientId, FriendlyName = friendlyName};
         var configurationValues = new[]
         {
             new ConfigurationValue("key1", "value1"), new ConfigurationValue("key2", "value2")
