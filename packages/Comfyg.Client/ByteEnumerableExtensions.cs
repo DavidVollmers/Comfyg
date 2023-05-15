@@ -4,6 +4,7 @@ public static class ByteEnumerableExtensions
 {
     public static bool StartsWith(this IReadOnlyList<byte> bytes, IReadOnlyCollection<byte> pattern)
     {
+        return IsMatch(bytes, pattern, 0);
     }
 
     private static bool IsMatch(IReadOnlyList<byte> bytes, IReadOnlyCollection<byte> pattern, int position)

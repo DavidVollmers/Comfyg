@@ -99,11 +99,21 @@ public sealed partial class ComfygClient : IDisposable
             else
             {
                 var clientSecretBytes = Convert.FromBase64String(clientSecret);
-                
-                if (clientSecretBytes.)
-                
-                if (_clientSecret.Length < 16)
-                    throw new InvalidOperationException("Client secret must be at least 16 bytes long.");
+
+                if (clientSecretBytes.StartsWith(BeginPrivateKeyMark))
+                {
+                    using var rsa = RSA.Create();
+                    rsa.ImportPkcs8PrivateKey(clientSecretBytes, out _);
+                    _clientSecret = rsa.ExportRSAPrivateKey();
+
+                    _isAsymmetric = true;
+                }
+                else
+                {
+                    _clientSecret = clientSecretBytes;
+                    if (_clientSecret.Length < 16)
+                        throw new InvalidOperationException("Client secret must be at least 16 bytes long.");
+                }
             }
 
             if (connectionInformation.TryGetValue("Encryption", out var encryption))
