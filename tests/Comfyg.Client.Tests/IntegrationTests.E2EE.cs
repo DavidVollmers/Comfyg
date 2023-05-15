@@ -29,8 +29,7 @@ public partial class IntegrationTests
             new TestConfigurationValue {Key = "key1", Value = encryptedValue1, IsEncrypted = true},
             new TestConfigurationValue {Key = "key2", Value = "value2"}
         };
-
-
+        
         using var rsa = RSA.Create();
         rsa.ImportFromPem(await File.ReadAllTextAsync(keysPath));
         var publicKey = rsa.ExportRSAPublicKey();

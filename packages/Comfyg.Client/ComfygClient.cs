@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using Comfyg.Client.Operations;
 using Comfyg.Store.Contracts;
 using Comfyg.Store.Contracts.Responses;
@@ -103,7 +104,7 @@ public sealed partial class ComfygClient : IDisposable
                 if (clientSecretBytes.StartsWith(BeginPrivateKeyMark))
                 {
                     using var rsa = RSA.Create();
-                    rsa.ImportPkcs8PrivateKey(clientSecretBytes, out _);
+                    rsa.ImportFromPem(Encoding.UTF8.GetString(clientSecretBytes));
                     _clientSecret = rsa.ExportRSAPrivateKey();
 
                     _isAsymmetric = true;
