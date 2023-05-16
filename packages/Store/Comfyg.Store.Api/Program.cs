@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text.RegularExpressions;
 using Comfyg.Store.Api;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -15,7 +16,13 @@ builder.Services.AddSwaggerGen(options =>
 {
     // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1684
     options.CustomOperationIds(apiDescription =>
-        apiDescription.TryGetMethodInfo(out MethodInfo methodInfo) ? methodInfo.Name : null);
+    {
+        if (!apiDescription.TryGetMethodInfo(out MethodInfo methodInfo)) return null;
+
+        var name = methodInfo.Name;
+        if (name.EndsWith("Async")) name = name[..^"Async".Length];
+        return Regex.Replace(name, "([A-Z])", " $1", RegexOptions.Compiled).Trim();
+    });
 });
 
 var app = builder.Build();
