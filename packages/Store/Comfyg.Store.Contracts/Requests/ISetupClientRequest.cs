@@ -17,6 +17,9 @@ public interface ISetupClientRequest : IClient
     /// </summary>
     public IFormFile? EncryptionKey { get; }
     
+    /// <summary>
+    /// Utility implementation to use for serialization.
+    /// </summary>
     // Must be public to use with [FromForm]
     // ReSharper disable once ClassNeverInstantiated.Global
     public sealed class Form : ISetupClientRequest

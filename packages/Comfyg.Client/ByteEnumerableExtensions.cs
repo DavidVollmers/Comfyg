@@ -1,6 +1,6 @@
 ﻿namespace Comfyg.Client;
 
-public static class ByteEnumerableExtensions
+internal static class ByteEnumerableExtensions
 {
     public static bool StartsWith(this IReadOnlyList<byte> bytes, IReadOnlyCollection<byte> pattern)
     {

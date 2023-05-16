@@ -8,8 +8,6 @@ on:
       - '.github/workflows/docs-cd.yml'
       - 'packages/Store/Comfyg.Store.Api'
 
-# TODO: use dotnet swagger tofile
-
 jobs:
   Build:
     runs-on: ubuntu-latest
