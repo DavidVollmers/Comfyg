@@ -6,6 +6,7 @@ on:
     paths:
       - 'docs/**'
       - '.github/workflows/docs-cd.yml'
+      - 'packages/Store/Comfyg.Store.Api'
 
 # TODO: use dotnet swagger tofile
 
