@@ -7,6 +7,8 @@ on:
       - 'docs/**'
       - '.github/workflows/docs-cd.yml'
 
+# TODO: use dotnet swagger tofile
+
 jobs:
   Build:
     runs-on: ubuntu-latest

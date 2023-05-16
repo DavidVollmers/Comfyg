@@ -15,5 +15,9 @@
     <ProjectReference Include="..\Comfyg.Store.Contracts\Comfyg.Store.Contracts.csproj" />
     <ProjectReference Include="..\Comfyg.Store.Authentication\Comfyg.Store.Authentication.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
 
 </Project>
