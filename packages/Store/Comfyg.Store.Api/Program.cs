@@ -1,4 +1,6 @@
-﻿using Comfyg.Store.Api;
+﻿using System.Reflection;
+using Comfyg.Store.Api;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,13 @@ builder.Services.AddControllers(options =>
 });
 
 builder.UseComfygStoreApi();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1684
+    options.CustomOperationIds(apiDescription =>
+        apiDescription.TryGetMethodInfo(out MethodInfo methodInfo) ? methodInfo.Name : null);
+});
 
 var app = builder.Build();
 

@@ -1,3 +1,5 @@
+docs/swagger.json
+
 dist
 *.tgz
 

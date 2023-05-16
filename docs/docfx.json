@@ -35,6 +35,11 @@
           "toc.yml",
           "*.md"
         ]
+      },
+      {
+        "files": [
+          "swagger.json"
+        ]
       }
     ],
     "resource": [
