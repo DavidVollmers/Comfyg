@@ -6,7 +6,11 @@ on:
     paths:
       - 'docs/**'
       - '.github/workflows/docs-cd.yml'
+      - 'packages/Comfyg'
+      - 'packages/Comfyg.Cli'
+      - 'packages/Comfyg.Client'
       - 'packages/Store/Comfyg.Store.Api'
+      - 'packages/Store/Comfyg.Store.Contracts'
 
 jobs:
   Build:
