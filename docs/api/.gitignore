@@ -2,4 +2,5 @@
 #  temp file  #
 ###############
 *.yml
+*.json
 .manifest

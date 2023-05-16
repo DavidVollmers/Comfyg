@@ -12,3 +12,5 @@ It contains the code documentation for the following NuGet packages:
 
 - [Comfyg.Store.Contracts](https://nuget.org/packages/Comfyg.Store.Contracts)
   Contract types to consume the Comfyg store API.
+
+This documentation also contains the reference for the [Comfyg Store API](Comfyg.Store.Api.json).

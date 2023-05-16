@@ -25,7 +25,8 @@
       {
         "files": [
           "api/**.yml",
-          "api/index.md"
+          "api/index.md",
+          "api/**.json"
         ]
       },
       {
@@ -34,11 +35,6 @@
           "docs/**/toc.yml",
           "toc.yml",
           "*.md"
-        ]
-      },
-      {
-        "files": [
-          "swagger.json"
         ]
       }
     ],
