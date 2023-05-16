@@ -24,16 +24,22 @@ public interface ISetupClientRequest : IClient
     // ReSharper disable once ClassNeverInstantiated.Global
     public sealed class Form : ISetupClientRequest
     {
+        /// <inheritdoc cref="ISetupClientRequest.ClientId"/>
         public string ClientId { get; init; } = null!;
 
+        /// <inheritdoc cref="ISetupClientRequest.ClientSecret"/>
         public string ClientSecret => null!;
 
+        /// <inheritdoc cref="ISetupClientRequest.FriendlyName"/>
         public string FriendlyName { get; init; } = null!;
 
+        /// <inheritdoc cref="ISetupClientRequest.IsAsymmetric"/>
         public bool IsAsymmetric => ClientSecretPublicKey != null;
 
+        /// <inheritdoc cref="ISetupClientRequest.ClientSecretPublicKey"/>
         public IFormFile? ClientSecretPublicKey { get; init; } = null;
 
+        /// <inheritdoc cref="ISetupClientRequest.EncryptionKey"/>
         public IFormFile? EncryptionKey { get; init; } = null;
     }
 }
