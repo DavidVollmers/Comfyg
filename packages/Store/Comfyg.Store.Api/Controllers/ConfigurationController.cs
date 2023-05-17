@@ -32,8 +32,9 @@ public class ConfigurationController : ValueControllerBase<IConfigurationValue>
     /// <returns><see cref="IAsyncEnumerable{IConfigurationValue}"/></returns>
     /// <remarks>
     /// Example request:
-    /// 
-    ///     GET /configuration?since=2023-05-17T11:28:33.467Z&amp;tags=Tag1&amp;tags=Tag2
+    /// ```http
+    /// GET /configuration?since=2023-05-17T11:28:33.467Z&amp;tags=Tag1&amp;tags=Tag2
+    /// ```
     /// </remarks>
     /// <response code="200">Returns an array of Comfyg configuration values.</response>
     [HttpGet]
