@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Comfyg.Store.Api.Controllers;
 
+/// <summary>
+/// Manage and retrieve Comfyg configuration values.
+/// </summary>
 [Authorize]
 [ApiController]
 [Route("configuration")]
@@ -27,7 +30,14 @@ public class ConfigurationController : ValueControllerBase<IConfigurationValue>
     /// <param name="tags">Optional array of tags to filter the Comfyg configuration values.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
     /// <returns><see cref="IAsyncEnumerable{IConfigurationValue}"/></returns>
+    /// <remarks>
+    /// Example request:
+    ///     GET /configuration?since=2023-05-17T11:28:33.467Z&amp;tags=Tag1&amp;tags=Tag2
+    /// </remarks>
+    /// <response code="200">Returns an array of Comfyg configuration values.</response>
     [HttpGet]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetConfigurationValues([FromQuery] DateTimeOffset? since = null,
         [FromQuery] string[]? tags = null, CancellationToken cancellationToken = default)
     {
