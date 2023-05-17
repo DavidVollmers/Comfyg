@@ -20,6 +20,13 @@ public class ConfigurationController : ValueControllerBase<IConfigurationValue>
     {
     }
 
+    /// <summary>
+    /// Get Comfyg configuration values.
+    /// </summary>
+    /// <param name="since">Optional <see cref="DateTimeOffset"/> to only get Comfyg configuration values which were added or updated since then.</param>
+    /// <param name="tags">Optional array of tags to filter the Comfyg configuration values.</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/> controlling the request lifespan.</param>
+    /// <returns><see cref="IAsyncEnumerable{IConfigurationValue}"/></returns>
     [HttpGet]
     public IActionResult GetConfigurationValues([FromQuery] DateTimeOffset? since = null,
         [FromQuery] string[]? tags = null, CancellationToken cancellationToken = default)

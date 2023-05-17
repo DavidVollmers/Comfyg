@@ -4,20 +4,21 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <UserSecretsId>e7b922dc-d2e8-41d0-b82c-a8112e8be873</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Comfyg.Tests.Common" />
+    <InternalsVisibleTo Include="Comfyg.Tests.Common"/>
   </ItemGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\Comfyg.Store.Contracts\Comfyg.Store.Contracts.csproj" />
-    <ProjectReference Include="..\Comfyg.Store.Authentication\Comfyg.Store.Authentication.csproj" />
+    <ProjectReference Include="..\Comfyg.Store.Contracts\Comfyg.Store.Contracts.csproj"/>
+    <ProjectReference Include="..\Comfyg.Store.Authentication\Comfyg.Store.Authentication.csproj"/>
   </ItemGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0"/>
   </ItemGroup>
 
 </Project>

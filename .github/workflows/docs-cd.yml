@@ -17,10 +17,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          # https://github.com/actions/checkout/issues/701 https://github.com/actions/checkout/pull/579
+          fetch-depth: 0
+      - run: echo "VERSION=$(git describe --tags --dirty)" >> $GITHUB_ENV
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.x
-      - run: dotnet publish -c Release packages/Store/Comfyg.Store.Api/Comfyg.Store.Api.csproj
+      - run: dotnet publish -c Release packages/Store/Comfyg.Store.Api/Comfyg.Store.Api.csproj -p:Version=$VERSION
       - run: dotnet tool restore
       - run: dotnet tool install -g docfx --version 2.63.1
       - run: dotnet swagger tofile --serializeasv2 --output docs/api/Comfyg.Store.Api.json packages/Store/Comfyg.Store.Api/bin/Release/net6.0/publish/Comfyg.Store.Api.dll v1
