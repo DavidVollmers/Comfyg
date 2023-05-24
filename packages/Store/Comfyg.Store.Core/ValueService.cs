@@ -162,4 +162,17 @@ internal class ValueService<TValue, TEntity> : IValueService<TValue>
 
         return taggedValue;
     }
+
+    public async Task DeleteValueAsync(string deleter, string key, string version, CancellationToken cancellationToken)
+    {
+        if (deleter == null) throw new ArgumentNullException(nameof(deleter));
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (version == null) throw new ArgumentNullException(nameof(version));
+
+        var value = await _values.GetAsync(key.ToLower(), version.ToLower(), cancellationToken: cancellationToken);
+
+        await _values.DeleteAsync(value, cancellationToken: cancellationToken);
+
+        await _changeService.LogChangeAsync<TValue>(key, ChangeType.Delete, deleter, cancellationToken);
+    }
 }

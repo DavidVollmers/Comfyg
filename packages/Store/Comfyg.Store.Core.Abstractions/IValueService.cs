@@ -15,4 +15,6 @@ public interface IValueService<T> where T : IComfygValue
 
     Task<T> TagValueAsync(string owner, string key, string tag, string version,
         CancellationToken cancellationToken = default);
+
+    Task DeleteValueAsync(string deleter, string key, string version, CancellationToken cancellationToken);
 }

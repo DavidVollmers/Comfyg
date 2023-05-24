@@ -24,6 +24,21 @@ public abstract class ValueControllerBase<T> : ControllerBase where T : IComfygV
         _changeService = changeService;
     }
 
+    protected async Task DeleteValueAsync(IClientIdentity clientIdentity, string key, string? version,
+        CancellationToken cancellationToken)
+    {
+        // ReSharper disable once InvertIf
+        if (!clientIdentity.IsSystemClient)
+        {
+            var isPermitted = await _permissionService.IsPermittedAsync<T>(clientIdentity.Client.ClientId, key,
+                Permissions.Delete, cancellationToken: cancellationToken);
+            if (!isPermitted) return;
+        }
+
+        await _valueService.DeleteValueAsync(clientIdentity.Client.ClientId, key,
+            version ?? ComfygConstants.LatestVersion, cancellationToken);
+    }
+
     protected async Task<T?> TagValueAsync(IClientIdentity clientIdentity, string key, string version, string tag,
         CancellationToken cancellationToken)
     {

@@ -12,10 +12,6 @@ internal static class Cli
     
     public static async Task CheckForUpdateAsync(CancellationToken cancellationToken = default)
     {
-        var lastUpdateCheck =
-            await State.User.ReadAsync<DateTime?>(nameof(Comfyg), LastUpdateCheck, cancellationToken);
-        if (lastUpdateCheck.HasValue && lastUpdateCheck.Value >= DateTime.UtcNow.AddHours(-1)) return;
-        
         var assembly = Assembly.GetAssembly(typeof(Program))!.GetName();
         var version = assembly.Version!;
         var packageId = assembly.Name!;
